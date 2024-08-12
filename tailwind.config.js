@@ -17,6 +17,11 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      primary: ['Forum', 'sans-serif'],
+      secondary: ['Poppins', 'sans-serif'],
+      title : ['Righteous', 'sans-serif']
+    },
     extend: {
       colors: {
         border: "hsl(var(--border))",

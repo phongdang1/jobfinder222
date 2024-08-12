@@ -1,0 +1,7 @@
+.Typewriter{
+    overflow: hidden;
+    /* white-space: nowrap; */
+    font-size: 28px; /* Kích thước chữ */
+    display: inline-block;
+    padding : 0 20px 0 20px;
+}
