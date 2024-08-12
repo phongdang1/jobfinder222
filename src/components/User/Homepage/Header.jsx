@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
@@ -24,7 +25,7 @@ function Header() {
             className="bg-secondary text-third hover:bg-secondary hover:text-primary"
             variant="ghost"
           >
-            Login
+            <Link to="/login">Login</Link>
           </Button>
           <Button
             className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary"

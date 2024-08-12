@@ -56,7 +56,7 @@ function Card() {
       {data.map((card, index) => (
         <div
           key={index}
-          className="flex bg-white rounded-lg h-28 w-full gap-4 cursor-pointer  hover:text-primary hover:outline hover:outline-1 hover:outline-primary"
+          className="flex bg-white border-2 border-gray-200 rounded-lg h-28 w-full gap-4 cursor-pointer  hover:text-primary hover:border hover:border-2 hover:border-primary"
         >
           <div
             className="flex-1/3 h-24 w-24 bg-contain my-auto ml-3 rounded-lg  "

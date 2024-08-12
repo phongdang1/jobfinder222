@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 function DefaultLayout() {
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-r from-slate-100 to-purple-100">
+    <div className="flex flex-col min-h-screen bg-secondary">
       <Header />
       <div className="flex-grow">
         <Outlet />
