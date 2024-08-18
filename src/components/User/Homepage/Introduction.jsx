@@ -7,7 +7,7 @@ function Introduction() {
   return (
     <div
       data-aos="fade-right"
-      className="flex items-center justify-center bg-[#4a3d8d] bg-opacity-80 mx-24 my-8 rounded-2xl"
+      className="flex items-center justify-center bg-[#4a3d8d] bg-opacity-80 mx-24 my-6 rounded-2xl"
     >
       <div className="flex w-full max-w-7xl ">
         {/* Text Section */}

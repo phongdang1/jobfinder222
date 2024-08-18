@@ -1,5 +1,5 @@
 import Introduction from "@/components/User/Homepage/Introduction";
-import LatestJob from "@/components/User/Homepage/LatestJob";
+import BestJob from "@/components/User/Homepage/BestJob";
 import HomeCategory from "@/components/User/Homepage/HomeCategory";
 import Pro from "@/components/User/Homepage/Pro";
 import "aos/dist/aos.css";
@@ -16,7 +16,7 @@ function HomePage() {
     <>
       <Introduction />
       <HomeCategory />
-      <LatestJob />
+      <BestJob />
       <Pro />
     </>
   );
