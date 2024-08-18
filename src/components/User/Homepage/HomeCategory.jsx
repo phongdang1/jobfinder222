@@ -1,34 +1,30 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import Cate from "../../../assets/Home/cate.png";
 
 function HomeCategory() {
   return (
-    <div className="flex flex-col pb-20 mt-10 ml-20">
+    <div className="flex flex-col pb-20 mt-10 mx-20 font-poppins">
       <div className="text-5xl font-forum mb-8 font-semibold ml-16">
         Occupation <span className="text-5xl text-primary ">Category</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 px-16 font-poppins">
-        {Array.from({ length: 8 }).map((_, index) => (
+      <div className="flex gap-4 px-16 font-poppins " data-aos="fade-right">
+        {Array.from({ length: 6 }).map((_, index) => (
           <Card
             key={index}
-            className="w-72 h-60 shadow-xl cursor-pointer hover:outline hover:outline-1 hover:outline-primary group"
+            className="w-full h-64 shadow-xl cursor-pointer hover:outline hover:outline-1 hover:outline-primary hover:bg-secondary"
           >
             <CardHeader>
-              <WorkOutlineIcon
-                className="mx-auto mt-4 group-hover:bg-slate-100 group-hover:rounded-lg"
-                sx={{ fontSize: 90 }}
-              />
-            </CardHeader>
-            <CardContent>
-              <div className="text-center -mt-2 font-medium">
+              <div className="text-left text-lg font-medium text-third">
                 Category Name {index + 1}
               </div>
-            </CardContent>
+            </CardHeader>
+
             <CardContent>
-              <div className="text-center -mt-4 text-sm text-primary">
-                100 jobs
-              </div>
+              <div
+                style={{ backgroundImage: `url(${Cate})` }}
+                className="w-46 h-32 mx-auto bg-cover bg-center rounded-lg bg-slate-500 relative -bottom-2"
+              ></div>
             </CardContent>
           </Card>
         ))}
