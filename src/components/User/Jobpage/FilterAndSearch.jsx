@@ -9,6 +9,16 @@ import EsportLogo from "../../../assets/JobsPage/Logo3.png";
 import TechLogo from "../../../assets/JobsPage/Logo4.png";
 import FptLogo from "../../../assets/JobsPage/Logo5.png";
 import FilterListIcon from '@mui/icons-material/FilterList';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
+
 
 function FilterAndSearch() {
     return (
@@ -299,11 +309,23 @@ function FilterAndSearch() {
 
                     <div className="flex justify-center mt-8 mb-5">
                         <nav className="flex items-center space-x-2">
-                            <Button className="bg-gray-200 text-gray-800">Previous</Button>
-                            <Button className="bg-gray-200 text-gray-800">1</Button>
-                            <Button className="bg-gray-200 text-gray-800">2</Button>
-                            <Button className="bg-gray-200 text-gray-800">3</Button>
-                            <Button className="bg-gray-200 text-gray-800">Next</Button>
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious href="#" />
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink href="#">1</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationEllipsis />
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationNext href="#" />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+
                         </nav>
                     </div>
                 </div>
