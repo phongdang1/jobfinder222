@@ -20,6 +20,9 @@ function Header() {
             <li>About Us</li>
             <li>Pricing</li>
             <li>Features</li>
+            <Link to="/jobs">
+              <li>Jobs</li>
+            </Link>
           </ul>
         </div>
         <div className="flex gap-4 text-lg">
