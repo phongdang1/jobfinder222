@@ -7,6 +7,12 @@
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
+    --gradient: linear-gradient(
+      90deg,
+      hsl(240°, 35%, 81%) 0%,
+      hsl(230°, 46%, 74%) 51%,
+      hsl(233°, 57%, 67%) 100%
+    );
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
