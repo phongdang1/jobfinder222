@@ -1,8 +1,9 @@
 import ProImage from "../../../assets/Home/pro.png";
+import { Button } from "@/components/ui/button";
 
 function Pro() {
   return (
-    <div className="bg-[#4a3d8d] bg-opacity-80  w-full h-full flex flex-col font-poppins text-secondary">
+    <div className="bg-[#4a3d8d] bg-opacity-80 mb-8 w-full h-full flex flex-col font-poppins text-secondary">
       <div className="grid grid-cols-2 mx-36 mt-6">
         <div>
           <div className="py-8">Jobfinder Pro.</div>
@@ -21,16 +22,23 @@ function Pro() {
               <li>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</li>
             </ul>
           </div>
+          <div className="mt-4">
+            <Button
+              className="bg-third text-secondary hover:bg-third/85 hover:text-secondary border-third"
+              variant="outline"
+            >
+              Get Started
+            </Button>
+          </div>
         </div>
-        <div>
-          <div
-            className="w-full h-[550px] bg-cover bg-center my-4 rounded-2xl "
-            style={{
-              backgroundImage: `url(${ProImage})`,
-              backgroundPosition: "center left",
-            }}
-          ></div>
-        </div>
+
+        <div
+          className="w-full h-[550px] bg-cover bg-center my-4 rounded-2xl "
+          style={{
+            backgroundImage: `url(${ProImage})`,
+            backgroundPosition: "center left",
+          }}
+        ></div>
       </div>
     </div>
   );

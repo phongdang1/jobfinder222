@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 
 function Introduction() {
   return (
-    <div className="flex items-center justify-center bg-[#4a3d8d] bg-opacity-80 mx-24 my-8 rounded-2xl">
+    <div
+      data-aos="fade-right"
+      className="flex items-center justify-center bg-[#4a3d8d] bg-opacity-80 mx-24 my-6 rounded-2xl"
+    >
       <div className="flex w-full max-w-7xl ">
         {/* Text Section */}
         <div className="flex flex-col justify-center w-full md:w-1/2 text-center md:text-left px-4">
