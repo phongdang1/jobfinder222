@@ -56,7 +56,7 @@ const jobs = [
 
 function RelatedJob() {
   return (
-    <div className="shadow-md rounded-lg px-4 md:px-6 lg:px-8 xl:px-16">
+    <div className="mt-5 mb-16 px-4 md:px-6 lg:px-8 xl:px-16">
   <div className="bg-primary text-white text-lg md:text-xl lg:text-2xl font-bold p-4 rounded-t-lg text-center">
     Related Jobs
   </div>
