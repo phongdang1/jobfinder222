@@ -3,7 +3,7 @@ import { LinkedIn, Facebook, Instagram } from "@mui/icons-material";
 function Footer() {
   return (
     <>
-      <div className="flex py-4 bg-secondary items-center justify-between px-24 border-t-2 ">
+      <footer className="flex py-4 bg-secondary items-center justify-between px-24 border-t-2 ">
         {/* left */}
         <div className="flex gap-4">
           <div>Logo</div>
@@ -24,7 +24,7 @@ function Footer() {
             </a>
           </ul>
         </div>
-      </div>
+      </footer>
     </>
   );
 }

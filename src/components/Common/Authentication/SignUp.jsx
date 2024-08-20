@@ -32,7 +32,7 @@ const SignUp = () => {
     setShowRetypePassword(!showRetypePassword);
 
   return (
-    <div className="flex-1 px-12 py-14 mx-auto bg-white flex flex-col items-center justify-center border border-gray-300">
+    <div className="flex-1 px-12 py-14 mx-auto bg-secondary flex flex-col items-center justify-center border border-gray-300">
       <form className="w-[524px]">
         <h1 className="mb-8 text-5xl text-primary font-title">Sign Up</h1>
 
@@ -52,6 +52,26 @@ const SignUp = () => {
               placeholder="Last Name"
               className="flex items-center border focus:border-primary py-7 px-10"
             />
+          </div>
+          <div className="relative flex items-center mb-6">
+            <IoMdPerson className="text-gray-500 mr-2 absolute left-3" />
+            <Select className="rounded-full">
+              <SelectTrigger className="w-full rounded-full py-7 pl-10 pr-4 ">
+                <SelectValue placeholder="Genders" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel className="text-primary">Genders</SelectLabel>
+                  {genders.map((gender) => {
+                    return (
+                      <SelectItem key={gender} value={gender}>
+                        {gender}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="relative flex items-center mb-4">
             <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
@@ -107,6 +127,7 @@ const SignUp = () => {
               )}
             </button>
           </div>
+        
           <div className="relative flex items-center mb-4">
             <FaGenderless className="text-gray-500 mr-2 absolute left-3" />
             <Select className="rounded-full">
@@ -120,26 +141,6 @@ const SignUp = () => {
                     return (
                       <SelectItem key={role} value={role}>
                         {role}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="relative flex items-center mb-6">
-            <IoMdPerson className="text-gray-500 mr-2 absolute left-3" />
-            <Select className="rounded-full">
-              <SelectTrigger className="w-full rounded-full py-7 pl-10 pr-4 ">
-                <SelectValue placeholder="Genders" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel className="text-primary">Genders</SelectLabel>
-                  {genders.map((gender) => {
-                    return (
-                      <SelectItem key={gender} value={gender}>
-                        {gender}
                       </SelectItem>
                     );
                   })}
