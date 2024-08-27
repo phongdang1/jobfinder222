@@ -63,11 +63,11 @@ function JobCard() {
   });
 
   return (
-    <div className="grid grid-cols-3 gap-4 mx-20 py-10">
+    <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto md:mx-8 lg:mx-6 py-10">
       {data.map((card, index) => (
         <div
           key={index}
-          className="flex bg-white border-2 border-gray-200 rounded-lg h-28 w-full gap-4 cursor-pointer  hover:text-primary hover:border hover:border-2 hover:border-primary"
+          className="flex bg-white border-2 border-gray-200 rounded-lg h-28 w-full gap-4 cursor-pointer hover:text-primary hover:border-primary"
         >
           {loading ? (
             <div className="flex items-center space-x-4">
@@ -79,16 +79,16 @@ function JobCard() {
               </div>
             </div>
           ) : (
-            <>
+            <div className="flex gap-2">
               <div
-                className="flex-1/3 h-24 w-24 bg-contain my-auto ml-3 rounded-lg  "
+                className=" w-24 h-24 bg-contain my-auto ml-3 rounded-lg  "
                 style={{
                   backgroundImage: `url(${card.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
               ></div>
-              <div className="flex-2/3 flex-2 mt-4">
+              <div className="max-w-screen-xl mt-4">
                 <div className="block">
                   <div className="font-poppins text-base font-medium ">
                     {card.occupation}
@@ -104,12 +104,13 @@ function JobCard() {
                   <Badge variant="outline" className="bg-secondary">
                     {card.location}
                   </Badge>
+
                   <Badge variant="outline" className="bg-secondary">
                     {card.time}
                   </Badge>
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
       ))}

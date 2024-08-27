@@ -6,7 +6,7 @@ function Footer() {
   return (
     <div className="flex flex-col">
       <Separator className="" />
-      <div className="grid grid-cols-4 mx-36 py-8">
+      <div className="grid grid-cols-4 mx-36 py-8 gap-10">
         <div className="font-poppins ">
           <p className="font-semibold text-xl text-third mb-4">About us</p>
           <ul className="text-sm flex flex-col gap-4 text-third/60 font-semibold">

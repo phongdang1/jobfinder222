@@ -18,16 +18,16 @@ import {
 
 function BestJob() {
   return (
-    <div className="flex flex-col mx-16 pt-10">
-      <div className="text-5xl font-forum mb-4 font-semibold ml-20">
-        Best <span className="text-5xl text-primary ">Job</span> For You
+    <div className="flex flex-col mx-4 md:mx-20 pt-10 items-center justify-center">
+      <div className="text-4xl md:text-5xl font-forum mb-4 font-semibold text-center">
+        Best <span className="text-primary">Job</span> For You
       </div>
-      {/* sort */}
-      <div className="mb-4 mx-20 flex justify-between">
-        <div>
+      {/* sort and carousel */}
+      <div className="flex flex-col md:flex-row justify-between items-center w-full px-6 md:space-y-0">
+        <div className="w-full md:w-auto ">
           <Select>
-            <SelectTrigger className="w-80 flex">
-              <FilterListIcon className="" />
+            <SelectTrigger className="w-full md:w-80 shrink basis-1/4">
+              <FilterListIcon className="mr-2" />
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -38,11 +38,12 @@ function BestJob() {
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Carousel className="w-full max-w-md mr-32">
-            <CarouselContent className="-ml-1">
+
+        <div className="w-full md:w-auto basis-1/2 pl-12">
+          <Carousel className="w-full sm:w-[300px] md:w-[600px]">
+            <CarouselContent className="">
               {Array.from({ length: 6 }).map((_, index) => (
-                <CarouselItem key={index} className="pl-1 basis-1/3">
+                <CarouselItem key={index} className=" basis-1/3">
                   <div className="">
                     <Card className="h-10 text-center rounded-3xl">
                       <CardContent className="flex mt-2 items-center justify-center text-center">
@@ -58,8 +59,9 @@ function BestJob() {
           </Carousel>
         </div>
       </div>
-      {/* card */}
-      <div className="-mt-10">
+
+      {/* job cards */}
+      <div className="w-full">
         <JobCard />
       </div>
     </div>
