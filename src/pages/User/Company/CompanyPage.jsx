@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Hero from "@/components/Company/Hero";
-import Filter from "@/components/Company/Filter";
-import CompanyList from "@/components/Company/CompanyList";
+import Hero from "@/components/User/Company/Hero";
+import Filter from "@/components/User/Company/Filter";
+import CompanyList from "@/components/User/Company/CompanyList";
 import fptLogo from '@/assets/Home/Company/fpt1.png';
 import fptTele from '@/assets/Home/Company/fpt_tele.png';
 
