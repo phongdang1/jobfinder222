@@ -12,7 +12,7 @@ function Filter() {
     };
 
     return (
-        <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200">
+        <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200 ease-in-out duration-300 transition-all">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold flex items-center space-x-2">
                     <FilterListIcon />
@@ -23,8 +23,12 @@ function Filter() {
                 </IconButton>
             </div>
 
-            {isOpen && (
-                <div>
+            <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                    isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+            >
+                <div >
                     {/* Location Filter */}
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">Location</label>
@@ -64,7 +68,7 @@ function Filter() {
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 }
