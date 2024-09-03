@@ -5,6 +5,7 @@ import SignUpPage from "@/pages/Common/Authentication/SignUpPage";
 import JobDetail from "@/pages/User/Job/JobDetail";
 import Jobspage from "@/pages/User/Jobspage";
 import CompanyDetail from "@/pages/Company/CompanyDetail";
+import UserProfilePage from "@/pages/User/UserProfilePage";
 
 const routes = [
   { path: "/", element: <HomePage /> },
@@ -14,6 +15,7 @@ const routes = [
   { path: "/signup", element: <SignUpPage /> },
   { path: "/job-detail", element: <JobDetail /> },
   { path: "/jobs", element: <Jobspage /> },
+  { path: "/profile", element: <UserProfilePage /> },
 ];
 
 export default routes;

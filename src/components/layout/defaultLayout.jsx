@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 function DefaultLayout() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-slate-100">
       <Header />
       <div className="flex-grow">
         <Outlet />
