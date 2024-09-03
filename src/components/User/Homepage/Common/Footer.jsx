@@ -4,7 +4,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 function Footer() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-white">
       <Separator className="" />
       <div className="grid grid-cols-4 mx-36 py-8 gap-10">
         <div className="font-poppins ">

@@ -11,7 +11,7 @@ import ManageJobPost from "@/components/Company/components/ManageJobPost";
 import ManageCompany from "@/components/Company/components/ManageCompany";
 import FindCandidate from "@/components/Company/components/FindCandidate";
 import TransactionHistory from "@/components/Company/components/TransactionHistory";
-
+import UserProfilePage from "@/pages/User/UserProfilePage";
 const routes = [
   // Routes using DefaultLayout
   {
@@ -25,6 +25,7 @@ const routes = [
       { path: "/jobs", element: <Jobspage /> },
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail", element: <CompanyDetail /> },
+      { path: "/profile", element: <UserProfilePage /> },
     ],
   },
   // Routes using CompanyLayout
@@ -37,7 +38,7 @@ const routes = [
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
     ],
-  },
+  }
 ];
 
 export default routes;
