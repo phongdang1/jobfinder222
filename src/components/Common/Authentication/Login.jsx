@@ -19,7 +19,7 @@ const Login = () => {
     setShowPassword((prev) => !prev);
   };
   return (
-    <div className="m-auto height-[100vh] flex flex-row border border-gray-300 px-12 py-14 mx-auto">
+    <div className="m-auto height-[100vh] flex flex-row px-12 py-24 mx-auto">
       {/* Left side */}
       <div className="flex-1 mb-[56px] w-[548px] text-third lg:flex hidden flex-col items-center justify-center">
         <div className="text-3xl font-title font-bold mb-4">Job Finder</div>
@@ -34,8 +34,8 @@ const Login = () => {
       </div>
 
       {/* Right side */}
-      <div className="flex-1  px-12 py-14 mx-auto bg-white flex flex-col items-center justify-center">
-        <form className="w-[524px]">
+      <div className="flex-1  px-12 py-14 mx-auto border shadow-lg max-w-[800px] bg-white flex flex-col items-center justify-center">
+        <form className="w-full">
           <h1 className="mb-8 text-5xl text-primary  font-title">Sign in</h1>
           <div className="mb-6">
             <div
@@ -113,14 +113,14 @@ const Login = () => {
             <span className="mx-4 font-bold">Login with other</span>
             <hr className="flex-1 border-t border-gray-300" />
           </div>
-          <div className="flex flex-col justify-center w-full gap-y-3 xl:flex-col xl:gap-x-4">
+          <div className="flex flex-row sm:flex-col justify-center gap-x-10 gap-y-3 xl:gap-x-4">
             <button className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200">
-              <img src={IconGoogle} className="w-6 mx-2" alt="" />
-              Login with Google
+              <img src={IconGoogle} className="w-6 m-2" alt="" />
+              <p className="hidden sm:block">Login with Google</p>
             </button>
             <button className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200">
-              <img src={IconFacebook} className="w-6 mx-2" alt="" />
-              Login with Facebook
+              <img src={IconFacebook} className="w-6 m-2" alt="" />
+              <p className="hidden sm:block">Login with Facebook</p>
             </button>
           </div>
         </form>
