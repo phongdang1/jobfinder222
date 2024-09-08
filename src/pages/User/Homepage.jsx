@@ -15,8 +15,8 @@ function HomePage() {
   return (
     <>
       <Introduction />
-      <HomeCategory />
       <BestJob />
+      <HomeCategory />
       <Pro />
     </>
   );
