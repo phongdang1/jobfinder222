@@ -7,8 +7,8 @@ import fptTele from '@/assets/Home/Company/fpt_tele.png';
 
 export function CompanyPage() {
   const [companies, setCompanies] = useState([
-    { id: 1, name: 'Company One', location: 'New York', status: 'Still recruiting', description: 'Description for Company One', image: fptLogo, category: 'Tech' },
-    { id: 2, name: 'Company Two', location: 'San Francisco', status: 'Not recruiting', description: 'Description for Company Two', image: fptTele, category: 'Finance' },
+    { id: 1, name: 'Company One', location: 'New York', status: 'Hiring', description: 'Description for Company One', image: fptLogo, category: 'Tech' },
+    { id: 2, name: 'Company Two', location: 'San Francisco', status: 'Closed', description: 'Description for Company Two', image: fptTele, category: 'Finance' },
     // Add more companies as needed
   ]);
   const [filter, setFilter] = useState({

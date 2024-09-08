@@ -6,11 +6,13 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DefaultLayout />}>
-          {routes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-        </Route>
+        {routes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element}>
+            {route.children?.map((child, childIndex) => (
+              <Route key={childIndex} path={child.path} element={child.element} />
+            ))}
+          </Route>
+        ))}
       </Routes>
     </BrowserRouter>
   );
