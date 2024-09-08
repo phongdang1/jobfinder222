@@ -83,7 +83,7 @@ function Header() {
             </SheetContent>
           </Sheet>
         </div>
-        <ul className="md:hidden sm:hidden  lg:flex gap-2 items-center text-third text-sm md:text-sm font-medium">
+        <ul className="hidden md:hidden sm:hidden lg:flex gap-2 items-center text-third text-sm md:text-sm font-medium">
           <li className="hover:text-primary">
             <Button
               className="bg-secondary text-third hover:bg-secondary hover:text-primary"

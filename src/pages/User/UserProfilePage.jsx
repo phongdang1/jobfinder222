@@ -18,9 +18,9 @@ import DefaultBg from "../../../src/assets/Home/defaultavatar.png";
 
 function UserProfilePage() {
   return (
-    <div className="h-full flex gap-4 mx-36 my-4">
+    <div className="h-full flex flex-col lg:flex-row gap-4 px-4 lg:px-36 my-4">
       {/* left */}
-      <div className="h-full w-1/3 items-center text-center rounded-lg bg-white shadow-md space-y-2">
+      <div className="w-full lg:w-1/3 items-center text-center rounded-lg bg-white shadow-md space-y-2">
         <div
           className="h-40 w-40 bg-contain bg-center mx-auto"
           style={{ backgroundImage: `url(${DefaultBg})` }}
@@ -32,14 +32,22 @@ function UserProfilePage() {
           <UploadFileOutlinedIcon />
           <p>Upload Image</p>
         </Button>
-        <div className="mx-6 pt-2">
+        <div className="px-6 pt-2">
           <Separator />
         </div>
 
-        <ul className="flex flex-col items-center space-y-2 mx-6 text-center pb-4">
+        <ul className="flex flex-col items-center space-y-2 px-6 text-center pb-4">
           <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
             <AccountCircleOutlinedIcon />
             <p>Personal Information</p>
+          </li>
+          <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
+            <AdminPanelSettingsOutlinedIcon />
+            <p>Account Security</p>
+          </li>
+          <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
+            <AdminPanelSettingsOutlinedIcon />
+            <p>Account Security</p>
           </li>
           <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
             <AdminPanelSettingsOutlinedIcon />
@@ -49,13 +57,13 @@ function UserProfilePage() {
       </div>
       {/* right */}
       <div className="bg-white w-full rounded-lg shadow-md space-y-4 pb-4">
-        <p className="font-poppins text-2xl font-medium ml-6 my-6">
-          Your Profile
+        <p className="font-poppins text-xl md:text-2xl font-medium ml-6 my-6">
+          Hello, User
         </p>
-        <div className="mx-6">
+        <div className="px-6">
           <Separator />
         </div>
-        <div className="grid grid-cols-2 gap-6 mx-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6">
           <div className="space-y-2">
             <p className="font-medium">Name:</p>
             <Input
@@ -119,7 +127,7 @@ function UserProfilePage() {
             </div>
           </div>
         </div>
-        <div className="flex justify-end ">
+        <div className="flex justify-end">
           <div className="space-x-2 mr-6 mt-4">
             <Button
               className="bg-secondary mx-auto text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1"
