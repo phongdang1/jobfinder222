@@ -8,16 +8,46 @@ import { IoMdLock, IoMdCall, IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import IconGoogle from "../../../assets/svgicon/icons8-google.svg";
 import IconFacebook from "../../../assets/svgicon/icons8-facebook.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import "../../../assets/css/login.css"
+import "../../../assets/css/login.css";
+import { useEffect } from "react";
+import { getProfile } from "@/fetchData/User";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from './../../../../redux/features/authSlice';
 
 const Login = () => {
+  // xử lý show/hidden password
   const [showPassword, setShowPassword] = useState(false);
-
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
+
+  // Xử lý login bằng redux
+  const authStatus = useSelector((state) => state.auth.status);
+  const authToken = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
+  const error = useSelector((state) => state.auth.error);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const credentials = {
+      phoneNumber: phoneNumber, // Ensure phoneNumber is correctly set
+      password: password // Ensure password is correctly set
+    };
+    try {
+      const result = await dispatch(login(credentials)).unwrap();
+      console.log('Login successful, result:', result);
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to login: ",  error.message || error);
+    }
+  };
+
   return (
     <div className="m-auto height-[100vh] flex flex-row px-12 py-24 mx-auto">
       {/* Left side */}
@@ -25,8 +55,10 @@ const Login = () => {
         <div className="text-3xl font-title font-bold mb-4">Job Finder</div>
         <Typewriter
           options={{
-            strings: ["Lorem ipsum dolor sit amet, consectetur adipiscing el Lorem ipsum dolor sit amet, consectetur adipiscing el"],
-            autoStart: true,   
+            strings: [
+              "Lorem ipsum dolor sit amet, consectetur adipiscing el Lorem ipsum dolor sit amet, consectetur adipiscing el",
+            ],
+            autoStart: true,
             loop: true,
             delay: 75, // Thay đổi độ trễ nếu cần
           }}
@@ -35,7 +67,7 @@ const Login = () => {
 
       {/* Right side */}
       <div className="flex-1  px-12 py-14 mx-auto border shadow-lg max-w-[800px] bg-white flex flex-col items-center justify-center">
-        <form className="w-full">
+        <form className="w-full" onSubmit={handleLogin}>
           <h1 className="mb-8 text-5xl text-primary  font-title">Sign in</h1>
           <div className="mb-6">
             <div
@@ -62,6 +94,8 @@ const Login = () => {
                 id="phone"
                 type="tel"
                 placeholder="Enter your phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 className="flex items-center border focus:border-primary py-7 px-10"
               />
             </div>
@@ -96,14 +130,19 @@ const Login = () => {
               <IoMdLock className="text-gray-500 mr-2 absolute left-3" />
               <Input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="flex items-center border focus:border-primary py-7 px-10"
               />
             </div>
           </div>
           <div className="my-7 flex items-center justify-center ">
-            <Button className="text-white rounded-full w-full py-5 px-7 transition  transform hover:scale-105">
+            <Button
+              type="submit"
+              className="text-white rounded-full w-full py-5 px-7 transition  transform hover:scale-105"
+            >
               Login now
             </Button>
           </div>
