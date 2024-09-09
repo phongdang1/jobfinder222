@@ -1,3 +1,5 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from './../../../../../redux/features/authSlice';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -11,8 +13,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import MenuIcon from "@mui/icons-material/Menu";
+import Avatar from "@mui/material/Avatar";
 
 function Header() {
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <div className="flex justify-between sticky top-0 px-6 md:px-16 lg:px-36 py-4 md:py-6 bg-secondary items-center font-poppins border-b-2 shadow-md z-50">
       {/* Logo */}
@@ -60,26 +70,30 @@ function Header() {
                   </Link>
                 </SheetClose>
               </SheetHeader>
-              <SheetHeader>
-                <SheetClose asChild>
-                  <Link
-                    className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
-                    to="/signup"
-                  >
-                    Register
-                  </Link>
-                </SheetClose>
-              </SheetHeader>
-              <SheetHeader>
-                <SheetClose asChild>
-                  <Link
-                    className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
-                    to="/login"
-                  >
-                    Login
-                  </Link>
-                </SheetClose>
-              </SheetHeader>
+              {!user && (
+                <>
+                  <SheetHeader>
+                    <SheetClose asChild>
+                      <Link
+                        className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                        to="/signup"
+                      >
+                        Register
+                      </Link>
+                    </SheetClose>
+                  </SheetHeader>
+                  <SheetHeader>
+                    <SheetClose asChild>
+                      <Link
+                        className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                        to="/login"
+                      >
+                        Login
+                      </Link>
+                    </SheetClose>
+                  </SheetHeader>
+                </>
+              )}
             </SheetContent>
           </Sheet>
         </div>
@@ -92,7 +106,6 @@ function Header() {
               <Link to="/">Home</Link>
             </Button>
           </li>
-
           <li className="hover:text-primary">
             <Button
               className="bg-secondary text-third hover:bg-secondary hover:text-primary"
@@ -109,23 +122,37 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-
-          <li>
-            <Button
-              className="bg-secondary text-third hover:bg-secondary hover:text-primary"
-              variant="ghost"
-            >
-              <Link to="/signup">Register</Link>
-            </Button>
-          </li>
-          <li>
-            <Button
-              className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary"
-              variant="outline"
-            >
-              <Link to="/login">Login</Link>
-            </Button>
-          </li>
+          {!user ? (
+            <>
+              <li>
+                <Button
+                  className="bg-secondary text-third hover:bg-secondary hover:text-primary"
+                  variant="ghost"
+                >
+                  <Link to="/signup">Register</Link>
+                </Button>
+              </li>
+              <li>
+                <Button
+                  className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary"
+                  variant="outline"
+                >
+                  <Link to="/login">Login</Link>
+                </Button>
+              </li>
+            </>
+          ) : (
+            <li className="flex items-center space-x-4">
+              <Avatar alt={user.phoneNumber} src={user.avatarUrl} />
+              <span className="text-third">{user.phoneNumber}</span>
+              <button
+                onClick={handleLogout}
+                className="text-red-500 hover:text-red-700"
+              >
+                Logout
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </div>
