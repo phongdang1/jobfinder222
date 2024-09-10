@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from './../../../../../redux/features/authSlice';
+import { logout } from '../../../../redux/features/authSlice';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -143,8 +143,8 @@ function Header() {
             </>
           ) : (
             <li className="flex items-center space-x-4">
-              <Avatar alt={user.phoneNumber} src={user.avatarUrl} />
-              <span className="text-third">{user.phoneNumber}</span>
+              <Avatar alt={user.firstName} src={user.avatarUrl} />
+              <span className="text-third">{user.firstName}</span>
               <button
                 onClick={handleLogout}
                 className="text-red-500 hover:text-red-700"
