@@ -14,7 +14,11 @@ import "../../../assets/css/login.css";
 import { useEffect } from "react";
 import { getProfile } from "@/fetchData/User";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from './../../../../redux/features/authSlice';
+import {
+  login,
+  setToken,
+  loginWithGoogle,
+} from "../../../redux/features/authSlice";
 
 const Login = () => {
   // xử lý show/hidden password
@@ -33,21 +37,41 @@ const Login = () => {
   const user = useSelector((state) => state.auth.user);
   const error = useSelector((state) => state.auth.error);
 
+  // Xử lý login thông thường
   const handleLogin = async (e) => {
     e.preventDefault();
     const credentials = {
-      phoneNumber: phoneNumber, // Ensure phoneNumber is correctly set
-      password: password // Ensure password is correctly set
+      phoneNumber: phoneNumber,
+      password: password,
     };
     try {
       const result = await dispatch(login(credentials)).unwrap();
-      console.log('Login successful, result:', result);
+      console.log("Login successful, result:", result);
       navigate("/");
     } catch (error) {
-      console.error("Failed to login: ",  error.message || error);
+      console.error("Failed to login: ", error.message || error);
     }
   };
 
+  // Xử lý khi nhận token từ Google OAuth
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromUrl = params.get("token");
+
+    if (tokenFromUrl) {
+      dispatch(setToken(tokenFromUrl));
+      dispatch(loginWithGoogle(tokenFromUrl));
+
+      // Xóa token khỏi URL sau khi xử lý xong
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [dispatch]);
+
+  // Xử lý đăng nhập bằng Google
+  const handleLoginWithGoogle = () => {
+    // Điều hướng đến route Google OAuth của backend
+    window.location.href = "http://localhost:5000/auth/google";
+  };
   return (
     <div className="m-auto height-[100vh] flex flex-row px-12 py-24 mx-auto">
       {/* Left side */}
@@ -153,11 +177,18 @@ const Login = () => {
             <hr className="flex-1 border-t border-gray-300" />
           </div>
           <div className="flex flex-row sm:flex-col justify-center gap-x-10 gap-y-3 xl:gap-x-4">
-            <button className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200">
+            <button
+            type="y"
+              onClick={handleLoginWithGoogle}
+              className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200"
+            >
               <img src={IconGoogle} className="w-6 m-2" alt="" />
               <p className="hidden sm:block">Login with Google</p>
             </button>
-            <button className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200">
+            <button
+              type="button"
+              className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200"
+            >
               <img src={IconFacebook} className="w-6 m-2" alt="" />
               <p className="hidden sm:block">Login with Facebook</p>
             </button>
