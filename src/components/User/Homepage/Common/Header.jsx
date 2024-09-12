@@ -17,8 +17,11 @@ import Avatar from "@mui/material/Avatar";
 
 function Header() {
   const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
+  console.log("abc",user);
+  console.log("token",token);
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -70,7 +73,7 @@ function Header() {
                   </Link>
                 </SheetClose>
               </SheetHeader>
-              {!user && (
+              {user === null && user === undefined && (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
@@ -122,7 +125,7 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {!user ? (
+          {(user === null || user === undefined )? (
             <>
               <li>
                 <Button
@@ -143,8 +146,8 @@ function Header() {
             </>
           ) : (
             <li className="flex items-center space-x-4">
-              <Avatar alt={user.firstName} src={user.avatarUrl} />
-              <span className="text-third">{user.firstName}</span>
+              <Avatar alt={user?.phoneNumber} src={user?.image} />
+              <span className="text-third">{user?.phoneNumber}</span>
               <button
                 onClick={handleLogout}
                 className="text-red-500 hover:text-red-700"
