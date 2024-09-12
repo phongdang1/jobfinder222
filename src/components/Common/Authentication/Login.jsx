@@ -14,12 +14,8 @@ import "../../../assets/css/login.css";
 import { useEffect } from "react";
 import { getProfile } from "@/fetchData/User";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  login,
-  setToken,
-  loginWithGoogle,
-} from "../../../redux/features/authSlice";
-
+import { login, setToken,setUser } from "../../../redux/features/authSlice";
+import axios from "../../../fetchData/axios"
 const Login = () => {
   // xử lý show/hidden password
   const [showPassword, setShowPassword] = useState(false);
@@ -53,25 +49,36 @@ const Login = () => {
     }
   };
 
-  // Xử lý khi nhận token từ Google OAuth
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tokenFromUrl = params.get("token");
+    // Extract token from cookies (sent by backend)
+    const fetchUser = async () => {
+      try {
+        // Make a request to get the user data
+        const token = localStorage.getItem('token');
+        if (!token) return; // No token found
 
-    if (tokenFromUrl) {
-      dispatch(setToken(tokenFromUrl));
-      dispatch(loginWithGoogle(tokenFromUrl));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Set auth header
 
-      // Xóa token khỏi URL sau khi xử lý xong
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [dispatch]);
+        // Fetch user data from backend using the token
+        const response = await axios.get(`/get-user-by-id?id=abcxyz`); // Replace 'abcxyz' with actual user ID from the token or context
+        if (response.data) {
+          dispatch(setUser(response.data)); // Set user data in Redux store
+          console.log("user may", response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
 
-  // Xử lý đăng nhập bằng Google
-  const handleLoginWithGoogle = () => {
-    // Điều hướng đến route Google OAuth của backend
-    window.location.href = "http://localhost:5000/auth/google";
-  };
+    fetchUser();
+  }, [dispatch, navigate]);
+
+    // Function to handle Google login using the googleLogin thunk
+    const handleGoogleLogin = async () => {
+      // Dispatch Google login action
+      window.location.href = "http://localhost:5000/auth/google";
+    };
+
   return (
     <div className="m-auto height-[100vh] flex flex-row px-12 py-24 mx-auto">
       {/* Left side */}
@@ -178,8 +185,8 @@ const Login = () => {
           </div>
           <div className="flex flex-row sm:flex-col justify-center gap-x-10 gap-y-3 xl:gap-x-4">
             <button
-            type="y"
-              onClick={handleLoginWithGoogle}
+            type="button"
+             onClick={handleGoogleLogin}
               className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200"
             >
               <img src={IconGoogle} className="w-6 m-2" alt="" />
