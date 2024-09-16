@@ -12,6 +12,7 @@ import ManageCompany from "@/components/Company/components/ManageCompany";
 import FindCandidate from "@/components/Company/components/FindCandidate";
 import TransactionHistory from "@/components/Company/components/TransactionHistory";
 import UserProfilePage from "@/pages/User/UserProfilePage";
+import OTPPage from "@/components/Common/Authentication/OTP";
 const routes = [
   // Routes using DefaultLayout
   {
@@ -21,6 +22,7 @@ const routes = [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
+      { path: "/otp", element: <OTPPage /> },
       { path: "/job-detail", element: <JobDetail /> },
       { path: "/jobs", element: <Jobspage /> },
       { path: "/companypage", element: <CompanyPage /> },

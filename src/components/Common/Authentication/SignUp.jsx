@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IoMdCall,
   IoMdLock,
@@ -24,6 +24,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { signUp } from "../../../redux/features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import firebase from "../../../utils/firebase";
+
 const roles = ["User", "Company"];
 
 const SignUp = () => {
@@ -39,6 +41,7 @@ const SignUp = () => {
     roleCode: "",
     image: "",
   });
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const navigate = useNavigate();
   const [retypePassword, setRetypePassword] = useState("");
   const toggleShowPassword = () => setShowPassword(!showPassword);
@@ -56,62 +59,101 @@ const SignUp = () => {
   const handleRetypePasswordChange = (e) => {
     setRetypePassword(e.target.value); // Cập nhật giá trị của retypePassword riêng
   };
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "jobfinder"); // Replace with your actual upload preset
-  
-      try {
-        // Use axios to upload the file to Cloudinary
-        const res = await axios.post(
-          "https://api.cloudinary.com/v1_1/doxkyqfte/image/upload", // Replace with your Cloudinary cloud name
-          formData
-        );
-  
-        if (res.status === 200) {
-          const data = res.data; // Extract the data from the response
-          console.log("Cloudinary Upload Response:", data);
-          if (data.secure_url) {
-            // Update form data with the Cloudinary image URL
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              image: data.secure_url,
-            }));
-          }
-        } else {
-          console.error("Failed to upload image to Cloudinary:", res.statusText);
-        }
-      } catch (error) {
-        console.error("Error uploading image to Cloudinary:", error);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setFormData({
+        ...formData,
+        image: reader.result,
+      });
+    };
+  };
+  const formatPhoneNumber = (phoneNumber) => {
+    // Thêm mã quốc gia +84 và bỏ số 0 đầu tiên nếu cần
+    if (phoneNumber.startsWith("0")) {
+      return "+84" + phoneNumber.slice(1);
+    }
+    return phoneNumber;
+  };
+  const handleSubmit = async (e) => {
+    firebase.auth().settings.appVerificationDisabledForTesting = true;
+    e.preventDefault();
+
+    try {
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear(); // Xóa reCAPTCHA cũ nếu đã hết hạn
+        window.recaptchaVerifier = null; // Reset biến reCAPTCHA
       }
+
+      // Kiểm tra và khởi tạo reCAPTCHA nếu chưa có hoặc nếu đã hết hạn
+
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          defaultCountry: "VN"
+        }
+      );
+      console.log(
+        "reCAPTCHA verifier already exists:",
+        window.recaptchaVerifier
+      );
+      console.log("reCAPTCHA verifier initialized:", window.recaptchaVerifier);
+
+      await sendOtp(); // Nếu reCAPTCHA hợp lệ, tiến hành gửi OTP
+    } catch (error) {
+      console.error("Error during OTP sending:", error.message);
     }
   };
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.password !== retypePassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    dispatch(signUp(formData))
-      .unwrap()
-      .then(() => {
-        // Điều hướng sau khi thành công, nếu cần
-        console.log("Sign Up Successful", authState);
-        console.log("image", formData.image);
-        navigate("/");
+  const sendOtp = async () => {
+    const appVerify = window.recaptchaVerifier;
+    const formattedPhoneNumber = formatPhoneNumber(formData.phoneNumber); // Format số điện thoại
+    console.log("sdt ne", formattedPhoneNumber);
+    firebase
+      .auth()
+      .signInWithPhoneNumber(formattedPhoneNumber, appVerify)
+      .then((confirmationResult) => {
+        console.log("sdt", formattedPhoneNumber);
+        // Store confirmation result globally
+        window.confirmationResult = confirmationResult; // Save OTP verification result globally
+        console.log("gui otp thanh cong");
+        localStorage.setItem("phoneNumber", formattedPhoneNumber);
+        navigate("/otp", { state: formData });
       })
       .catch((error) => {
-        console.log("image", formData.image);
-        console.error("Sign Up Error:", error);
+        if (error.code === "auth/invalid-app-credential") {
+          console.error(
+            "reCAPTCHA token expired or invalid. Please reload reCAPTCHA."
+          );
+          window.recaptchaVerifier.clear(); // Xóa reCAPTCHA khi gặp lỗi
+          window.recaptchaVerifier = null; // Tái khởi tạo reCAPTCHA khi gặp lỗi
+        }
+        console.error("Failed to send OTP:", error.message);
       });
   };
-
+  useEffect(() => {
+    if (!recaptchaVerifier) {
+      const verifier = new firebase.auth.RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log("reCAPTCHA solved, can proceed with OTP sending.");
+          },
+          "expired-callback": () => {
+            console.error("reCAPTCHA expired. Please solve the CAPTCHA again.");
+          },
+        }
+      );
+      setRecaptchaVerifier(verifier);
+    }
+  }, [recaptchaVerifier]);
   return (
     <div className="flex-1 px-12 py-14 mx-auto bg-secondary flex flex-col items-center justify-center border border-gray-300">
+      {/* Recaptcha container */}
+      <div id="recaptcha-container"></div>
       <form className="w-[524px]">
         <h1 className="mb-8 text-5xl text-primary font-title">Sign Up</h1>
 
@@ -248,7 +290,7 @@ const SignUp = () => {
               onChange={handleImageChange}
               className="flex items-center border focus:border-primary py-7 px-10"
             />
-          </div>  
+          </div>
           <div className="my-7 flex items-center justify-center">
             <Button
               onClick={handleSubmit}
