@@ -1,17 +1,14 @@
-import Bg from "../../../assets/Home/bg2.png";
+import Bg from "../../../assets/Home/Home/bg2.png";
 import { Input } from "@/components/ui/input";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@/components/ui/button";
 
 function Introduction() {
   return (
-    <div
-      data-aos="fade-right"
-      className="flex items-center justify-center bg-[#4a3d8d] bg-opacity-80 mx-4 md:mx-16 lg:mx-24 my-8 rounded-2xl p-6"
-    >
-      <div className="flex flex-col md:flex-row w-full max-w-7xl items-center">
+    <div className="flex items-center justify-center bg-[#4a3d8d] bg-opacity-80 mb-16 py-6">
+      <div className="flex flex-col md:flex-row w-full max-w-7xl items-center justify-between">
         {/* Text Section */}
-        <div className="flex flex-col justify-center w-full md:w-1/2 text-center md:text-left px-4">
+        <div className="flex flex-col justify-center w-full md:w-1/2 text-center md:text-left ">
           <div className="text-white text-4xl md:text-5xl lg:text-6xl pb-4 md:pb-8">
             <p className="font-poppins">One Step Closer To</p>
             <p className="inline-flex gap-4">

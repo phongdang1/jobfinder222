@@ -55,39 +55,33 @@ function CompanyDetail() {
                 "https://imgcdn.tapchicongthuong.vn/tcct-media/24/6/19/lai-tang-vot--von-hoa-cua-tap-doan-fpt-len-muc-cao-ky-luc_6672e333a42c2.jpg"
               )`,
           }}
-        >
-          <div
-            className="h-40 w-40 bg-cover bg-center bg-white rounded-full absolute
-                lg:top-[400px] lg:left-72
-                md:top-[340px] md:left-1/2 md:transform md:-translate-x-1/2
-                sm:top-[400px] sm:left-1/2 sm:transform sm:-translate-x-1/2"
-            style={{
-              backgroundImage: `url(
+        ></div>
+        <div
+          className="h-40 w-40 bg-cover bg-center bg-white rounded-full absolute z-30
+                lg:top-[450px] lg:left-72
+                md:top-[360px] md:left-1/2 md:transform md:-translate-x-1/2
+                sm:top-[380px] sm:left-1/2 sm:transform sm:-translate-x-1/2
+                top-[380px] translate-x-1/2"
+          style={{
+            backgroundImage: `url(
                 "https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-FPT.png"
               )`,
-            }}
-          ></div>
-        </div>
+          }}
+        ></div>
 
         <div
           className="flex text-secondary bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90
-                     lg:h-[150px] md:h-[200px] sm:h-[300px] shadow-lg mb-8 rounded-b-xl"
+                     lg:h-[150px] md:h-[200px] sm:h-[300px] h-[280px] shadow-lg mb-8 rounded-b-xl relative"
         >
           {companyDetail.map((company, index) => (
             <div
               key={index}
-              className="flex flex-col mx-auto my-auto w-[600px]"
+              className="my-auto justify-center lg:ml-72 md:mx-auto sm:mx-auto mx-auto"
             >
-              <div className="text-3xl font-medium mb-4 lg:text-left md:text-center sm:text-center">
+              <div className="text-3xl font-medium mb-4 lg:text-left md:text-center sm:text-center text-center">
                 {company.name}
               </div>
-              <div className="flex gap-10 md:gap-4 sm:gap-2 lg:flex-row md:flex-col sm:flex-col md:items-center sm:items-center">
-                <div className="flex gap-2">
-                  <LanguageIcon />
-                  <div>
-                    <a href={company.link}>{company.link}</a>
-                  </div>
-                </div>
+              <div className="flex gap-3 md:gap-4 sm:gap-2 lg:flex-row md:flex-col sm:flex-col flex-col md:items-center sm:items-center items-center">
                 <div className="flex gap-2">
                   <LanguageIcon />
                   <div>

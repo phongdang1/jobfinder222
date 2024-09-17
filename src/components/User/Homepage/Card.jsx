@@ -52,6 +52,30 @@ function JobCard() {
       location: "Da Nang",
       time: "Part time",
     },
+    {
+      occupation: "Design Manager",
+      companyName: "FPT Software Da Nang",
+      wage: "500$",
+      image: "https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-FPT.png",
+      location: "Da Nang",
+      time: "Part time",
+    },
+    {
+      occupation: "Design Manager",
+      companyName: "FPT Software Da Nang",
+      wage: "500$",
+      image: "https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-FPT.png",
+      location: "Da Nang",
+      time: "Part time",
+    },
+    {
+      occupation: "Design Manager",
+      companyName: "FPT Software Da Nang",
+      wage: "500$",
+      image: "https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-FPT.png",
+      location: "Da Nang",
+      time: "Part time",
+    },
   ];
 
   const [loading, setLoading] = useState(true);
@@ -63,7 +87,7 @@ function JobCard() {
   });
 
   return (
-    <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mx-auto md:mx-8 lg:mx-6 py-10">
+    <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 py-10">
       {data.map((card, index) => (
         <div
           key={index}
@@ -79,7 +103,7 @@ function JobCard() {
               </div>
             </div>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex gap-8 shadow-lg w-full">
               <div
                 className=" w-24 h-24 bg-contain my-auto ml-3 rounded-lg  "
                 style={{
