@@ -103,7 +103,7 @@ function JobCard() {
               </div>
             </div>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex gap-8 shadow-lg w-full">
               <div
                 className=" w-24 h-24 bg-contain my-auto ml-3 rounded-lg  "
                 style={{
