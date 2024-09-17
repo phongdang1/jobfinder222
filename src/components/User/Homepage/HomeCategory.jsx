@@ -1,4 +1,4 @@
-import Cate from "../../../assets/Home/cate.png";
+import Cate from "../../../assets/Home/Home/cate.png";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -28,7 +28,7 @@ function HomeCategory() {
                 key={index}
                 className="w-full basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 flex-shrink-0"
               >
-                <Card className="h-dull text-center p-4">
+                <Card className="h-dull text-center p-4 shadow-inner">
                   <div className="text-xl font-medium mb-8">
                     Category {index + 1}
                   </div>
