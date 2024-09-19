@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import Typewriter from "typewriter-effect";
 import { FaFacebookF, FaGoogle } from "react-icons/fa";
 import { IoMdLock, IoMdCall, IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { MdAlternateEmail } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import IconGoogle from "../../../assets/svgicon/icons8-google.svg";
 import IconFacebook from "../../../assets/svgicon/icons8-facebook.svg";
@@ -21,7 +22,7 @@ import firebase from "../../../utils/firebase";
 const Login = () => {
   // xử lý show/hidden password
   const [showPassword, setShowPassword] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null); // To store OTP verification result
@@ -112,13 +113,13 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     const credentials = {
-      phoneNumber: phoneNumber,
+      email: email,
       password: password,
     };
     try {
       const result = await dispatch(login(credentials)).unwrap();
       console.log("Login successful, result:", result);
-      localStorage.setItem('phoneNumber', phoneNumber); 
+      localStorage.setItem('email', email); 
       
       // Lưu số điện thoại vào localStorage
       navigate("/");
@@ -138,9 +139,9 @@ const Login = () => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/get-user-by-id?id=${userId}`);
+      const response = await axios.get(`/getUserById?id=${userId}`);
 
-      console.log("Response from /get-user-by-id:", response);
+      console.log("Response from /getUserById:", response);
 
       if (response.data) {
         dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
@@ -201,13 +202,13 @@ const Login = () => {
               </div>
             </div>
             <div className="relative flex items-center">
-              <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
+              <MdAlternateEmail className="text-gray-500 mr-2 absolute left-3" />
               <Input
                 id="phone"
                 type="tel"
-                placeholder="Enter your phone number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="flex items-center border focus:border-primary py-7 px-10"
               />
             </div>

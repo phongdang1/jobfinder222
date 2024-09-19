@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { logout, setUser } from "../../../../redux/features/authSlice";
+import { logout, setUser } from "../../../redux/features/authSlice";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -14,13 +14,13 @@ import {
 } from "@/components/ui/sheet";
 import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
-import { useEffect,useState } from "react";
-import axios from "../../../../fetchData/axios";
+import { useEffect, useState } from "react";
+import axios from "../../../fetchData/axios";
 function Header() {
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
-
+  console.log("user", user);
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("user"); // Xóa user khỏi localStorage khi logout
