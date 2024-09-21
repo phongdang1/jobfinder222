@@ -19,33 +19,31 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 
 import DefaultBg from "../../../src/assets/Home/Home/defaultavatar.png";
-import { toast, Toaster } from "react-hot-toast";
-import { CheckCircleOutline, Close, CloseOutlined } from "@mui/icons-material";
+
 import { useState } from "react";
+
+import Validation from "@/components/User/Common/Validation";
+import toast from "react-hot-toast";
 
 function UserProfilePage() {
   const [date, setDate] = useState();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState({
+    firstName: "",
+    lastName: "",
+    address: "",
+    phoneNumber: "",
+    email: "",
+  });
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputField = (e) => {
-    setInputValue(e.target.value);
-    setErrorMessage("");
-  };
-
-  const handleValidation = (inputValue) => {
-    if (inputValue.trim() === "") {
-      setErrorMessage("You need to fill this field!");
-      return false;
-    }
-    return true;
+    setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+    setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (handleValidation(inputValue)) {
-      toast.success("Your information has been saved successfully!");
-    }
+    setErrorMessage(Validation(inputValue));
   };
 
   return (
@@ -89,28 +87,46 @@ function UserProfilePage() {
         <form onSubmit={handleFormSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6">
             <div className="space-y-2">
-              <label className="font-medium">Name:</label>
+              <div className="font-medium">First Name:</div>
               <Input
-                id="name"
-                placeholder="Name"
+                name="firstName"
+                placeholder="First Name"
                 className={`${
-                  errorMessage ? "border-red-500" : null
+                  errorMessage.firstName ? "border-red-500" : null
                 } flex items-center rounded-sm border focus:border-primary py-4 px-4`}
-                onChange={handleInputField}
-                value={inputValue}
+                onChange={(e) => handleInputField(e)}
+                value={inputValue.firstName}
               />
 
-              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+              {errorMessage.firstName && (
+                <p className="text-red-500">{errorMessage.firstName}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <label className="font-medium">Last Name:</label>
+              <Input
+                name="lastName"
+                placeholder="Last Name"
+                className={`${
+                  errorMessage.lastName ? "border-red-500" : null
+                } flex items-center rounded-sm border focus:border-primary py-4 px-4`}
+                onChange={(e) => handleInputField(e)}
+                value={inputValue.lastName}
+              />
+
+              {errorMessage.lastName && (
+                <p className="text-red-500">{errorMessage.lastName}</p>
+              )}
             </div>
             <div className="space-y-2 w-full">
               <p className="font-medium">Date of Birth:</p>
-              <div className="w-full max-w-lg">
+              <div className="w-full max-w-lg flex">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] justify-start text-left font-normal",
+                        "2xl:w-[560px] flex flex-shrink lg:w-full md:w-full justify-start text-left font-normal rounded-sm",
                         !date && "text-muted-foreground"
                       )}
                     >
@@ -131,30 +147,7 @@ function UserProfilePage() {
                 </Popover>
               </div>
             </div>
-            <div className="space-y-2">
-              <p className="font-medium">Address:</p>
-              <Input
-                id="Address"
-                placeholder="Address"
-                className="flex items-center rounded-sm border focus:border-primary py-4 px-4"
-              />
-            </div>
-            <div className="space-y-2">
-              <p className="font-medium">Phone Number:</p>
-              <Input
-                id="PhoneNumber"
-                placeholder="Phone Number"
-                className="flex items-center rounded-sm border focus:border-primary py-4 px-4"
-              />
-            </div>
-            <div className="space-y-2">
-              <p className="font-medium">Email:</p>
-              <Input
-                id="Email"
-                placeholder="Email"
-                className="flex items-center rounded-sm border focus:border-primary py-4 px-4"
-              />
-            </div>
+
             <div className="space-y-2 items-center">
               <p className="font-medium">Gender:</p>
               <div className="flex gap-10">
@@ -167,6 +160,61 @@ function UserProfilePage() {
                   <p>Female</p>
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="font-medium">Address:</p>
+              <Input
+                name="address"
+                placeholder="Address"
+                className={`${
+                  errorMessage.address ? "border-red-500" : null
+                } flex items-center rounded-sm border focus:border-primary py-4 px-4`}
+                onChange={(e) => handleInputField(e)}
+                value={inputValue.address}
+              />
+              {errorMessage.address && (
+                <p className="text-red-500">{errorMessage.address}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <p className="font-medium">Phone Number:</p>
+              <Input
+                name="phoneNumber"
+                placeholder="Phone Number"
+                className={`${
+                  errorMessage.phoneNumber ? "border-red-500" : null
+                } flex items-center rounded-sm border focus:border-primary py-4 px-4`}
+                onChange={(e) => handleInputField(e)}
+                value={inputValue.phoneNumber}
+              />
+              {errorMessage.phoneNumber && (
+                <p className="text-red-500">{errorMessage.phoneNumber}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <p className="font-medium">Email:</p>
+              <Input
+                name="email"
+                placeholder="Email"
+                className={`${
+                  errorMessage.email ? "border-red-500" : null
+                } flex items-center rounded-sm border focus:border-primary py-4 px-4`}
+                onChange={(e) => handleInputField(e)}
+                value={inputValue.email}
+              />
+              {errorMessage.email && (
+                <p className="text-red-500">{errorMessage.email}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col w-full gap-1.5 space-y-3">
+              <label htmlFor="skills">Your skill</label>
+              <Input
+                name="skills"
+                placeholder="Add skill"
+                className="flex items-center rounded-sm border focus:border-primary py-4 px-4"
+              />
             </div>
 
             <div className="col-span-2 flex justify-end">
