@@ -127,14 +127,16 @@ const Login = () => {
       fetchUser();
     } catch (error) {
       console.error("Failed to login: ", error.message || error);
-    const errors = Validation({ phoneNumber, password });
+    const errors = Validation({ email, password });
     setErrorMessage(errors);
     if (Object.keys(errors).length === 0) {
       const credentials = {
-        phoneNumber: phoneNumber,
+        email: email,
         password: password,
       };
- 
+    }
+  }
+}
   useEffect(() => {
     const userId = new URLSearchParams(window.location.search).get("user_id");
     console.log("User ID retrieved from URL:", userId);
@@ -172,7 +174,7 @@ const Login = () => {
 
   const handleValidation = (e) => {
     setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
-    setPhoneNumber({ phoneNumber, [e.target.name]: e.target.value });
+    setEmail({ email, [e.target.name]: e.target.value });
     setPassword({ password, [e.target.name]: e.target.value });
   };
 
