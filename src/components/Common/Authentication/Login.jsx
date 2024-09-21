@@ -14,10 +14,11 @@ import "../../../assets/css/login.css";
 import { useEffect } from "react";
 import { getProfile } from "@/fetchData/User";
 import { useDispatch, useSelector } from "react-redux";
-import { login, setToken,setUser } from "../../../redux/features/authSlice";
-import axios from "../../../fetchData/axios"
+import { login, setToken, setUser } from "../../../redux/features/authSlice";
+import axios from "../../../fetchData/axios";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"; // Import OTP functions from Firebase
 import firebase from "../../../utils/firebase";
+import Validation from "@/components/User/Common/Validation";
 const Login = () => {
   // xử lý show/hidden password
   const [showPassword, setShowPassword] = useState(false);
@@ -41,11 +42,11 @@ const Login = () => {
 
   // const handleLogin = async (e) => {
   //   e.preventDefault();
-  
+
   //   try{
   //      // Kiểm tra và khởi tạo reCAPTCHA nếu chưa có
   //   if (!window.recaptchaVerifier) {
-      
+
   //     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
   //       "recaptcha-container",
   //       {
@@ -84,7 +85,7 @@ const Login = () => {
   //       window.confirmationResult = confirmationResult; // Save OTP verification result globally
   //       console.log('gui otp thanh cong')
   //       localStorage.setItem("phoneNumber", formattedPhoneNumber);
-       
+
   //     })
   //     .catch((error) => {
   //       if (error.code === "auth/invalid-app-credential") {
@@ -111,20 +112,26 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const credentials = {
-      phoneNumber: phoneNumber,
-      password: password,
-    };
-    try {
-      const result = await dispatch(login(credentials)).unwrap();
-      console.log("Login successful, result:", result);
-      localStorage.setItem('phoneNumber', phoneNumber); 
-      
-      // Lưu số điện thoại vào localStorage
-      navigate("/");
-      fetchUser();
-    } catch (error) {
-      console.error("Failed to login: ", error.message || error);
+    const errors = Validation({ phoneNumber, password });
+
+    setErrorMessage(errors);
+    if (Object.keys(errors).length === 0) {
+      const credentials = {
+        phoneNumber: phoneNumber,
+        password: password,
+      };
+
+      try {
+        const result = await dispatch(login(credentials)).unwrap();
+        console.log("Login successful, result:", result);
+        localStorage.setItem("phoneNumber", phoneNumber);
+
+        // Navigate to home after successful login
+        navigate("/");
+        fetchUser();
+      } catch (error) {
+        console.error("Failed to login: ", error.message || error);
+      }
     }
   };
   useEffect(() => {
@@ -134,7 +141,7 @@ const Login = () => {
       localStorage.setItem("user_id", userId); // Lưu userId vào localStorage
       fetchUser(userId); // Gọi API để lấy thông tin chi tiết người dùng
     }
-  }, [dispatch,navigate]);
+  }, [dispatch, navigate]);
 
   const fetchUser = async (userId) => {
     try {
@@ -152,11 +159,21 @@ const Login = () => {
     }
   };
 
-    // Function to handle Google login using the googleLogin thunk
-    const handleGoogleLogin = async () => {
-      // Dispatch Google login action
-      window.location.href = "http://localhost:5000/auth/google";
-    };
+  // Function to handle Google login using the googleLogin thunk
+  const handleGoogleLogin = async () => {
+    // Dispatch Google login action
+    window.location.href = "http://localhost:5000/auth/google";
+  };
+
+  //Validation
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleValidation = (e) => {
+    setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
+    setPhoneNumber({ phoneNumber, [e.target.name]: e.target.value });
+    setPassword({ password, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="m-auto height-[100vh] flex flex-row px-12 py-24 mx-auto">
@@ -203,14 +220,21 @@ const Login = () => {
             <div className="relative flex items-center">
               <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
               <Input
-                id="phone"
+                name="phoneNumber"
                 type="tel"
                 placeholder="Enter your phone number"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className="flex items-center border focus:border-primary py-7 px-10"
+                className={`flex items-center border ${
+                  errorMessage.phoneNumber
+                    ? "border-red-500"
+                    : "focus:border-primary"
+                } py-7 px-10`}
               />
             </div>
+            {errorMessage.phoneNumber && (
+              <p className="text-red-500 mt-2">{errorMessage.phoneNumber}</p>
+            )}
           </div>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
@@ -241,14 +265,19 @@ const Login = () => {
             <div className="relative flex items-center">
               <IoMdLock className="text-gray-500 mr-2 absolute left-3" />
               <Input
-                id="password"
+                name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="flex items-center border focus:border-primary py-7 px-10"
+                className={`${
+                  errorMessage.firstName ? "border-red-500" : null
+                } flex items-center border focus:border-primary py-7 px-10`}
               />
-            </div>
+            </div>{" "}
+            {errorMessage.password && (
+              <p className="text-red-500">{errorMessage.password}</p>
+            )}
             {/* otp */}
             {/* <div className="relative flex items-center">
               <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
@@ -281,8 +310,8 @@ const Login = () => {
           </div>
           <div className="flex flex-row sm:flex-col justify-center gap-x-10 gap-y-3 xl:gap-x-4">
             <button
-            type="button"
-             onClick={handleGoogleLogin}
+              type="button"
+              onClick={handleGoogleLogin}
               className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200"
             >
               <img src={IconGoogle} className="w-6 m-2" alt="" />

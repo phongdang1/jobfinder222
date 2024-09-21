@@ -78,7 +78,7 @@ const SignUp = () => {
     return phoneNumber;
   };
   const handleSubmit = async (e) => {
-    firebase.auth().settings.appVerificationDisabledForTesting = true;
+    // firebase.auth().settings.appVerificationDisabledForTesting = true;
     e.preventDefault();
 
     try {
@@ -93,7 +93,7 @@ const SignUp = () => {
         "recaptcha-container",
         {
           size: "invisible",
-          defaultCountry: "VN"
+          defaultCountry: "VN",
         }
       );
       console.log(
@@ -101,6 +101,10 @@ const SignUp = () => {
         window.recaptchaVerifier
       );
       console.log("reCAPTCHA verifier initialized:", window.recaptchaVerifier);
+
+      window.recaptchaVerifier.render().then((widgetId) => {
+        console.log("reCAPTCHA rendered with widgetId:", widgetId);
+      });
 
       await sendOtp(); // Nếu reCAPTCHA hợp lệ, tiến hành gửi OTP
     } catch (error) {
@@ -111,6 +115,7 @@ const SignUp = () => {
     const appVerify = window.recaptchaVerifier;
     const formattedPhoneNumber = formatPhoneNumber(formData.phoneNumber); // Format số điện thoại
     console.log("sdt ne", formattedPhoneNumber);
+    console.log(appVerify);
     firebase
       .auth()
       .signInWithPhoneNumber(formattedPhoneNumber, appVerify)
