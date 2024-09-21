@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDispatch, useSelector } from "react-redux";
-import { signUp } from "../../../redux/features/authSlice";
+import { login, signUp } from "../../../redux/features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import firebase from "../../../utils/firebase";
@@ -70,91 +70,121 @@ const SignUp = () => {
       });
     };
   };
-  const formatPhoneNumber = (phoneNumber) => {
-    // Thêm mã quốc gia +84 và bỏ số 0 đầu tiên nếu cần
-    if (phoneNumber.startsWith("0")) {
-      return "+84" + phoneNumber.slice(1);
-    }
-    return phoneNumber;
-  };
-  const handleSubmit = async (e) => {
-    // firebase.auth().settings.appVerificationDisabledForTesting = true;
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    try {
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear(); // Xóa reCAPTCHA cũ nếu đã hết hạn
-        window.recaptchaVerifier = null; // Reset biến reCAPTCHA
-      }
-
-      // Kiểm tra và khởi tạo reCAPTCHA nếu chưa có hoặc nếu đã hết hạn
-
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-        "recaptcha-container",
-        {
-          size: "invisible",
-          defaultCountry: "VN",
-        }
-      );
-      console.log(
-        "reCAPTCHA verifier already exists:",
-        window.recaptchaVerifier
-      );
-      console.log("reCAPTCHA verifier initialized:", window.recaptchaVerifier);
-
-      window.recaptchaVerifier.render().then((widgetId) => {
-        console.log("reCAPTCHA rendered with widgetId:", widgetId);
-      });
-
-      await sendOtp(); // Nếu reCAPTCHA hợp lệ, tiến hành gửi OTP
-    } catch (error) {
-      console.error("Error during OTP sending:", error.message);
+    if (formData.password !== retypePassword) {
+      alert("Passwords do not match");
+      return;
     }
-  };
-  const sendOtp = async () => {
-    const appVerify = window.recaptchaVerifier;
-    const formattedPhoneNumber = formatPhoneNumber(formData.phoneNumber); // Format số điện thoại
-    console.log("sdt ne", formattedPhoneNumber);
-    console.log(appVerify);
-    firebase
-      .auth()
-      .signInWithPhoneNumber(formattedPhoneNumber, appVerify)
-      .then((confirmationResult) => {
-        console.log("sdt", formattedPhoneNumber);
-        // Store confirmation result globally
-        window.confirmationResult = confirmationResult; // Save OTP verification result globally
-        console.log("gui otp thanh cong");
-        localStorage.setItem("phoneNumber", formattedPhoneNumber);
-        navigate("/otp", { state: formData });
+    dispatch(signUp(formData))
+      .unwrap()
+      .then(() => {
+        const credentials = {
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+        };
+        // Điều hướng sau khi thành công, nếu cần
+        console.log("Sign Up Successful", authState);
+        console.log("image", formData.image);
+        // dispatch(login(credentials)).unwrap();
+        // localStorage.setItem('phoneNumber', formData.phoneNumber); 
+        navigate("/");
+
       })
       .catch((error) => {
-        if (error.code === "auth/invalid-app-credential") {
-          console.error(
-            "reCAPTCHA token expired or invalid. Please reload reCAPTCHA."
-          );
-          window.recaptchaVerifier.clear(); // Xóa reCAPTCHA khi gặp lỗi
-          window.recaptchaVerifier = null; // Tái khởi tạo reCAPTCHA khi gặp lỗi
-        }
-        console.error("Failed to send OTP:", error.message);
+        console.log("image", formData.image);
+        console.error("Sign Up Error:", error);
       });
   };
-  useEffect(() => {
-    if (!recaptchaVerifier) {
-      const verifier = new firebase.auth.RecaptchaVerifier(
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: (response) => {
-            console.log("reCAPTCHA solved, can proceed with OTP sending.");
-          },
-          "expired-callback": () => {
-            console.error("reCAPTCHA expired. Please solve the CAPTCHA again.");
-          },
-        }
-      );
-      setRecaptchaVerifier(verifier);
-    }
-  }, [recaptchaVerifier]);
+  // const formatPhoneNumber = (phoneNumber) => {
+  //   // Thêm mã quốc gia +84 và bỏ số 0 đầu tiên nếu cần
+  //   if (phoneNumber.startsWith("0")) {
+  //     return "+84" + phoneNumber.slice(1);
+  //   }
+  //   return phoneNumber;
+  // };
+  // const handleSubmit = async (e) => {
+  //   //  firebase.auth().settings.appVerificationDisabledForTesting = true;
+  //   e.preventDefault();
+
+  //   try {
+  //     if (!window.recaptchaVerifier) {
+  //       // Kiểm tra và khởi tạo reCAPTCHA nếu chưa có hoặc nếu đã hết hạn
+
+  //       window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+  //         "recaptcha-container",
+  //         {
+  //           'size': "invisible",
+  //           defaultCountry: "VN",
+  //           callback: (response) => {
+  //             console.log("reCAPTCHA solved, can proceed with OTP sending.",response);
+
+  //           },
+  //           "expired-callback": (response) => {
+  //             console.error("reCAPTCHA expired. Please solve the CAPTCHA again.", response);
+  //           },
+  //         }
+  //       );
+  //       // console.log(
+  //       //   "reCAPTCHA verifier already exists:",
+  //       //   window.recaptchaVerifier
+  //       // );
+  //       console.log(
+  //         "reCAPTCHA verifier initialized:",
+  //         window.recaptchaVerifier
+  //       );
+  //     }
+  //     await sendOtp(); // Nếu reCAPTCHA hợp lệ, tiến hành gửi OTP
+  //     // navigate("/otp");
+  //   } catch (error) {
+  //     console.error("Error during OTP sending:", error.message);
+  //   }
+  // };
+  // const sendOtp = async () => {
+  //   const appVerify = window.recaptchaVerifier;
+  //   const formattedPhoneNumber = formatPhoneNumber(formData.phoneNumber); // Format số điện thoại
+  //   console.log("sdt ne", formattedPhoneNumber);
+  //   firebase
+  //     .auth()
+  //     .signInWithPhoneNumber(formattedPhoneNumber, appVerify)
+  //     .then((confirmationResult) => {
+  //       console.log("sdt", formattedPhoneNumber);
+  //       // Store confirmation result globally
+  //       window.confirmationResult = confirmationResult; // Save OTP verification result globally
+  //       console.log("gui otp thanh cong");
+  //       localStorage.setItem("phoneNumber", formattedPhoneNumber);
+  //       navigate("/otp", { state: formData });
+  //     })
+  //     .catch((error) => {
+  //       if (error.code === "auth/invalid-app-credential") {
+  //         console.error(
+  //           "reCAPTCHA token expired or invalid. Please reload reCAPTCHA."
+  //         );
+  //         if (window.recaptchaVerifier) {
+  //           window.recaptchaVerifier.clear(); // Clear the old reCAPTCHA verifier
+  //           window.recaptchaVerifier = null;  // Reset to null
+  //         }
+  //       }
+  //       console.error("Failed to send OTP:", error);
+  //     });
+  // };
+  // useEffect(() => {
+  //   if (!window.recaptchaVerifier) {
+  //     const verifier = new firebase.auth.RecaptchaVerifier(
+  //       "recaptcha-container",
+  //       {
+  //         size: "invisible",
+  //         callback: (response) => {
+  //           console.log("reCAPTCHA solved, can proceed with OTP sending.");
+  //         },
+  //         "expired-callback": () => {
+  //           console.error("reCAPTCHA expired. Please solve the CAPTCHA again.");
+  //         },
+  //       }
+  //     );
+  //     setRecaptchaVerifier(verifier);
+  //   }
+  // }, []);
   return (
     <div className="flex-1 px-12 py-14 mx-auto bg-secondary flex flex-col items-center justify-center border border-gray-300">
       {/* Recaptcha container */}
@@ -286,15 +316,6 @@ const SignUp = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
-          <div className="relative flex items-center mb-4">
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="flex items-center border focus:border-primary py-7 px-10"
-            />
           </div>
           <div className="my-7 flex items-center justify-center">
             <Button

@@ -17,8 +17,7 @@ import Avatar from "@mui/material/Avatar";
 import { useEffect, useState } from "react";
 import axios from "../../../fetchData/axios";
 function Header() {
-  const [user, setUser] = useState(null);
-  // const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
