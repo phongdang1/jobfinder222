@@ -40,12 +40,12 @@ export const signUp = createAsyncThunk(
   "auth/signUp",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/create-new-user", userData);
+      const response = await axios.post("/createNewUser", userData);
       console.log("SignUp response:", response.data);
       if (response && response.data) {
         const { data } = response;
         return {
-          user: data.data.user, // Assuming the response contains user data
+          user: data.data, // Assuming the response contains user data
         };
       } else {
         return rejectWithValue("No response data received from server");

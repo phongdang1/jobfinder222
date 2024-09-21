@@ -80,14 +80,14 @@ const SignUp = () => {
       .unwrap()
       .then(() => {
         const credentials = {
-          phoneNumber: formData.phoneNumber,
+          email: formData.email,
           password: formData.password,
         };
         // Điều hướng sau khi thành công, nếu cần
         console.log("Sign Up Successful", authState);
         console.log("image", formData.image);
         // dispatch(login(credentials)).unwrap();
-        // localStorage.setItem('phoneNumber', formData.phoneNumber); 
+        localStorage.setItem('email', formData.email); 
         navigate("/");
 
       })

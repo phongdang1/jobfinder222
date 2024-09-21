@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import Typewriter from "typewriter-effect";
 import { FaFacebookF, FaGoogle } from "react-icons/fa";
 import { IoMdLock, IoMdCall, IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { MdAlternateEmail } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import IconGoogle from "../../../assets/svgicon/icons8-google.svg";
 import IconFacebook from "../../../assets/svgicon/icons8-facebook.svg";
@@ -22,7 +23,7 @@ import Validation from "@/components/User/Common/Validation";
 const Login = () => {
   // xử lý show/hidden password
   const [showPassword, setShowPassword] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null); // To store OTP verification result
@@ -112,28 +113,28 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const credentials = {
+      email: email,
+      password: password,
+    };
+    try {
+      const result = await dispatch(login(credentials)).unwrap();
+      console.log("Login successful, result:", result);
+      localStorage.setItem('email', email); 
+      
+      // Lưu số điện thoại vào localStorage
+      navigate("/");
+      fetchUser();
+    } catch (error) {
+      console.error("Failed to login: ", error.message || error);
     const errors = Validation({ phoneNumber, password });
-
     setErrorMessage(errors);
     if (Object.keys(errors).length === 0) {
       const credentials = {
         phoneNumber: phoneNumber,
         password: password,
       };
-
-      try {
-        const result = await dispatch(login(credentials)).unwrap();
-        console.log("Login successful, result:", result);
-        localStorage.setItem("phoneNumber", phoneNumber);
-
-        // Navigate to home after successful login
-        navigate("/");
-        fetchUser();
-      } catch (error) {
-        console.error("Failed to login: ", error.message || error);
-      }
-    }
-  };
+ 
   useEffect(() => {
     const userId = new URLSearchParams(window.location.search).get("user_id");
     console.log("User ID retrieved from URL:", userId);
@@ -145,9 +146,9 @@ const Login = () => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/get-user-by-id?id=${userId}`);
+      const response = await axios.get(`/getUserById?id=${userId}`);
 
-      console.log("Response from /get-user-by-id:", response);
+      console.log("Response from /getUserById:", response);
 
       if (response.data) {
         dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
@@ -201,11 +202,11 @@ const Login = () => {
           <div className="mb-6">
             <div
               className="flex flex-row justify-between items-center mb-2"
-              htmlFor="phone"
+              htmlFor="email"
             >
               <label className="text-gray-700 text-sm font-bold">
                 {" "}
-                Phone Number
+                Email
               </label>
               <div className="flex items-center text-[13px] gap-x-2">
                 <p>Need an account ?</p>
@@ -218,13 +219,13 @@ const Login = () => {
               </div>
             </div>
             <div className="relative flex items-center">
-              <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
+              <MdAlternateEmail className="text-gray-500 mr-2 absolute left-3" />
               <Input
-                name="phoneNumber"
-                type="tel"
-                placeholder="Enter your phone number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                name="email"
+                type="text"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className={`flex items-center border ${
                   errorMessage.phoneNumber
                     ? "border-red-500"
