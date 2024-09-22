@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,22 +13,45 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import Paginition from "./Common/Paginition";
 import { useState } from "react";
+import Validation from "../Common/Validation";
+import { Link, useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 function PersonalInformation() {
   const [date, setDate] = useState();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    address: "",
+    phoneNumber: "",
+  });
+  const [errorMessage, setErrorMessage] = useState({});
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrorMessage({ ...errorMessage, [e.target.name]: "" });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const errors = Validation(formData);
+    if (Object.keys(errors).length > 0) {
+      setErrorMessage(errors);
+      console.log("deo dc");
+      console.log(errors);
+    } else {
+      console.log("success");
+      navigate("/profileUpdate/skills");
+    }
+  };
 
   return (
     <div className="w-full h-full block">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="h-[460px] 2xl:h-[600px] lg:mx-40 md:mx-10 my-10 bg-white shadow-xl rounded-2xl">
           <p className="text-center pt-8 text-xl font-semibold">
             Personal Information
@@ -37,16 +59,45 @@ function PersonalInformation() {
           <ScrollArea className="h-4/5">
             <div className="flex flex-col items-center mt-8 space-y-6">
               <div className="grid w-full max-w-sm items-center gap-1.5">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <Input
-                  type="name"
-                  id="name"
-                  placeholder="Name"
-                  className="rounded-lg"
+                  type="text"
+                  name="firstName"
+                  placeholder="First Name"
+                  className={`${
+                    errorMessage.firstName
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  } rounded-lg`}
+                  onChange={handleInputChange}
+                  value={formData.firstName}
                 />
+                {errorMessage.firstName && (
+                  <p className="text-red-500">{errorMessage.firstName}</p>
+                )}
               </div>
+
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  type="text"
+                  name="lastName"
+                  placeholder="Last Name"
+                  className={`${
+                    errorMessage.lastName
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  } rounded-lg`}
+                  onChange={handleInputChange}
+                  value={formData.lastName}
+                />
+                {errorMessage.lastName && (
+                  <p className="text-red-500">{errorMessage.lastName}</p>
+                )}
+              </div>
+
               <div className="flex gap-4 w-full max-w-sm items-center">
-                <div className="block ">
+                <div className="block">
                   <Label htmlFor="dob">Date of Birth</Label>
                   <div className="w-full max-w-md">
                     <Popover>
@@ -66,7 +117,7 @@ function PersonalInformation() {
                           )}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent align="start" className=" w-auto p-0">
+                      <PopoverContent align="start" className="w-auto p-0">
                         <Calendar
                           mode="single"
                           captionLayout="dropdown-buttons"
@@ -93,57 +144,70 @@ function PersonalInformation() {
                   </RadioGroup>
                 </div>
               </div>
-              <div className="flex flex-col w-full max-w-sm gap-1.5">
-                <Label htmlFor="Phone Number">Phone Number</Label>
-                <div className="flex gap-2">
-                  <Select>
-                    <SelectTrigger className="w-[100px]">
-                      <SelectValue placeholder="+84" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                  </Select>
 
+              <div className="flex flex-col w-full max-w-sm gap-1.5">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <div className="flex gap-2">
                   <Input
-                    type="Phone Number"
-                    id="Phone Number"
+                    type="text"
+                    name="phoneNumber"
                     placeholder="Phone Number"
-                    className="rounded-lg"
+                    className={`${
+                      errorMessage.phoneNumber
+                        ? "border-red-500"
+                        : "focus:border-primary"
+                    } rounded-lg`}
+                    onChange={handleInputChange}
+                    value={formData.phoneNumber}
                   />
                 </div>
+                {errorMessage.phoneNumber && (
+                  <p className="text-red-500 ">{errorMessage.phoneNumber}</p>
+                )}
               </div>
+
               <div className="grid w-full max-w-sm items-center gap-1.5">
-                <Label htmlFor="name">City</Label>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choose your city" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid w-full max-w-sm items-center gap-1.5">
-                <Label htmlFor="name">Current Address</Label>
+                <Label htmlFor="address">Current Address</Label>
                 <Input
-                  type="name"
-                  id="name"
+                  type="text"
+                  name="address"
                   placeholder="Current Address"
-                  className="rounded-lg"
+                  className={`${
+                    errorMessage.address
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  } rounded-lg`}
+                  onChange={handleInputChange}
+                  value={formData.address}
                 />
+                {errorMessage.address && (
+                  <p className="text-red-500">{errorMessage.address}</p>
+                )}
               </div>
             </div>
           </ScrollArea>
         </div>
-        <Paginition
-          back="/profileUpdate/experience"
-          next="/profileUpdate/skills"
-        />
+        <div className="h-16 lg:mx-40 md:mx-10 my-10 bg-white shadow-xl rounded-2xl flex justify-between items-center">
+          <Link
+            className="flex gap-2 pl-4 hover:bg-primary cursor-pointer rounded-2xl items-center h-full transition-all duration-300 pr-4"
+            to={"/profileUpdate/experience"}
+          >
+            <div className="flex gap-1">
+              <ArrowBackIcon />
+              <p>Back</p>
+            </div>
+          </Link>
+          <div>Page</div>
+          <Button
+            type="submit"
+            className="flex gap-2 pl-4 hover:bg-primary cursor-pointer rounded-2xl items-center h-full transition-all duration-300 pr-4"
+          >
+            <div className="flex gap-1">
+              <p>Next</p>
+              <ArrowForwardIcon />
+            </div>
+          </Button>
+        </div>
       </form>
     </div>
   );

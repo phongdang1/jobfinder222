@@ -272,7 +272,10 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  handleValidation(e);
+                }}
                 className={`${
                   errorMessage.firstName ? "border-red-500" : null
                 } flex items-center border focus:border-primary py-7 px-10`}

@@ -25,6 +25,7 @@ import { login, signUp } from "../../../redux/features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import firebase from "../../../utils/firebase";
+import Validation from "@/components/User/Common/Validation";
 
 const roles = ["User", "Company"];
 
@@ -38,12 +39,12 @@ const SignUp = () => {
     phoneNumber: "",
     email: "",
     password: "",
+    retypePassword: "",
     roleCode: "",
     image: "",
   });
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const navigate = useNavigate();
-  const [retypePassword, setRetypePassword] = useState("");
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const toggleShowRetypePassword = () =>
     setShowRetypePassword(!showRetypePassword);
@@ -55,10 +56,9 @@ const SignUp = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
   };
-  const handleRetypePasswordChange = (e) => {
-    setRetypePassword(e.target.value); // Cập nhật giá trị của retypePassword riêng
-  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -72,10 +72,29 @@ const SignUp = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.password !== retypePassword) {
-      alert("Passwords do not match");
-      return;
+    const errors = Validation(formData);
+    setErrorMessage(errors);
+    if (Object.keys(errors).length === 0) {
+      dispatch(signUp(formData))
+        .unwrap()
+        .then(() => {
+          const credentials = {
+            phoneNumber: formData.phoneNumber,
+            password: formData.password,
+          };
+          // Điều hướng sau khi thành công, nếu cần
+          console.log("Sign Up Successful", authState);
+          console.log("image", formData.image);
+          // dispatch(login(credentials)).unwrap();
+          // localStorage.setItem('phoneNumber', formData.phoneNumber);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log("image", formData.image);
+          console.error("Sign Up Error:", error);
+        });
     }
+
     dispatch(signUp(formData))
       .unwrap()
       .then(() => {
@@ -95,7 +114,12 @@ const SignUp = () => {
         console.log("image", formData.image);
         console.error("Sign Up Error:", error);
       });
+
   };
+
+  //validation
+  const [errorMessage, setErrorMessage] = useState("");
+
   // const formatPhoneNumber = (phoneNumber) => {
   //   // Thêm mã quốc gia +84 và bỏ số 0 đầu tiên nếu cần
   //   if (phoneNumber.startsWith("0")) {
@@ -189,7 +213,7 @@ const SignUp = () => {
     <div className="flex-1 px-12 py-14 mx-auto bg-secondary flex flex-col items-center justify-center border border-gray-300">
       {/* Recaptcha container */}
       <div id="recaptcha-container"></div>
-      <form className="w-[524px]">
+      <form className="w-[524px]" onSubmit={handleSubmit}>
         <h1 className="mb-8 text-5xl text-primary font-title">Sign Up</h1>
 
         <div className="mb-6">
@@ -200,10 +224,19 @@ const SignUp = () => {
               name="firstName"
               placeholder="First Name"
               value={formData.firstName}
-              onChange={handleChange}
-              className="flex items-center border focus:border-primary py-7 px-10"
+              onChange={(e) => {
+                handleChange(e);
+              }}
+              className={`flex items-center border ${
+                errorMessage.firstName
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
           </div>
+          {errorMessage.firstName && (
+            <p className="text-red-500 -mt-3 mb-2">{errorMessage.firstName}</p>
+          )}
           <div className="relative flex items-center mb-4">
             <AiOutlineUser className="text-gray-500 mr-2 absolute left-3" />
             <Input
@@ -212,9 +245,16 @@ const SignUp = () => {
               placeholder="Last Name"
               value={formData.lastName}
               onChange={handleChange}
-              className="flex items-center border focus:border-primary py-7 px-10"
+              className={`flex items-center border ${
+                errorMessage.firstName
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
           </div>
+          {errorMessage.lastName && (
+            <p className="text-red-500 -mt-3 mb-2">{errorMessage.lastName}</p>
+          )}
           <div className="relative flex items-center mb-6">
             <FaRegAddressBook className="text-gray-500 mr-2 absolute left-3" />
             <Input
@@ -223,9 +263,16 @@ const SignUp = () => {
               placeholder="Address"
               value={formData.address}
               onChange={handleChange}
-              className="flex items-center border focus:border-primary py-7 px-10"
+              className={`flex items-center border ${
+                errorMessage.firstName
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
           </div>
+          {errorMessage.address && (
+            <p className="text-red-500 -mt-3 mb-2">{errorMessage.address}</p>
+          )}
           <div className="relative flex items-center mb-4">
             <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
             <Input
@@ -234,9 +281,18 @@ const SignUp = () => {
               value={formData.phoneNumber}
               onChange={handleChange}
               placeholder="Phone Number"
-              className="flex items-center border focus:border-primary py-7 px-10"
+              className={`flex items-center border ${
+                errorMessage.firstName
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
           </div>
+          {errorMessage.phoneNumber && (
+            <p className="text-red-500 -mt-3 mb-2">
+              {errorMessage.phoneNumber}
+            </p>
+          )}
           <div className="relative flex items-center mb-4">
             <IoMdMail className="text-gray-500 mr-2 absolute left-3" />
             <Input
@@ -245,9 +301,16 @@ const SignUp = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email"
-              className="flex items-center border focus:border-primary py-7 px-10"
+              className={`flex items-center border ${
+                errorMessage.firstName
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
           </div>
+          {errorMessage.email && (
+            <p className="text-red-500 -mt-3 mb-2">{errorMessage.email}</p>
+          )}
           <div className="relative flex items-center mb-4">
             <IoMdLock className="text-gray-500 mr-2 absolute left-3" />
             <Input
@@ -256,7 +319,11 @@ const SignUp = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Password"
-              className="flex items-center border focus:border-primary py-7 px-10"
+              className={`flex items-center border ${
+                errorMessage.password
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
             <button
               type="button"
@@ -270,14 +337,22 @@ const SignUp = () => {
               )}
             </button>
           </div>
+          {errorMessage.password && (
+            <p className="text-red-500 -mt-3 mb-2">{errorMessage.password}</p>
+          )}
           <div className="relative flex items-center mb-4">
             <IoMdLock className="text-gray-500 mr-2 absolute left-3" />
             <Input
+              name="retypePassword"
               type={showRetypePassword ? "text" : "password"}
               placeholder="Retype Password"
-              value={retypePassword}
-              onChange={handleRetypePasswordChange}
-              className="flex items-center border focus:border-primary py-7 px-10"
+              value={formData.retypePassword}
+              onChange={(e) => handleChange(e)}
+              className={`flex items-center border ${
+                errorMessage.retypePassword
+                  ? "border-red-500"
+                  : "focus:border-primary"
+              } py-7 px-10`}
             />
             <button
               type="button"
@@ -291,6 +366,11 @@ const SignUp = () => {
               )}
             </button>
           </div>
+          {errorMessage.retypePassword && (
+            <p className="text-red-500 -mt-3 mb-2">
+              {errorMessage.retypePassword}
+            </p>
+          )}
 
           <div className="relative flex items-center mb-4">
             <FaGenderless className="text-gray-500 mr-2 absolute left-3" />
@@ -319,7 +399,6 @@ const SignUp = () => {
           </div>
           <div className="my-7 flex items-center justify-center">
             <Button
-              onClick={handleSubmit}
               type="submit"
               className="text-white rounded-full w-full py-5 px-7 transition transform hover:scale-105"
             >
