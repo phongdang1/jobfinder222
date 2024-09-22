@@ -94,6 +94,27 @@ const SignUp = () => {
           console.error("Sign Up Error:", error);
         });
     }
+
+    dispatch(signUp(formData))
+      .unwrap()
+      .then(() => {
+        const credentials = {
+          email: formData.email,
+          password: formData.password,
+        };
+        // Điều hướng sau khi thành công, nếu cần
+        console.log("Sign Up Successful", authState);
+        console.log("image", formData.image);
+        // dispatch(login(credentials)).unwrap();
+        localStorage.setItem('email', formData.email); 
+        navigate("/");
+
+      })
+      .catch((error) => {
+        console.log("image", formData.image);
+        console.error("Sign Up Error:", error);
+      });
+
   };
 
   //validation

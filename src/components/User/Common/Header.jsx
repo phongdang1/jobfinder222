@@ -20,7 +20,7 @@ function Header() {
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
-
+  console.log("user", user);
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("user"); // Xóa user khỏi localStorage khi logout

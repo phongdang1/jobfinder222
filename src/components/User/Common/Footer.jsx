@@ -14,7 +14,7 @@ function Footer() {
     <div className="flex flex-col bg-white">
       <Separator className="" />
       <div className="lg:hidden md:hidden sm:hidden">
-        <Accordion type="multiple" collapsible>
+        <Accordion type="multiple" collapsible="true">
           <AccordionItem value="aboutus" className="mx-8">
             <AccordionTrigger>
               <p className="font-medium text-lg text-third ">About us</p>
