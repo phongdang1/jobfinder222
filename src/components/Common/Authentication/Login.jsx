@@ -171,8 +171,6 @@ const Login = () => {
 
   const handleValidation = (e) => {
     setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
-    setPhoneNumber({ phoneNumber, [e.target.name]: e.target.value });
-    setPassword({ password, [e.target.name]: e.target.value });
   };
 
   return (
@@ -224,7 +222,10 @@ const Login = () => {
                 type="tel"
                 placeholder="Enter your phone number"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value);
+                  handleValidation(e);
+                }}
                 className={`flex items-center border ${
                   errorMessage.phoneNumber
                     ? "border-red-500"
@@ -269,7 +270,10 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  handleValidation(e);
+                }}
                 className={`${
                   errorMessage.firstName ? "border-red-500" : null
                 } flex items-center border focus:border-primary py-7 px-10`}

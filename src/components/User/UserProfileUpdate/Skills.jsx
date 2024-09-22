@@ -40,7 +40,7 @@ function Skills() {
   return (
     <div className="w-full h-full block">
       <form>
-        <div className="h-[460px] 2xl:h-[600px] lg:mx-40 md:mx-10 px-2 my-10 bg-white shadow-xl rounded-2xl">
+        <div className="lg:h-[460px] 2xl:h-[600px] lg:mx-40 md:mx-10 px-2 my-10 bg-white shadow-xl rounded-2xl">
           <p className="text-center pt-8 text-xl font-semibold">
             Add your skill set to attract more employers
           </p>
