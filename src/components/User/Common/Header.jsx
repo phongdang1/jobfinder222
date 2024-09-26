@@ -1,5 +1,5 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../../../redux/features/authSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { logout, setUser } from "../../../redux/features/authSlice";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -14,16 +14,17 @@ import {
 } from "@/components/ui/sheet";
 import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
-
+import { useEffect, useState } from "react";
+import axios from "../../../fetchData/axios";
 function Header() {
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
-
-  console.log("abc",user);
-  console.log("token",token);
+  console.log("user", user);
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem("user"); // Xóa user khỏi localStorage khi logout
+    localStorage.removeItem("userId"); // Xóa userId khỏi localStorage khi logout
   };
 
   return (
@@ -73,7 +74,7 @@ function Header() {
                   </Link>
                 </SheetClose>
               </SheetHeader>
-              {user === null && user === undefined && (
+              {(user === null || user === undefined) && (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
@@ -125,7 +126,7 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {(user === null || user === undefined )? (
+          {user === null || user === undefined ? (
             <>
               <li>
                 <Button
@@ -147,7 +148,7 @@ function Header() {
           ) : (
             <li className="flex items-center space-x-4">
               <Avatar alt={user?.phoneNumber} src={user?.image} />
-              <span className="text-third">{user?.phoneNumber}</span>
+              <span className="text-third">{user?.firstName}</span>
               <button
                 onClick={handleLogout}
                 className="text-red-500 hover:text-red-700"

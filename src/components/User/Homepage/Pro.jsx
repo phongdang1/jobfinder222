@@ -1,4 +1,4 @@
-import ProImage from "../../../assets/Home/pro.png";
+import ProImage from "../../../assets/Home/Home/pro.png";
 import { Button } from "@/components/ui/button";
 
 function Pro() {

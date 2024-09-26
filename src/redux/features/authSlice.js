@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../fetchData/axios";
-import  createNewUser  from "../../fetchData/axios";
+import createNewUser from "../../fetchData/axios";
 // Async Thunk để xử lý login
 export const login = createAsyncThunk(
   "auth/login",
@@ -10,6 +10,8 @@ export const login = createAsyncThunk(
       console.log("Login response:", response);
       if (response && response.data) {
         const { data } = response;
+        const userId = data.data.id;
+        localStorage.setItem("user_id", userId);
         return {
           user: data.data,
           token: data.token,
@@ -32,40 +34,18 @@ export const login = createAsyncThunk(
   }
 );
 
-// Async Thunk to handle Google login
-export const googleLogin = createAsyncThunk(
-  "auth/googleLogin",
-  async (_, { rejectWithValue }) => {
-    try {
-      // Start Google authentication flow
-      const response = await axios.get("/auth/google"); // Endpoint to initiate Google OAuth
-
-      if (response && response.data) {
-        const { data } = response;
-        return {
-          user: data.data,
-          token: data.token,
-        };
-      }
-    } catch (error) {
-      return rejectWithValue("Failed to initiate Google login");
-    }
-  }
-);
-
 //Sign up
 // Async Thunk to handle SignUp
 export const signUp = createAsyncThunk(
   "auth/signUp",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/create-new-user",userData);
+      const response = await axios.post("/createNewUser", userData);
       console.log("SignUp response:", response.data);
       if (response && response.data) {
         const { data } = response;
         return {
-          user: data.data.user, // Assuming the response contains user data
-         
+          user: data.data, // Assuming the response contains user data
         };
       } else {
         return rejectWithValue("No response data received from server");
@@ -86,8 +66,7 @@ export const signUp = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: localStorage.getItem("user")
-      || null,
+    user: localStorage.getItem("user") || null,
     token: localStorage.getItem("token") || null,
     status: "idle",
     error: null,
@@ -130,24 +109,6 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         // Khi thất bại
-        state.status = "failed";
-        state.error = action.payload;
-      })
-      .addCase(googleLogin.fulfilled, (state, action) => {
-        // Khi thành công
-        state.status = "succeeded";
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.error = null;
-        // Lưu thông tin user và token vào localStorage
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.token);
-      })
-      .addCase(googleLogin.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(googleLogin.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })

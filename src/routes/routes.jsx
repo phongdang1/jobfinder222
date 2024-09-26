@@ -11,7 +11,14 @@ import ManageJobPost from "@/components/Company/components/ManageJobPost";
 import ManageCompany from "@/components/Company/components/ManageCompany";
 import FindCandidate from "@/components/Company/components/FindCandidate";
 import TransactionHistory from "@/components/Company/components/TransactionHistory";
+
 import UserProfilePage from "@/pages/User/UserProfilePage";
+import OTPPage from "@/components/Common/Authentication/OTP";
+import UserProfileUpdate from "@/pages/User/UserProfileUpdate";
+import UserProfileUpdateLayout from "@/components/layout/userProfileUpdateLayout";
+import Skills from "@/components/User/UserProfileUpdate/Skills";
+import PersonalInformation from "@/components/User/UserProfileUpdate/PersonalInformation";
+
 const routes = [
   // Routes using DefaultLayout
   {
@@ -21,6 +28,7 @@ const routes = [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
+      { path: "/otp", element: <OTPPage /> },
       { path: "/job-detail", element: <JobDetail /> },
       { path: "/jobs", element: <Jobspage /> },
       { path: "/companypage", element: <CompanyPage /> },
@@ -38,7 +46,16 @@ const routes = [
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
     ],
-  }
+  },
+  {
+    path: "/profileUpdate",
+    element: <UserProfileUpdateLayout />,
+    children: [
+      { path: "experience", element: <UserProfileUpdate /> },
+      { path: "information", element: <PersonalInformation /> },
+      { path: "skills", element: <Skills /> },
+    ],
+  },
 ];
 
 export default routes;
