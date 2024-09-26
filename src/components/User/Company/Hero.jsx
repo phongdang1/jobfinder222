@@ -1,9 +1,28 @@
 import { Input } from "@/components/ui/input";
 import SearchIcon from "@mui/icons-material/Search";
-import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
-import { Button } from "@/components/ui/button";
 
-function Hero() {
+import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
+
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+
+function Hero({ filter, handleSearch }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    handleSearch(searchTerm);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit();
+    }
+  };
+
   return (
     <div>
       {/* Search Section */}
@@ -56,7 +75,15 @@ function Hero() {
               >
                 <p className="text-white">Search Job</p>
               </Button>
+
             </div>
+            <Button
+              type="button"
+              onClick={handleSearchSubmit}
+              className="p-3 bg-third hover:text-white rounded-md rounded-l-none flex-shrink-0"
+            >
+              <p className="text-white">Search Job</p>
+            </Button>
           </div>
         </div>
       </div>
@@ -64,4 +91,7 @@ function Hero() {
   );
 }
 
+
+
 export default Hero;
+

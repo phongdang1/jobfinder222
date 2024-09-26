@@ -33,7 +33,7 @@ const routes = [
       { path: "/jobs", element: <JobPage /> },
       { path: "/jobs/tab=:page", element: <JobPage /> }, // Thêm route cho phân trang
       { path: "/companypage", element: <CompanyPage /> },
-      { path: "/companydetail", element: <CompanyDetail /> },
+      { path: "/companydetail/:id", element: <CompanyDetail /> },
       { path: "/profile", element: <UserProfilePage /> },
     ],
   },
