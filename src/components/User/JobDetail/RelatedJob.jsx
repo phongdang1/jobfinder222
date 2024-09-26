@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  FaMapMarkerAlt,
-  FaBriefcase,
-  FaDollarSign,
-  FaCheckCircle,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaBriefcase, FaDollarSign } from "react-icons/fa";
 
 const jobs = [
   {
@@ -68,7 +63,7 @@ function RelatedJob() {
           >
             {/* Left Side */}
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div>
+              <div className="flex flex-col">
                 <div className="flex flex-row items-center gap-2">
                   <h3 className="text-sm md:text-md font-semibold text-gray-900">
                     {job.title}

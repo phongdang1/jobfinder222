@@ -3,7 +3,7 @@ import CompanyPage from "../pages/User/Company/CompanyPage";
 import LoginPage from "../pages/Common/Authentication/LoginPage";
 import SignUpPage from "@/pages/Common/Authentication/SignUpPage";
 import JobDetail from "@/pages/User/Job/JobDetail";
-import Jobspage from "@/pages/User/Jobspage";
+import JobPage from "@/pages/User/Job/JobPage";
 import CompanyDetail from "@/pages/User/Company/CompanyDetail";
 import CompanyLayout from "@/components/layout/companyLayout";
 import DefaultLayout from "@/components/layout/defaultLayout";
@@ -29,8 +29,9 @@ const routes = [
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
       { path: "/otp", element: <OTPPage /> },
-      { path: "/job-detail", element: <JobDetail /> },
-      { path: "/jobs", element: <Jobspage /> },
+      { path: "/job-detail/:id", element: <JobDetail /> },
+      { path: "/jobs", element: <JobPage /> },
+      { path: "/jobs/tab=:page", element: <JobPage /> }, // Thêm route cho phân trang
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
       { path: "/profile", element: <UserProfilePage /> },
