@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDispatch, useSelector } from "react-redux";
-import { login, signUp } from "../../../redux/features/authSlice";
+import { login, signUp, setUser } from "../../../redux/features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import firebase from "../../../utils/firebase";
@@ -33,15 +33,10 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showRetypePassword, setShowRetypePassword] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    address: "",
-    phoneNumber: "",
     email: "",
     password: "",
     retypePassword: "",
     roleCode: "",
-    image: "",
   });
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const navigate = useNavigate();
@@ -70,51 +65,43 @@ const SignUp = () => {
       });
     };
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = Validation(formData);
     setErrorMessage(errors);
     if (Object.keys(errors).length === 0) {
-      dispatch(signUp(formData))
-        .unwrap()
-        .then(() => {
-          const credentials = {
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-          };
-          // Điều hướng sau khi thành công, nếu cần
-          console.log("Sign Up Successful", authState);
-          console.log("image", formData.image);
-          // dispatch(login(credentials)).unwrap();
-          // localStorage.setItem('phoneNumber', formData.phoneNumber);
-          navigate("/");
-        })
-        .catch((error) => {
-          console.log("image", formData.image);
-          console.error("Sign Up Error:", error);
-        });
-    }
-
-    dispatch(signUp(formData))
-      .unwrap()
-      .then(() => {
-        const credentials = {
-          email: formData.email,
-          password: formData.password,
-        };
+      try {
+        const result = await dispatch(signUp(formData)).unwrap();
         // Điều hướng sau khi thành công, nếu cần
         console.log("Sign Up Successful", authState);
-        console.log("image", formData.image);
-        // dispatch(login(credentials)).unwrap();
-        localStorage.setItem('email', formData.email); 
-        navigate("/");
-
-      })
-      .catch((error) => {
+        localStorage.setItem("email", formData.email);
+        localStorage.setItem("user_id", result.user?.id);
+        fetchUser(result.user?.id);
+        navigate("/profileUpdate/experience");
+      } catch (error) {
         console.log("image", formData.image);
         console.error("Sign Up Error:", error);
-      });
+      }
+    } else {
+      console.log("con loi");
+    }
+  };
 
+  const fetchUser = async (userId) => {
+    try {
+      const response = await axios.get(`/getUserById?id=${userId}`);
+
+      console.log("Response from /getUserById:", response.data);
+
+      if (response.data) {
+        dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
+        localStorage.setItem("user", JSON.stringify(response.data)); // Lưu thông tin người dùng vào localStorage
+        console.log("User data set in Redux and localStorage:", response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
   };
 
   //validation
@@ -218,82 +205,6 @@ const SignUp = () => {
 
         <div className="mb-6">
           <div className="relative flex items-center mb-4">
-            <AiOutlineUser className="text-gray-500 mr-2 absolute left-3" />
-            <Input
-              type="text"
-              name="firstName"
-              placeholder="First Name"
-              value={formData.firstName}
-              onChange={(e) => {
-                handleChange(e);
-              }}
-              className={`flex items-center border ${
-                errorMessage.firstName
-                  ? "border-red-500"
-                  : "focus:border-primary"
-              } py-7 px-10`}
-            />
-          </div>
-          {errorMessage.firstName && (
-            <p className="text-red-500 -mt-3 mb-2">{errorMessage.firstName}</p>
-          )}
-          <div className="relative flex items-center mb-4">
-            <AiOutlineUser className="text-gray-500 mr-2 absolute left-3" />
-            <Input
-              type="text"
-              name="lastName"
-              placeholder="Last Name"
-              value={formData.lastName}
-              onChange={handleChange}
-              className={`flex items-center border ${
-                errorMessage.firstName
-                  ? "border-red-500"
-                  : "focus:border-primary"
-              } py-7 px-10`}
-            />
-          </div>
-          {errorMessage.lastName && (
-            <p className="text-red-500 -mt-3 mb-2">{errorMessage.lastName}</p>
-          )}
-          <div className="relative flex items-center mb-6">
-            <FaRegAddressBook className="text-gray-500 mr-2 absolute left-3" />
-            <Input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={formData.address}
-              onChange={handleChange}
-              className={`flex items-center border ${
-                errorMessage.firstName
-                  ? "border-red-500"
-                  : "focus:border-primary"
-              } py-7 px-10`}
-            />
-          </div>
-          {errorMessage.address && (
-            <p className="text-red-500 -mt-3 mb-2">{errorMessage.address}</p>
-          )}
-          <div className="relative flex items-center mb-4">
-            <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
-            <Input
-              type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="Phone Number"
-              className={`flex items-center border ${
-                errorMessage.firstName
-                  ? "border-red-500"
-                  : "focus:border-primary"
-              } py-7 px-10`}
-            />
-          </div>
-          {errorMessage.phoneNumber && (
-            <p className="text-red-500 -mt-3 mb-2">
-              {errorMessage.phoneNumber}
-            </p>
-          )}
-          <div className="relative flex items-center mb-4">
             <IoMdMail className="text-gray-500 mr-2 absolute left-3" />
             <Input
               type="email"
@@ -302,15 +213,14 @@ const SignUp = () => {
               onChange={handleChange}
               placeholder="Email"
               className={`flex items-center border ${
-                errorMessage.firstName
-                  ? "border-red-500"
-                  : "focus:border-primary"
+                errorMessage.email ? "border-red-500" : "focus:border-primary"
               } py-7 px-10`}
             />
           </div>
           {errorMessage.email && (
             <p className="text-red-500 -mt-3 mb-2">{errorMessage.email}</p>
           )}
+
           <div className="relative flex items-center mb-4">
             <IoMdLock className="text-gray-500 mr-2 absolute left-3" />
             <Input
@@ -340,6 +250,7 @@ const SignUp = () => {
           {errorMessage.password && (
             <p className="text-red-500 -mt-3 mb-2">{errorMessage.password}</p>
           )}
+
           <div className="relative flex items-center mb-4">
             <IoMdLock className="text-gray-500 mr-2 absolute left-3" />
             <Input

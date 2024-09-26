@@ -16,8 +16,8 @@ import UserProfilePage from "@/pages/User/UserProfilePage";
 import OTPPage from "@/components/Common/Authentication/OTP";
 import UserProfileUpdate from "@/pages/User/UserProfileUpdate";
 import UserProfileUpdateLayout from "@/components/layout/userProfileUpdateLayout";
-import PersonalInformation from "@/components/User/UserProfileUpdate/PersonalInformation";
 import Skills from "@/components/User/UserProfileUpdate/Skills";
+import PersonalInformation from "@/components/User/UserProfileUpdate/PersonalInformation";
 
 const routes = [
   // Routes using DefaultLayout

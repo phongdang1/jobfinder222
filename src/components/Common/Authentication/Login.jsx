@@ -113,20 +113,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const credentials = {
-      email: email,
-      password: password,
-    };
-    try {
-      const result = await dispatch(login(credentials)).unwrap();
-      console.log("Login successful, result:", result);
-      localStorage.setItem('email', email); 
-      
-      // Lưu số điện thoại vào localStorage
-      navigate("/");
-      fetchUser();
-    } catch (error) {
-      console.error("Failed to login: ", error.message || error);
+
     const errors = Validation({ email, password });
     setErrorMessage(errors);
     if (Object.keys(errors).length === 0) {
@@ -134,9 +121,21 @@ const Login = () => {
         email: email,
         password: password,
       };
+      try {
+        const result = await dispatch(login(credentials)).unwrap();
+        console.log("Login successful, result:", result);
+        localStorage.setItem("email", email);
+
+        // Lưu số điện thoại vào localStorage
+        navigate("/");
+        fetchUser();
+      } catch (error) {
+        console.error("Failed to login: ", error.message || error);
+      }
+    } else {
+      console.log("Con loi");
     }
-  }
-}
+  };
   useEffect(() => {
     const userId = new URLSearchParams(window.location.search).get("user_id");
     console.log("User ID retrieved from URL:", userId);
@@ -174,8 +173,6 @@ const Login = () => {
 
   const handleValidation = (e) => {
     setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
-    setEmail({ email, [e.target.name]: e.target.value });
-    setPassword({ password, [e.target.name]: e.target.value });
   };
 
   return (
@@ -206,10 +203,7 @@ const Login = () => {
               className="flex flex-row justify-between items-center mb-2"
               htmlFor="email"
             >
-              <label className="text-gray-700 text-sm font-bold">
-                {" "}
-                Email
-              </label>
+              <label className="text-gray-700 text-sm font-bold"> Email</label>
               <div className="flex items-center text-[13px] gap-x-2">
                 <p>Need an account ?</p>
                 <Link
@@ -229,14 +223,12 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`flex items-center border ${
-                  errorMessage.phoneNumber
-                    ? "border-red-500"
-                    : "focus:border-primary"
+                  errorMessage.email ? "border-red-500" : "focus:border-primary"
                 } py-7 px-10`}
               />
             </div>
-            {errorMessage.phoneNumber && (
-              <p className="text-red-500 mt-2">{errorMessage.phoneNumber}</p>
+            {errorMessage.email && (
+              <p className="text-red-500 mt-2">{errorMessage.email}</p>
             )}
           </div>
           <div className="mb-6">
