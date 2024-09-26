@@ -24,7 +24,7 @@ const routes = [
       { path: "/job-detail", element: <JobDetail /> },
       { path: "/jobs", element: <Jobspage /> },
       { path: "/companypage", element: <CompanyPage /> },
-      { path: "/companydetail", element: <CompanyDetail /> },
+      { path: "/companydetail/:id", element: <CompanyDetail /> },
       { path: "/profile", element: <UserProfilePage /> },
     ],
   },
