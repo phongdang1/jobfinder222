@@ -53,7 +53,9 @@ const Countdown = ({ endTime }) => {
           </div>
         </div>
       ) : (
-        <div className="text-black text-lg font-bold">Time to apply has expired!</div>
+        <div className="text-black text-lg font-bold">
+          Time to apply has expired!
+        </div>
       )}
     </div>
   );

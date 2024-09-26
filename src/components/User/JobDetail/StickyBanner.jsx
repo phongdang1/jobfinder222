@@ -13,22 +13,19 @@ const StickyBanner = ({ job }) => {
 
   const handleScroll = () => {
     const scrollY = window.scrollY;
-    const offset = 200; // Bạn có thể thay đổi giá trị này để điều chỉnh vị trí xuất hiện của banner
+    const offset = 200;
 
-    if (scrollY >= offset) {
-      setIsSticky(true);
-    } else {
-      setIsSticky(false);
-    }
+    setIsSticky(scrollY >= offset);
   };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  if (!job) return null;
 
   return (
     <div
@@ -36,25 +33,29 @@ const StickyBanner = ({ job }) => {
         isSticky ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
       }`}
     >
-      <div>
-        <span className="font-medium text-xl">{job.title}</span>
+      <div className="flex flex-col">
+        <span className="font-medium text-lg md:text-xl">
+          {job.data.postDetailData?.name}
+        </span>
         <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4 text-sm text-gray-700">
           <div className="flex items-center gap-2">
-            <FaBuilding /> {job.company}
+            <FaBuilding /> {job.data.companyData?.name}
           </div>
           <div className="flex items-center gap-2">
-            <FaMapMarkerAlt /> {job.location}
+            <FaMapMarkerAlt />{" "}
+            {job.data.postDetailData?.provincePostData?.value}
           </div>
           <div className="flex items-center gap-2">
-            <FaBriefcase /> {job.type}
+            <FaBriefcase /> {job.data.postDetailData?.jobLevelPostData?.value}
           </div>
           <div className="flex items-center gap-2">
-            <FaDollarSign /> {job.salary}
+            <FaDollarSign />{" "}
+            {job.data.postDetailData?.salaryTypePostData?.value}
           </div>
         </div>
       </div>
 
-      <Button className="bg-white border border-primary text-primary hover:bg-primary hover:border-white hover:text-white ease-in-out duration-300 py-3 px-3 lg:py-8 lg:px-10">
+      <Button className="bg-white border border-primary text-primary hover:bg-primary hover:border-white hover:text-white ease-in-out duration-300 py-2 px-4 lg:py-3 lg:px-6">
         Apply Now
       </Button>
     </div>
