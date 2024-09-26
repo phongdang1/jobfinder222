@@ -18,34 +18,69 @@ import Validation from "../Common/Validation";
 import { Link, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { handleSetDataUserDetail } from "@/fetchData/User";
 
 function PersonalInformation() {
   const [date, setDate] = useState();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    dob: "",
+    gender: "",
     address: "",
     phoneNumber: "",
   });
   const [errorMessage, setErrorMessage] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+
+  const handleDateChange = (selectedDate) => {
+    setDate(selectedDate);
+    setFormData({ ...formData, dob: selectedDate });
+    setErrorMessage((prevErrors) => ({ ...prevErrors, dob: "" }));
+  };
+
+  const handleGenderChange = (e) => {
+    setFormData({ ...formData, gender: e });
+    setErrorMessage((prevErrors) => ({ ...prevErrors, gender: "" }));
+  };
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrorMessage({ ...errorMessage, [e.target.name]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const userId = localStorage.getItem("user_id");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const errors = Validation(formData);
+    const dataSent = {
+      userId: userId,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      dob: formData.dob,
+      address: formData.address.trim(),
+      phoneNumber: formData.phoneNumber.trim(),
+      data: { genderCode: formData.gender },
+    };
+
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors);
       console.log("deo dc");
-      console.log(errors);
     } else {
-      console.log("success");
-      navigate("/profileUpdate/skills");
+      try {
+        const response = await handleSetDataUserDetail(dataSent);
+        console.log(response);
+        if (response) {
+          navigate("/profileUpdate/skills");
+          console.log("Profile updated successfully");
+        } else {
+          console.log("Profile update failed");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -99,7 +134,7 @@ function PersonalInformation() {
               <div className="flex gap-4 w-full max-w-sm items-center">
                 <div className="block">
                   <Label htmlFor="dob">Date of Birth</Label>
-                  <div className="w-full max-w-md">
+                  <div className="w-full max-w-md ">
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -122,26 +157,37 @@ function PersonalInformation() {
                           mode="single"
                           captionLayout="dropdown-buttons"
                           selected={date}
-                          onSelect={setDate}
+                          onSelect={handleDateChange}
                           fromYear={1960}
                           toYear={2030}
+                          value={formData.dob}
                         />
                       </PopoverContent>
                     </Popover>
                   </div>
+                  {errorMessage.dob && (
+                    <p className="text-red-500">{errorMessage.dob}</p>
+                  )}
                 </div>
+
                 <div className="flex flex-col gap-5 justify-center">
                   <Label htmlFor="gender">Gender</Label>
-                  <RadioGroup className="flex gap-4">
+                  <RadioGroup
+                    onValueChange={handleGenderChange}
+                    className="flex gap-4"
+                  >
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="male" id="r1" />
+                      <RadioGroupItem value="M" id="r1" />
                       <Label htmlFor="r1">Male</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="female" id="r2" />
+                      <RadioGroupItem value="FE" id="r2" />
                       <Label htmlFor="r2">Female</Label>
                     </div>
                   </RadioGroup>
+                  {errorMessage.gender && (
+                    <p className="text-red-500">{errorMessage.gender}</p>
+                  )}
                 </div>
               </div>
 
@@ -197,16 +243,17 @@ function PersonalInformation() {
               <p>Back</p>
             </div>
           </Link>
-          <div>Page</div>
-          <Button
+
+          <button
             type="submit"
             className="flex gap-2 pl-4 hover:bg-primary cursor-pointer rounded-2xl items-center h-full transition-all duration-300 pr-4"
+            to={"/profileUpdate/information"}
           >
             <div className="flex gap-1">
               <p>Next</p>
               <ArrowForwardIcon />
             </div>
-          </Button>
+          </button>
         </div>
       </form>
     </div>
