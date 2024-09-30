@@ -1,12 +1,12 @@
 import axios from "./axios";
 
-const getProfile = () => {
-    return axios.get("/get-user-by-id");
+const getUserById = (id) => {
+    return axios.get(`/getUserById?id=${id}`);
   };
 const createNewUser = (userData) => {
   return axios.post("/create-new-user",userData);
 }
   export{
-    getProfile,
+    getUserById,
     createNewUser
 }

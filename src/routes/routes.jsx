@@ -18,6 +18,7 @@ import UserProfileUpdate from "@/pages/User/UserProfileUpdate";
 import UserProfileUpdateLayout from "@/components/layout/userProfileUpdateLayout";
 import PersonalInformation from "@/components/User/UserProfileUpdate/PersonalInformation";
 import Skills from "@/components/User/UserProfileUpdate/Skills";
+import VipFeature from "@/pages/User/VipFeature";
 
 const routes = [
   // Routes using DefaultLayout
@@ -29,6 +30,7 @@ const routes = [
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
       { path: "/otp", element: <OTPPage /> },
+      { path: "/vip", element: <VipFeature /> },
       { path: "/job-detail", element: <JobDetail /> },
       { path: "/jobs", element: <Jobspage /> },
       { path: "/companypage", element: <CompanyPage /> },

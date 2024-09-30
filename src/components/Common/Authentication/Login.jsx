@@ -13,7 +13,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../../../assets/css/login.css";
 import { useEffect } from "react";
-import { getProfile } from "@/fetchData/User";
 import { useDispatch, useSelector } from "react-redux";
 import { login, setToken, setUser } from "../../../redux/features/authSlice";
 import axios from "../../../fetchData/axios";
@@ -120,31 +119,28 @@ const Login = () => {
     try {
       const result = await dispatch(login(credentials)).unwrap();
       console.log("Login successful, result:", result);
-      localStorage.setItem('email', email); 
-      
+      localStorage.setItem("email", email);
+      localStorage.setItem("user_id", result.user?.id);
+
       // Lưu số điện thoại vào localStorage
       navigate("/");
-      fetchUser();
+      fetchUser(result.user?.id);
     } catch (error) {
       console.error("Failed to login: ", error.message || error);
-    const errors = Validation({ email, password });
-    setErrorMessage(errors);
-    if (Object.keys(errors).length === 0) {
-      const credentials = {
-        email: email,
-        password: password,
-      };
+      const errors = Validation({ email, password });
+      setErrorMessage(errors);
+      if (Object.keys(errors).length === 0) {
+        const credentials = {
+          email: email,
+          password: password,
+        };
+      }
     }
-  }
-}
-  useEffect(() => {
-    const userId = new URLSearchParams(window.location.search).get("user_id");
-    console.log("User ID retrieved from URL:", userId);
-    if (userId) {
-      localStorage.setItem("user_id", userId); // Lưu userId vào localStorage
-      fetchUser(userId); // Gọi API để lấy thông tin chi tiết người dùng
-    }
-  }, [dispatch, navigate]);
+  };
+  // useEffect(() => {
+  //   const userId = localStorage.getItem("user_id");
+  //   console.log("User ID retrieved from URL:", userId);
+  // }, [dispatch, navigate]);
 
   const fetchUser = async (userId) => {
     try {
@@ -206,10 +202,7 @@ const Login = () => {
               className="flex flex-row justify-between items-center mb-2"
               htmlFor="email"
             >
-              <label className="text-gray-700 text-sm font-bold">
-                {" "}
-                Email
-              </label>
+              <label className="text-gray-700 text-sm font-bold"> Email</label>
               <div className="flex items-center text-[13px] gap-x-2">
                 <p>Need an account ?</p>
                 <Link

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDispatch, useSelector } from "react-redux";
-import { login, signUp } from "../../../redux/features/authSlice";
+import { login, signUp, setUser } from "../../../redux/features/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import firebase from "../../../utils/firebase";
@@ -70,121 +70,41 @@ const SignUp = () => {
       });
     };
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== retypePassword) {
       alert("Passwords do not match");
       return;
     }
-    dispatch(signUp(formData))
-      .unwrap()
-      .then(() => {
-        const credentials = {
-          email: formData.email,
-          password: formData.password,
-        };
-        // Điều hướng sau khi thành công, nếu cần
-        console.log("Sign Up Successful", authState);
-        console.log("image", formData.image);
-        // dispatch(login(credentials)).unwrap();
-        localStorage.setItem('email', formData.email); 
-        navigate("/");
-
-      })
-      .catch((error) => {
-        console.log("image", formData.image);
-        console.error("Sign Up Error:", error);
-      });
+    try {
+      const result = await dispatch(signUp(formData)).unwrap();
+      // Điều hướng sau khi thành công, nếu cần
+      console.log("Sign Up Successful", authState);
+      localStorage.setItem("email", formData.email);
+      localStorage.setItem("user_id", result.user?.id);
+      
+      navigate("/");
+    } catch (error) {
+      console.log("image", formData.image);
+      console.error("Sign Up Error:", error);
+    }
   };
-  // const formatPhoneNumber = (phoneNumber) => {
-  //   // Thêm mã quốc gia +84 và bỏ số 0 đầu tiên nếu cần
-  //   if (phoneNumber.startsWith("0")) {
-  //     return "+84" + phoneNumber.slice(1);
-  //   }
-  //   return phoneNumber;
-  // };
-  // const handleSubmit = async (e) => {
-  //   //  firebase.auth().settings.appVerificationDisabledForTesting = true;
-  //   e.preventDefault();
+  const fetchUser = async (userId) => {
+    try {
+      const response = await axios.get(`/getUserById?id=${userId}`);
 
-  //   try {
-  //     if (!window.recaptchaVerifier) {
-  //       // Kiểm tra và khởi tạo reCAPTCHA nếu chưa có hoặc nếu đã hết hạn
+      console.log("Response from /getUserById:", response);
 
-  //       window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-  //         "recaptcha-container",
-  //         {
-  //           'size': "invisible",
-  //           defaultCountry: "VN",
-  //           callback: (response) => {
-  //             console.log("reCAPTCHA solved, can proceed with OTP sending.",response);
+      if (response.data) {
+        dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
+        localStorage.setItem("user", JSON.stringify(response.data)); // Lưu thông tin người dùng vào localStorage
+        console.log("User data set in Redux and localStorage:", response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
 
-  //           },
-  //           "expired-callback": (response) => {
-  //             console.error("reCAPTCHA expired. Please solve the CAPTCHA again.", response);
-  //           },
-  //         }
-  //       );
-  //       // console.log(
-  //       //   "reCAPTCHA verifier already exists:",
-  //       //   window.recaptchaVerifier
-  //       // );
-  //       console.log(
-  //         "reCAPTCHA verifier initialized:",
-  //         window.recaptchaVerifier
-  //       );
-  //     }
-  //     await sendOtp(); // Nếu reCAPTCHA hợp lệ, tiến hành gửi OTP
-  //     // navigate("/otp");
-  //   } catch (error) {
-  //     console.error("Error during OTP sending:", error.message);
-  //   }
-  // };
-  // const sendOtp = async () => {
-  //   const appVerify = window.recaptchaVerifier;
-  //   const formattedPhoneNumber = formatPhoneNumber(formData.phoneNumber); // Format số điện thoại
-  //   console.log("sdt ne", formattedPhoneNumber);
-  //   firebase
-  //     .auth()
-  //     .signInWithPhoneNumber(formattedPhoneNumber, appVerify)
-  //     .then((confirmationResult) => {
-  //       console.log("sdt", formattedPhoneNumber);
-  //       // Store confirmation result globally
-  //       window.confirmationResult = confirmationResult; // Save OTP verification result globally
-  //       console.log("gui otp thanh cong");
-  //       localStorage.setItem("phoneNumber", formattedPhoneNumber);
-  //       navigate("/otp", { state: formData });
-  //     })
-  //     .catch((error) => {
-  //       if (error.code === "auth/invalid-app-credential") {
-  //         console.error(
-  //           "reCAPTCHA token expired or invalid. Please reload reCAPTCHA."
-  //         );
-  //         if (window.recaptchaVerifier) {
-  //           window.recaptchaVerifier.clear(); // Clear the old reCAPTCHA verifier
-  //           window.recaptchaVerifier = null;  // Reset to null
-  //         }
-  //       }
-  //       console.error("Failed to send OTP:", error);
-  //     });
-  // };
-  // useEffect(() => {
-  //   if (!window.recaptchaVerifier) {
-  //     const verifier = new firebase.auth.RecaptchaVerifier(
-  //       "recaptcha-container",
-  //       {
-  //         size: "invisible",
-  //         callback: (response) => {
-  //           console.log("reCAPTCHA solved, can proceed with OTP sending.");
-  //         },
-  //         "expired-callback": () => {
-  //           console.error("reCAPTCHA expired. Please solve the CAPTCHA again.");
-  //         },
-  //       }
-  //     );
-  //     setRecaptchaVerifier(verifier);
-  //   }
-  // }, []);
   return (
     <div className="flex-1 px-12 py-14 mx-auto bg-secondary flex flex-col items-center justify-center border border-gray-300">
       {/* Recaptcha container */}
