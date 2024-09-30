@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from "../../../fetchData/axios";
 import Hero from "@/components/User/Company/Hero";
-import CompanyList from "@/components/User/Company/CompanyList";
+import PaginationComponent from "@/components/User/Company/PaginationComponent";
+import CompanyCard from '@/components/User/Company/CompanyCard';
+import { useSearchParams } from 'react-router-dom'; // Import useSearchParams to manage URL state
 
 const URL = '/getAllCompanies';
 
@@ -12,16 +14,22 @@ function CompanyPage() {
   const [filter, setFilter] = useState({ company: '', typeCompany: 'Categories' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const numberRcdisinPage = 13;
+  const [searchParams, setSearchParams] = useSearchParams(); // Hook for URL params
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1); // Get current page from URL
+  const companiesPerPage = 6;
+  const totalCompanies = filteredCompanies.length;
+  const indexOfLastCompany = currentPage * companiesPerPage;
+  const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
+  const currentCompanies = filteredCompanies.slice(indexOfFirstCompany, indexOfLastCompany);
+  const totalPages = Math.ceil(totalCompanies / companiesPerPage);
 
   const fetchCompanies = async (searchKey = '', typeCompany = 'Categories') => {
     try {
       setLoading(true);
       const response = await axios.get(URL, {
         params: {
-          limit: numberRcdisinPage,
-          offset: (currentPage - 1) * numberRcdisinPage,
+          limit: 1000,
+          offset: 0,
           searchKey
         }
       });
@@ -51,12 +59,15 @@ function CompanyPage() {
 
   useEffect(() => {
     fetchCompanies(filter.company, filter.typeCompany);
-  }, [currentPage, filter.company, filter.typeCompany]);
+  }, [filter.company, filter.typeCompany]);
 
-  const totalPages = Math.ceil(filteredCompanies.length / numberRcdisinPage);
-  const indexOfLastCompany = currentPage * numberRcdisinPage;
-  const indexOfFirstCompany = indexOfLastCompany - numberRcdisinPage;
-  const currentCompanies = filteredCompanies.slice(indexOfFirstCompany, indexOfLastCompany);
+  useEffect(() => {
+    setSearchParams({ page: currentPage });
+  }, [currentPage, setSearchParams]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="p-2 sm:p-4 lg:p-8"> {/* Adjusted padding for smaller screens */}
@@ -70,7 +81,7 @@ function CompanyPage() {
             }}
             setFilteredCompanies={setFilteredCompanies}
           />
-          <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-2 sm:mt-4"> {/* Adjusted padding for smaller screens */}
+          <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-2 sm:mt-4">
             <select
               id="typeFilter"
               className="p-1 sm:p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-500 transition duration-200"
@@ -98,8 +109,27 @@ function CompanyPage() {
         ) : filteredCompanies.length === 0 ? (
           <p className="text-center text-gray-600">No companies match your search criteria.</p>
         ) : (
-          <CompanyList filteredCompanies={currentCompanies} />
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {currentCompanies.map(company => (
+                <div
+                  key={company.id}
+                  className="w-full bg-white p-4 rounded-lg shadow-md flex items-center justify-center border border-transparent hover:border-primary transition-all"
+                >
+                  <CompanyCard company={company} />
+                </div>
+              ))}
+            </div>
+          </>
         )}
+      </div>
+      {/* Pagination Component */}
+      <div className="flex justify-center mt-6">
+        <PaginationComponent
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );
