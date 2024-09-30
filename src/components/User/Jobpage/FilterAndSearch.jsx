@@ -210,64 +210,65 @@ function FilterAndSearch() {
           </div>
 
           <div className="space-y-4">
-  {jobs.map((job) => (
-    <div
-      key={job.id}
-      className="bg-white shadow-md rounded-lg p-5 pr-3 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"
-    >
-      <div className="flex-shrink-0">
-        <img
-          src={job.logo}
-          alt="Job"
-          className="w-16 h-16 mr-3 object-cover rounded-lg"
-        />
-      </div>
-      <div className="flex-1">
-        <p className="text-black font-medium text-sm mb-1">{job.company}</p>
-        <div className="flex items-center">
-          <h4 className="text-lg font-semibold">{job.title}</h4>
-          <span className="bg-purple-100 text-purple-700 px-2 py-1 text-xs font-semibold rounded-full ml-4">
-            {job.type}
-          </span>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center text-gray-700 text-sm mt-2 space-y-2 sm:space-y-0 sm:space-x-4">
-          <div className="flex items-center space-x-1">
-            <WorkOutlineOutlinedIcon
-              className="text-gray-600"
-              fontSize="small"
-            />
-            <p>{job.level}</p>
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                className="bg-white shadow-md rounded-lg p-5 pr-3 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"
+              >
+                <div className="flex-shrink-0">
+                  <img
+                    src={job.logo}
+                    alt="Job"
+                    className="w-16 h-16 mr-3 object-cover rounded-lg"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-black font-medium text-sm mb-1">
+                    {job.company}
+                  </p>
+                  <div className="flex items-center">
+                    <h4 className="text-lg font-semibold">{job.title}</h4>
+                    <span className="bg-purple-100 text-purple-700 px-2 py-1 text-xs font-semibold rounded-full ml-4">
+                      {job.type}
+                    </span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center text-gray-700 text-sm mt-2 space-y-2 sm:space-y-0 sm:space-x-4">
+                    <div className="flex items-center space-x-1">
+                      <WorkOutlineOutlinedIcon
+                        className="text-gray-600"
+                        fontSize="small"
+                      />
+                      <p>{job.level}</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <FmdGoodOutlinedIcon
+                        className="text-gray-600"
+                        fontSize="small"
+                      />
+                      <p>{job.location}</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <AttachMoneyIcon
+                        className="text-gray-600"
+                        fontSize="small"
+                      />
+                      <p>{job.salary}</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <AccessTimeOutlinedIcon
+                        className="text-gray-600"
+                        fontSize="small"
+                      />
+                      <p>{job.postedDate}</p>
+                    </div>
+                  </div>
+                  <div className="text-gray-700 text-sm mt-2">
+                    <p>{job.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="flex items-center space-x-1">
-            <FmdGoodOutlinedIcon
-              className="text-gray-600"
-              fontSize="small"
-            />
-            <p>{job.location}</p>
-          </div>
-          <div className="flex items-center space-x-1">
-            <AttachMoneyIcon
-              className="text-gray-600"
-              fontSize="small"
-            />
-            <p>{job.salary}</p>
-          </div>
-          <div className="flex items-center space-x-1">
-            <AccessTimeOutlinedIcon
-              className="text-gray-600"
-              fontSize="small"
-            />
-            <p>{job.postedDate}</p>
-          </div>
-        </div>
-        <div className="text-gray-700 text-sm mt-2">
-          <p>{job.description}</p>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
-
 
           <div className="flex justify-center mt-8 mb-5">
             <nav className="flex items-center space-x-2">
