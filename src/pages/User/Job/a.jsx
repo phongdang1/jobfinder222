@@ -48,7 +48,7 @@ function UserProfilePage() {
             dob: response.data.data.dob || "",
             image: response.data.data.image || "",
           });
-          setOriginalUserData(response.data.data);
+          setOriginalUserData(response.data.data); // Save original data
           if (response.data.data.dob) {
             setDate(new Date(response.data.data.dob));
           }
@@ -70,17 +70,19 @@ function UserProfilePage() {
     e.preventDefault();
     const validationErrors = Validation(inputValue);
     setErrorMessage(validationErrors);
-    
+
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post("http://localhost:5000/setDataUserDetail", {
+        const response = await axios.post("/setDataUserDetail", {
           userId: userId,
-          firstName: inputValue.firstName,
-          lastName: inputValue.lastName,
-          address: inputValue.address,
-          phoneNumber: inputValue.phoneNumber,
           data: {
-            genderCode: inputValue.gender,
+            firstName: inputValue.firstName,
+            lastName: inputValue.lastName,
+            address: inputValue.address,
+            phoneNumber: inputValue.phoneNumber,
+            data: {
+              genderCode: inputValue.gender,
+            }
           }
         });
 
@@ -299,7 +301,70 @@ function UserProfilePage() {
                 />
                 {errorMessage.email && isEditing && <p className="text-red-500">{errorMessage.email}</p>}
               </div>
-              <div className="flex justify-end gap-4 mt-8">
+              <div className="space-y-2">
+                <div className="font-medium">Category Job Code:</div>
+                <div className="relative">
+                  <select
+                    name="categoryJobCode"
+                    className={`block w-full rounded-sm border py-2 px-4 appearance-none bg-white focus:outline-none ${errorMessage.categoryJobCode && isEditing ? "border-red-500" : "focus:border-primary"
+                      }`}
+                    onChange={handleInputField}
+                    value={inputValue.categoryJobCode}
+                    disabled={!isEditing}
+                  >
+                    <option value="">Select Job Code</option>
+                    <option value="code1">Job Code 1</option>
+                    <option value="code2">Job Code 2</option>
+                    <option value="code3">Job Code 3</option>
+                    {/* Add more options as needed */}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+                {errorMessage.categoryJobCode && isEditing && (
+                  <p className="text-red-500">{errorMessage.categoryJobCode}</p>
+                )}
+              </div>
+
+
+
+            </div>
+            <div className="gap-6 px-6">
+              <div className="space-y-2">
+                <div className="flex justify-between pt-5 pb-1">
+                  <p className="font-medium">Skills:</p>
+                  {isEditing && (
+                    <Button onClick={addSkill} className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary">
+                      Add Skill
+                    </Button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> {/* Use grid layout with 3 columns */}
+                  {inputValue.skills.map((skill, index) => (
+                    <div key={skill.skillId} className="flex justify-between items-center space-x-2"> {/* Add spacing between input and button */}
+                      <Input
+                        placeholder="Skill"
+                        value={skill.skillData.name}
+                        onChange={(e) => handleSkillChange(index, e.target.value)}
+                        disabled={!isEditing}
+                        className="flex-1 rounded-sm"
+                      />
+                      {isEditing && (
+                        <Button onClick={() => removeSkill(index)} className="bg-red-500 text-white">
+                          <DeleteOutlineOutlinedIcon />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 px-6 mt-4">
               {isEditing && (
                 <div className="flex gap-4">
                   <Button
@@ -315,6 +380,9 @@ function UserProfilePage() {
                   <Button
                     className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1"
                     variant="outline"
+                    onClick={() => {
+                      setIsEditing(!isEditing);
+                    }}
                     type="submit"
                   >
                     <SaveOutlinedIcon />
@@ -322,7 +390,6 @@ function UserProfilePage() {
                   </Button>
                 </div>
               )}
-            </div>
             </div>
           </form>
         )}
