@@ -13,12 +13,12 @@ function HomePage() {
     });
   }, []);
   return (
-    <>
+    <div className="flex flex-col justify-center">
       <Introduction />
-      <BestJob />
       <HomeCategory />
+      <BestJob />
       <Pro />
-    </>
+    </div>
   );
 }
 
