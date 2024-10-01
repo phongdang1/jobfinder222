@@ -16,23 +16,46 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
 import { useEffect, useState } from "react";
 import axios from "../../../fetchData/axios";
+import logoText from "../../../assets/images/JobFinder_logoText.png"
+import logo from "../../../assets/images/JobFinder_logo.png"
 function Header() {
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
+  const userId = localStorage.getItem("user_id");
   const dispatch = useDispatch();
   console.log("user", user);
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("user"); // Xóa user khỏi localStorage khi logout
-    localStorage.removeItem("userId"); // Xóa userId khỏi localStorage khi logout
+    localStorage.removeItem("user");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("email");
   };
 
+  const fetchUser = async (userId) => {
+    try {
+      const response = await axios.get(`/getUserById?id=${userId}`);
+
+      console.log("Response from /getUserById:", response);
+
+      if (response.data) {
+        dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
+        localStorage.setItem("user", JSON.stringify(response.data)); // Lưu thông tin người dùng vào localStorage
+        console.log("User data set in Redux and localStorage:", response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUser(userId);
+  }, []);
   return (
-    <div className="flex justify-between sticky top-0 px-6 md:px-16 lg:px-36 py-4 md:py-6 bg-secondary items-center font-poppins border-b-2 shadow-md z-50">
+    <div className="flex justify-between sticky top-0 px-6 md:px-16 lg:pr-36 lg:pl-20 py-4 md:py-6 bg-secondary items-center font-poppins border-b-2 shadow-md z-50">
       {/* Logo */}
       <div className="flex items-center">
         <Link to="/" className="text-lg font-semibold">
-          Logo
+        <img className="w-full h-16 hidden lg:block" src={logoText} alt="JobFinder Logo"/>
+        <img className="w-full h-16 lg:hidden block" src={logo} alt="JobFinder Logo"/>
         </Link>
       </div>
 
@@ -44,6 +67,15 @@ function Header() {
               <MenuIcon className="text-primary" />
             </SheetTrigger>
             <SheetContent className="pt-16 space-y-4">
+              {/* login, register */}
+              {(user != null || user != undefined) && (
+                <SheetHeader>
+                  <p className="text-center text-lg font-medium">
+                    Hello, {user?.data?.firstName} !
+                  </p>
+                </SheetHeader>
+              )}
+              {/* những component còn lại */}
               <SheetHeader>
                 <SheetClose asChild>
                   <Link
@@ -74,7 +106,9 @@ function Header() {
                   </Link>
                 </SheetClose>
               </SheetHeader>
-              {(user === null || user === undefined) && (
+
+              {/* nút logout */}
+              {user === null || user === undefined ? (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
@@ -97,6 +131,12 @@ function Header() {
                     </SheetClose>
                   </SheetHeader>
                 </>
+              ) : (
+                <SheetHeader>
+                  <button  onClick={handleLogout} className="text-center text-red-600 hover:text-red-700 text-lg font-medium">
+                    Logout
+                  </button>
+                </SheetHeader>
               )}
             </SheetContent>
           </Sheet>
@@ -148,7 +188,7 @@ function Header() {
           ) : (
             <li className="flex items-center space-x-4">
               <Avatar alt={user?.phoneNumber} src={user?.image} />
-              <span className="text-third">{user?.firstName}</span>
+              <span className="text-third">{user?.data?.firstName}</span>
               <button
                 onClick={handleLogout}
                 className="text-red-500 hover:text-red-700"
