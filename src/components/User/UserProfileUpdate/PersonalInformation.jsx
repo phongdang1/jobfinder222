@@ -159,8 +159,8 @@ function PersonalInformation() {
                           captionLayout="dropdown-buttons"
                           selected={date}
                           onSelect={handleDateChange}
-                          fromYear={1960}
-                          toYear={2030}
+                          fromYear={1964}
+                          toYear={2006}
                           value={formData.dob}
                         />
                       </PopoverContent>
