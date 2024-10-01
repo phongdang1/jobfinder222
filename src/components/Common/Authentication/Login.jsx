@@ -220,7 +220,9 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`flex items-center border ${
-                  errorMessage.email ? "border-red-500" : "focus:border-primary"
+                  errorMessage.phoneNumber
+                    ? "border-red-500"
+                    : "focus:border-primary"
                 } py-7 px-10`}
               />
             </div>
