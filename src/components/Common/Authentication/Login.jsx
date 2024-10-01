@@ -170,8 +170,6 @@ const Login = () => {
 
   const handleValidation = (e) => {
     setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
-    setEmail({ email, [e.target.name]: e.target.value });
-    setPassword({ password, [e.target.name]: e.target.value });
   };
 
   return (
@@ -222,14 +220,12 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`flex items-center border ${
-                  errorMessage.phoneNumber
-                    ? "border-red-500"
-                    : "focus:border-primary"
+                  errorMessage.email ? "border-red-500" : "focus:border-primary"
                 } py-7 px-10`}
               />
             </div>
-            {errorMessage.phoneNumber && (
-              <p className="text-red-500 mt-2">{errorMessage.phoneNumber}</p>
+            {errorMessage.email && (
+              <p className="text-red-500 mt-2">{errorMessage.email}</p>
             )}
           </div>
           <div className="mb-6">
@@ -265,7 +261,10 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  handleValidation(e);
+                }}
                 className={`${
                   errorMessage.firstName ? "border-red-500" : null
                 } flex items-center border focus:border-primary py-7 px-10`}

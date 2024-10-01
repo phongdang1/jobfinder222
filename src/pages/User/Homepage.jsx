@@ -5,7 +5,6 @@ import Pro from "@/components/User/Homepage/Pro";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import { useEffect } from "react";
-import FeaturedCompanies from "./../../components/User/Homepage/FeaturedCompanies";
 
 function HomePage() {
   useEffect(() => {
@@ -16,8 +15,8 @@ function HomePage() {
   return (
     <div className="flex flex-col gap-y-32">
       <Introduction />
-      <BestJob />
       <HomeCategory />
+      <BestJob />
       <Pro />
     </div>
   );
