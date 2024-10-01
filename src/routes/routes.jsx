@@ -19,6 +19,11 @@ import UserProfileUpdateLayout from "@/components/layout/userProfileUpdateLayout
 import Skills from "@/components/User/UserProfileUpdate/Skills";
 import PersonalInformation from "@/components/User/UserProfileUpdate/PersonalInformation";
 
+import UserProfileLayout from "@/components/layout/UserProfileLayout";
+import PersonalInformation2 from "@/components/User/UserProfile/PersonalInformation";
+import ChangePassword from "@/components/User/UserProfile/ChangePassword";
+import AdvancedSetting from "@/components/User/UserProfile/AdvancedSetting";
+
 const routes = [
   // Routes using DefaultLayout
   {
@@ -55,6 +60,15 @@ const routes = [
       { path: "experience", element: <UserProfileUpdate /> },
       { path: "information", element: <PersonalInformation /> },
       { path: "skills", element: <Skills /> },
+    ],
+  },
+  {
+    path: "/userProfile",
+    element: <UserProfileLayout />,
+    children: [
+      { path: "personalInfo", element: <PersonalInformation2 /> },
+      { path: "changePassword", element: <ChangePassword /> },
+      { path: "advancedSetting", element: <AdvancedSetting /> },
     ],
   },
 ];

@@ -5,7 +5,7 @@ const handleSetDataUserDetail = (userData) => {
 };
 
 const getUsersById = (id) => {
-  return axios.post(`/getUserById?id${id}`);
+  return axios.get(`/getUserById?id=${id}`);
 };
 
 export { handleSetDataUserDetail, getUsersById };

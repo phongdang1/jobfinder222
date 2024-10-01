@@ -13,7 +13,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../../../assets/css/login.css";
 import { useEffect } from "react";
-import { getProfile } from "@/fetchData/User";
 import { useDispatch, useSelector } from "react-redux";
 import { login, setToken, setUser } from "../../../redux/features/authSlice";
 import axios from "../../../fetchData/axios";
