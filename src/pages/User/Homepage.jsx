@@ -13,7 +13,7 @@ function HomePage() {
     });
   }, []);
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col gap-y-32">
       <Introduction />
       <HomeCategory />
       <BestJob />

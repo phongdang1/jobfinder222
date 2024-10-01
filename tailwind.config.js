@@ -25,6 +25,7 @@ module.exports = {
       primary: ["Forum", "sans-serif"],
       secondary: ["Poppins", "sans-serif"],
       title: ["Righteous", "sans-serif"],
+      roboto: ["Roboto Slab", "serif"],
     },
     extend: {
       colors: {
