@@ -70,9 +70,12 @@ function Header() {
               {/* login, register */}
               {(user != null || user != undefined) && (
                 <SheetHeader>
-                  <p className="text-center text-lg font-medium">
+                  <Link to="/profile">
+                   <p className="text-center text-lg font-medium">
                     Hello, {user?.data?.firstName} !
                   </p>
+                  </Link>
+                 
                 </SheetHeader>
               )}
               {/* những component còn lại */}
@@ -187,8 +190,11 @@ function Header() {
             </>
           ) : (
             <li className="flex items-center space-x-4">
+              <Link className="flex items-center space-x-2" to="/profile">
               <Avatar alt={user?.phoneNumber} src={user?.image} />
               <span className="text-third">{user?.data?.firstName}</span>
+              </Link>
+              
               <button
                 onClick={handleLogout}
                 className="text-red-500 hover:text-red-700"
