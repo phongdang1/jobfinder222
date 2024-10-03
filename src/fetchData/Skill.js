@@ -20,4 +20,6 @@ const getAllSkillByCategory = (categoryJobCode) => {
   return axios.get(`getAllSkillByCategory?categoryJobCode=${categoryJobCode}`);
 };
 
+123
+
 export {getAllSkillWithLimit, handleCreateNewSkill, handleUpdateSkill, handleDeleteSkill, getAllSkillByCategory};
