@@ -29,7 +29,6 @@
 //         setCompanies(response.data.data);
 //         setFilteredCompanies(filterCompanies(response.data.data, typeCompany));
 
-      
 //         const uniqueTypes = [...new Set(response.data.data.map(company => company.typeCompany))];
 //         setTypes(uniqueTypes.map(type => ({ name: type })));
 //       } else {
@@ -44,7 +43,7 @@
 //   };
 
 //   const filterCompanies = (companies, typeCompany) => {
-//     return companies.filter(company => 
+//     return companies.filter(company =>
 //       typeCompany === 'All' || company.typeCompany === typeCompany
 //     );
 //   };
@@ -52,7 +51,6 @@
 //   useEffect(() => {
 //     fetchCompanies(filter.company, filter.typeCompany);
 //   }, [currentPage, filter.company, filter.typeCompany]);
-
 
 //   const totalPages = Math.ceil(filteredCompanies.length / numberRcdisinPage);
 //   const indexOfLastCompany = currentPage * numberRcdisinPage;
@@ -67,7 +65,7 @@
 //             filter={filter}
 //             handleSearch={(searchTerm) => {
 //               setFilter({ ...filter, company: searchTerm });
-//               setCurrentPage(1); 
+//               setCurrentPage(1);
 //             }}
 //             setFilteredCompanies={setFilteredCompanies}
 //           />
@@ -108,40 +106,48 @@
 
 // export default CompanyPage;
 
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import axios from "../../../fetchData/axios";
 import Hero from "@/components/User/Company/Hero";
 import CompanyList from "@/components/User/Company/CompanyList";
 
-const URL = '/getAllCompanies';
+const URL = "/getAllCompanies";
 
 function CompanyPage() {
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [types, setTypes] = useState([]);
-  const [filter, setFilter] = useState({ company: '', typeCompany: 'Categories' });
+  const [filter, setFilter] = useState({
+    company: "",
+    typeCompany: "Categories",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const numberRcdisinPage = 13;
 
-  const fetchCompanies = async (searchKey = '', typeCompany = 'Categories') => {
+  const fetchCompanies = async (searchKey = "", typeCompany = "Categories") => {
     try {
       setLoading(true);
       const response = await axios.get(URL, {
         params: {
           limit: numberRcdisinPage,
           offset: (currentPage - 1) * numberRcdisinPage,
-          searchKey
-        }
+          searchKey,
+        },
       });
       if (response.data.errCode === 0) {
         setCompanies(response.data.data);
         setFilteredCompanies(filterCompanies(response.data.data, typeCompany));
 
-        const uniqueTypes = [...new Set(response.data.data.map(company => company.typeCompany.toUpperCase()))];
-        setTypes(uniqueTypes.map(type => ({ name: type })));
+        const uniqueTypes = [
+          ...new Set(
+            response.data.data.map((company) =>
+              company.typeCompany.toUpperCase()
+            )
+          ),
+        ];
+        setTypes(uniqueTypes.map((type) => ({ name: type })));
       } else {
         setError(response.data.errMessage);
       }
@@ -155,8 +161,10 @@ function CompanyPage() {
 
   const filterCompanies = (companies, typeCompany) => {
     const upperCaseType = typeCompany.toUpperCase();
-    return companies.filter(company => 
-      upperCaseType === 'CATEGORIES' || company.typeCompany.toUpperCase() === upperCaseType
+    return companies.filter(
+      (company) =>
+        upperCaseType === "CATEGORIES" ||
+        company.typeCompany.toUpperCase() === upperCaseType
     );
   };
 
@@ -167,21 +175,28 @@ function CompanyPage() {
   const totalPages = Math.ceil(filteredCompanies.length / numberRcdisinPage);
   const indexOfLastCompany = currentPage * numberRcdisinPage;
   const indexOfFirstCompany = indexOfLastCompany - numberRcdisinPage;
-  const currentCompanies = filteredCompanies.slice(indexOfFirstCompany, indexOfLastCompany);
+  const currentCompanies = filteredCompanies.slice(
+    indexOfFirstCompany,
+    indexOfLastCompany
+  );
 
   return (
-    <div className="p-2 sm:p-4 lg:p-8"> {/* Adjusted padding for smaller screens */}
+    <div className="p-2 sm:p-4 lg:p-8">
+      {" "}
+      {/* Adjusted padding for smaller screens */}
       <div className="flex items-center justify-center bg-opacity-80 mx-2 sm:mx-4 my-4 sm:my-6 rounded-2xl">
         <div className="flex flex-col w-full max-w-7xl">
           <Hero
             filter={filter}
             handleSearch={(searchTerm) => {
               setFilter({ ...filter, company: searchTerm });
-              setCurrentPage(1); 
+              setCurrentPage(1);
             }}
             setFilteredCompanies={setFilteredCompanies}
           />
-          <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-2 sm:mt-4"> {/* Adjusted padding for smaller screens */}
+          <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-2 sm:mt-4">
+            {" "}
+            {/* Adjusted padding for smaller screens */}
             <select
               id="typeFilter"
               className="p-1 sm:p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-500 transition duration-200"
@@ -207,7 +222,9 @@ function CompanyPage() {
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : filteredCompanies.length === 0 ? (
-          <p className="text-center text-gray-600">No companies match your search criteria.</p>
+          <p className="text-center text-gray-600">
+            No companies match your search criteria.
+          </p>
         ) : (
           <CompanyList filteredCompanies={currentCompanies} />
         )}
