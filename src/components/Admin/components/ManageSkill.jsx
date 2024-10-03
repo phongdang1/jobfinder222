@@ -24,7 +24,7 @@ import {
   handleCreateNewSkill,
   handleUpdateSkill,
   handleDeleteSkill,
-} from "../../../fetchData/skill";
+} from "../../../fetchData/Skill";
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
