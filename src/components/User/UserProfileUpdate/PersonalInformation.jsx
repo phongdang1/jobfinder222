@@ -4,6 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+
 import {
   Popover,
   PopoverContent,
@@ -158,8 +159,8 @@ function PersonalInformation() {
                           captionLayout="dropdown-buttons"
                           selected={date}
                           onSelect={handleDateChange}
-                          fromYear={1960}
-                          toYear={2030}
+                          fromYear={1964}
+                          toYear={2006}
                           value={formData.dob}
                         />
                       </PopoverContent>

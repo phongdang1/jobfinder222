@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 /*eslint-env node*/
+const { nextui } = require("@nextui-org/react");
+
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -7,6 +9,8 @@ module.exports = {
     "./components/**/*.{js,jsx}",
     "./app/**/*.{js,jsx}",
     "./src/**/*.{js,jsx}",
+    // Include NextUI components
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   prefix: "",
   theme: {
@@ -21,6 +25,7 @@ module.exports = {
       primary: ["Forum", "sans-serif"],
       secondary: ["Poppins", "sans-serif"],
       title: ["Righteous", "sans-serif"],
+      roboto: ["Roboto Slab", "serif"],
     },
     extend: {
       colors: {
@@ -106,5 +111,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    nextui(), // Add the NextUI plugin here
+  ],
 };

@@ -13,7 +13,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../../../assets/css/login.css";
 import { useEffect } from "react";
-import { getProfile } from "@/fetchData/User";
 import { useDispatch, useSelector } from "react-redux";
 import { login, setToken, setUser } from "../../../redux/features/authSlice";
 import axios from "../../../fetchData/axios";
@@ -113,37 +112,35 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const credentials = {
+      email: email,
+      password: password,
+    };
+    try {
+      const result = await dispatch(login(credentials)).unwrap();
+      console.log("Login successful, result:", result);
+      localStorage.setItem("email", email);
+      localStorage.setItem("user_id", result.user?.id);
 
-    const errors = Validation({ email, password });
-    setErrorMessage(errors);
-    if (Object.keys(errors).length === 0) {
-      const credentials = {
-        email: email,
-        password: password,
-      };
-      try {
-        const result = await dispatch(login(credentials)).unwrap();
-        console.log("Login successful, result:", result);
-        localStorage.setItem("email", email);
-
-        // Lưu số điện thoại vào localStorage
-        navigate("/");
-        fetchUser();
-      } catch (error) {
-        console.error("Failed to login: ", error.message || error);
+      // Lưu số điện thoại vào localStorage
+      navigate("/");
+      fetchUser(result.user?.id);
+    } catch (error) {
+      console.error("Failed to login: ", error.message || error);
+      const errors = Validation({ email, password });
+      setErrorMessage(errors);
+      if (Object.keys(errors).length === 0) {
+        const credentials = {
+          email: email,
+          password: password,
+        };
       }
-    } else {
-      console.log("Con loi");
     }
   };
-  useEffect(() => {
-    const userId = new URLSearchParams(window.location.search).get("user_id");
-    console.log("User ID retrieved from URL:", userId);
-    if (userId) {
-      localStorage.setItem("user_id", userId); // Lưu userId vào localStorage
-      fetchUser(userId); // Gọi API để lấy thông tin chi tiết người dùng
-    }
-  }, [dispatch, navigate]);
+  // useEffect(() => {
+  //   const userId = localStorage.getItem("user_id");
+  //   console.log("User ID retrieved from URL:", userId);
+  // }, [dispatch, navigate]);
 
   const fetchUser = async (userId) => {
     try {
@@ -223,7 +220,9 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`flex items-center border ${
-                  errorMessage.email ? "border-red-500" : "focus:border-primary"
+                  errorMessage.phoneNumber
+                    ? "border-red-500"
+                    : "focus:border-primary"
                 } py-7 px-10`}
               />
             </div>

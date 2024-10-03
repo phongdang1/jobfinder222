@@ -14,12 +14,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { CloseOutlined } from "@mui/icons-material";
 import Paginition from "./Common/Paginition";
-import {
-  getAllCodeByType,
-  getAllSkillByCategory,
-  getUsersById,
-  handleSetDataUserDetail,
-} from "@/fetchData/User";
+import { getUsersById, handleSetDataUserDetail } from "@/fetchData/User";
+import { getAllCodeByType } from "@/fetchData/AllCode";
+import { getAllSkillByCategory } from "@/fetchData/Skill";
 import { Link, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { SaveIcon } from "lucide-react";
