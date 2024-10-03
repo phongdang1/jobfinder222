@@ -56,8 +56,6 @@
 
 // export default PaginationComponent;
 
-
-
 import React from "react";
 import {
   Pagination,

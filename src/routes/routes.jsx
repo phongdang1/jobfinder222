@@ -25,6 +25,12 @@ import PersonalInformation2 from "@/components/User/UserProfile/PersonalInformat
 import ChangePassword from "@/components/User/UserProfile/ChangePassword";
 import AdvancedSetting from "@/components/User/UserProfile/AdvancedSetting";
 
+import AdminLayout from "@/components/layout/adminLayout";
+import ManageTypeJob from "@/components/Admin/components/ManageTypeJob";
+import Dashboard from "@/components/Admin/components/Dashboard";
+import ManageSkill from "@/components/Admin/components/ManageSkill";
+import ManageLevel from "@/components/Admin/components/ManageLevel";
+import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
 const routes = [
   // Routes using DefaultLayout
   {
@@ -38,7 +44,7 @@ const routes = [
       { path: "/vip", element: <VipFeature /> },
       { path: "/job-detail/:id", element: <JobDetail /> },
       { path: "/jobs", element: <JobPage /> },
-      { path: "/jobs/tab=:page", element: <JobPage /> }, // Thêm route cho phân trang
+
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
       { path: "/profile", element: <UserProfilePage /> },
@@ -71,6 +77,18 @@ const routes = [
       { path: "personalInfo", element: <PersonalInformation2 /> },
       { path: "changePassword", element: <ChangePassword /> },
       { path: "advancedSetting", element: <AdvancedSetting /> },
+    ],
+  },
+  // Routes using AdminLayout
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "jobType", element: <ManageTypeJob /> },
+      { path: "skill", element: <ManageSkill /> },
+      { path: "level", element: <ManageLevel /> },
+      { path: "workForm", element: <ManageWorkForm /> },
     ],
   },
 ];
