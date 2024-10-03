@@ -17,6 +17,10 @@ const VipFeature = () => {
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
+  useEffect(() => {
+    // Cuộn lên đầu trang khi component được render
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="container mx-auto my-20">
@@ -24,7 +28,7 @@ const VipFeature = () => {
       <div className="w-full flex text-white justify-around" data-aos="fade-up">
         {/* text */}
         <div className="w-1/2">
-          <h1 className="text-4xl text-third font-bold font-roboto ">
+          <h1 className="text-4xl text-third font-bold  ">
             Elevate Your Career with VIP Access
           </h1>
           <p className="mt-4 text-lg text-gray-600 ">
@@ -47,10 +51,10 @@ const VipFeature = () => {
 
       {/* VIP Package Cards Section */}
       <div className="my-52">
-        <h1 className="my-10 text-4xl font-semibold font-roboto text-center">
-          Our <span className="text-primary font-roboto">Features</span>
+        <h1 className="my-10 text-4xl font-semibold  text-center">
+          Our <span className="text-primary ">Features</span>
         </h1>
-        <p>Enjoy a seamless job search experience with these features</p>
+        <p className="text-xl font-medium text-center my-10">Enjoy a seamless job search experience with these features</p>
         <div
           className="grid grid-cols-1 md:grid-cols-4 gap-6"
           data-aos="fade-up"
