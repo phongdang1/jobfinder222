@@ -55,13 +55,13 @@ function Introduction() {
         {/* Left */}
         <img
           src={facebook}
-          className="absolute w-20 h-20 left-24 -bottom-5 hidden md:block"
+          className="absolute w-20 h-20 md:left-24 left-10  md:-bottom-5 sm:-bottom-14 hidden sm:block"
           data-aos="fade-up"
           data-aos-delay="200"
         />
         <img
           src={star}
-          className="absolute w-20 h-20 left-56 -top-28 xl:-top-10 opacity-75 hidden md:block"
+          className="absolute w-20 h-20 left-56 -top-28 xl:-top-10 opacity-75 hidden sm:block"
           data-aos="fade-up"
           data-aos-delay="400"
         />
@@ -73,7 +73,7 @@ function Introduction() {
         />
         <img
           src={instagram}
-          className="absolute w-20 h-20 xl:left-72 right-14 -bottom-1 hidden md:block"
+          className="absolute w-20 h-20 xl:left-80 right-10 md:-bottom-3 sm:-bottom-14 hidden sm:block"
           data-aos="fade-up"
           data-aos-delay="800"
         />

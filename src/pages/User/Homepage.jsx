@@ -10,16 +10,20 @@ import FeaturedCompanies from './../../components/User/Homepage/FeaturedCompanie
 function HomePage() {
   useEffect(() => {
     AOS.init({
-      duration: 1000,
+      duration: 3000,   // Thời gian thực hiện hiệu ứng
+      once: true,      // Để hiệu ứng chạy lại mỗi khi cuộn đến
+     // Kích hoạt hiệu ứng khi cuộn đến gần phần tử
     });
+    AOS.refresh();      // Làm mới lại AOS để chắc chắn nó hoạt động đúng
   }, []);
+
   return (
-    <div className="flex flex-col gap-y-32">
-      <Introduction />
-      <HomeCategory />
-      <BestJob />
-      <FeaturedCompanies/>
-      <Pro />
+    <div className="flex flex-col gap-y-40">
+      <Introduction data-aos="fade-up" />
+      <HomeCategory data-aos="fade-right" />
+      <BestJob data-aos="fade-left" />
+      <FeaturedCompanies data-aos="fade-down" />
+      <Pro data-aos="fade-up" />
     </div>
   );
 }
