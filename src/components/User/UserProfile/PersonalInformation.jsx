@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/input-otp";
 function PersonalInformation() {
   const userId = localStorage.getItem("user_id");
-  // const userId = 1;
   const [date, setDate] = useState();
   const [inputValue, setInputValue] = useState({
     firstName: "",

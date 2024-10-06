@@ -51,6 +51,26 @@ function Validation(inputValue) {
     }
   }
 
+  if (inputValue.province !== undefined && inputValue.province === "") {
+    error.province = "Province is required!";
+  }
+
+  if (inputValue.jobType !== undefined && inputValue.jobType === "") {
+    error.jobType = "Job Type is required!";
+  }
+
+  if (inputValue.jobLevel !== undefined && inputValue.jobLevel === "") {
+    error.jobLevel = "Job Level is required!";
+  }
+
+  if (inputValue.salary !== undefined && inputValue.salary === "") {
+    error.salary = "Salary is required!";
+  }
+
+  if (inputValue.workType !== undefined && inputValue.workType === "") {
+    error.workType = "Work Type is required!";
+  }
+
   return error;
 }
 
