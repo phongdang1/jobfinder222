@@ -79,7 +79,7 @@ function BestJob() {
           className="flex items-center"
           onValueChange={(type) => setSelectedType(type)}
         >
-          <SelectTrigger className="w-4/5 sm:w-4/5 md:w-4/5 lg:w-1/5 shrink basis-1/4 ">
+          <SelectTrigger className="w-4/5 sm:w-4/5 md:w-4/5 lg:w-[200px] shrink basis-1/4 ">
             <FilterListIcon className="" />
             <SelectValue placeholder="Sort by" value={selectedType} />
           </SelectTrigger>
@@ -94,8 +94,8 @@ function BestJob() {
           </SelectContent>
         </Select>
 
-        <div className="w-full lg:w-auto basis-1/2 px-20 flex-shrink">
-          <Carousel className="w-full xl:w-[600px]">
+        <div className="w-[95%] basis-1/2 px-20 flex-shrink">
+          <Carousel className="w-[96%] xl:w-[600px]">
             <CarouselContent className="flex">
               {sortValue.map((value, index) => (
                 <CarouselItem key={index} className="basis-1/3 items-center">
@@ -118,7 +118,7 @@ function BestJob() {
         <JobCard />
       </div>
       {/* pagination */}
-      <div className="flex flex-col gap-5 mx-auto">
+      {/* <div className="flex flex-col gap-5 mx-auto">
         <Pagination
           variant="border"
           showControls
@@ -126,7 +126,7 @@ function BestJob() {
           initialPage={1}
           color="secondary"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

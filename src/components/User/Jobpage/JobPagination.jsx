@@ -42,8 +42,8 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
                   className={`px-3 py-1 rounded-md transition-colors duration-200
                     ${
                       currentPage === index + 1
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-200 text-gray-700"
+                        ? "bg-purple-600 text-white border border-purple-600"
+                        : "hover:bg-gray-200 text-gray-700 "
                     }
                   `}
                 >

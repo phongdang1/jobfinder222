@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@heroicons/react": "^2.1.5",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "@nextui-org/calendar": "^2.0.12",
@@ -44,6 +45,7 @@
     "embla-carousel-react": "^8.1.8",
     "firebase": "^9.6.3",
     "framer-motion": "^11.7.0",
+    "input-otp": "^1.2.4",
     "jobfinder-capstone-frontend": "file:",
     "lucide-react": "^0.424.0",
     "react": "^18.3.1",

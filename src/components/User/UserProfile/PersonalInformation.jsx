@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-
+import { sendOtp, verifyOtp } from "../../../fetchData/OTP";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Validation from "@/components/User/Common/Validation";
 import toast from "react-hot-toast";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,7 +25,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 function PersonalInformation() {
   const userId = localStorage.getItem("user_id");
   const [date, setDate] = useState();
@@ -46,48 +62,51 @@ function PersonalInformation() {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [verify, setVerify] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isCompleteOTP, setIsCompleteOTP] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialogRef = useRef(null);
+  const fetchUserData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/getUserById?id=${userId}`
+      );
+      if (response.data.errCode === 0) {
+        setInputValue({
+          firstName: response.data.data.firstName || "",
+          lastName: response.data.data.lastName || "",
+          address: response.data.data.address || "",
+          phoneNumber: response.data.data.phoneNumber || "",
+          email: response.data.data.email || "",
+          skills: response.data.data.listSkill || [],
+          gender: response.data.data.UserDetailData.genderCode || "",
+          dob: response.data.data.dob || "",
+          image: response.data.data.image || "",
+          file: response.data.data.UserDetailData.file || "",
+        });
+        setOriginalUserData(response.data.data);
+
+        // verify
+        const verifiedData = response.data.data;
+        setVerify(verifiedData.isVerify);
+        console.log(verifiedData.isVerify);
+
+        if (response.data.data.dob) {
+          setDate(new Date(response.data.data.dob));
+        }
+      } else {
+        setError(response.data.errMessage);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setError("Error fetching data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/getUserById?id=${userId}`
-        );
-        if (response.data.errCode === 0) {
-          setInputValue({
-            firstName: response.data.data.firstName || "",
-            lastName: response.data.data.lastName || "",
-            address: response.data.data.address || "",
-            phoneNumber: response.data.data.phoneNumber || "",
-            email: response.data.data.email || "",
-            skills: response.data.data.listSkill || [],
-            gender: response.data.data.UserDetailData.genderCode || "",
-            dob: response.data.data.dob || "",
-            image: response.data.data.image || "",
-            file: response.data.data.UserDetailData.file || "",
-          });
-          setOriginalUserData(response.data.data);
-
-          // verify
-          const verifiedData = response.data.data;
-          setVerify(verifiedData.isVerify);
-          console.log(verifiedData.isVerify);
-
-          if (response.data.data.dob) {
-            setDate(new Date(response.data.data.dob));
-          }
-        } else {
-          setError(response.data.errMessage);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError("Error fetching data. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUserData();
   }, []);
 
@@ -208,6 +227,26 @@ function PersonalInformation() {
     setErrorMessage((prevErrors) => ({ ...prevErrors, dob: "" }));
   };
 
+  const handleSendOtp = async (email) => {
+    await sendOtp(email);
+  };
+  const handleSubmitOtp = async (email, otp) => {
+    const res = await verifyOtp(email, otp);
+    console.log(res);
+    console.log("email: " + email + " otp: " + otp.length);
+    if (res.data.errCode === 0) {
+      setIsCompleteOTP(true);
+      setOtp("");
+      fetchUserData();
+      toast.success("OTP sent successfully!");
+    } else if (res.data.errCode === -1) {
+      console.log("abc sai roi");
+      setOtp("");
+      toast.error("Invalid OTP");
+      return;
+    }
+  };
+
   return (
     <div className="bg-white w-full rounded-lg shadow-md space-y-4 pb-4">
       <div className="flex justify-end gap-4 px-6 mt-4">
@@ -321,6 +360,7 @@ function PersonalInformation() {
                     type="radio"
                     name="gender"
                     id="male"
+                    className="text-primary bg-primary"
                     value="M"
                     checked={inputValue.gender === "M"}
                     onChange={handleInputField}
@@ -333,7 +373,7 @@ function PersonalInformation() {
                     type="radio"
                     name="gender"
                     id="female"
-                    value="F"
+                    value="FE"
                     checked={inputValue.gender === "FE"}
                     onChange={handleInputField}
                     disabled={!isEditing}
@@ -405,25 +445,68 @@ function PersonalInformation() {
                   </>
                 ) : (
                   <>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <WarningAmberOutlined className="absolute right-3 cursor-pointer text-warning" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="p-4">
-                            <p>Email of user is not verified</p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <WarningAmberOutlined className="cursor-pointer absolute right-3 text-warning" />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <h1>
+                          Please verify your email to access all Job Finder
+                          features!
+                        </h1>
+                        <Dialog ref={dialogRef}>
+                          <DialogTrigger asChild>
                             <Button
+                              onClick={() => handleSendOtp(inputValue.email)}
                               variant="outline"
-                              type="button"
-                              className="hover:bg-primary hover:text-white"
                             >
-                              Verify
+                              Verify Now
                             </Button>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>Please check your email</DialogTitle>
+                              <DialogDescription>
+                                We have sent a code to {inputValue.email}
+                              </DialogDescription>
+                            </DialogHeader>
+                            {/* otp nè */}
+                            <InputOTP
+                              value={otp}
+                              onChange={(value) => setOtp(value)}
+                              maxLength={6}
+                            >
+                              <InputOTPGroup>
+                                <InputOTPSlot index={0} />
+                                <InputOTPSlot index={1} />
+                                <InputOTPSlot index={2} />
+                              </InputOTPGroup>
+                              <InputOTPSeparator />
+                              <InputOTPGroup>
+                                <InputOTPSlot index={3} />
+                                <InputOTPSlot index={4} />
+                                <InputOTPSlot index={5} />
+                              </InputOTPGroup>
+                            </InputOTP>
+                            <DialogFooter>
+                              <DialogClose>
+                                <Button
+                                  type="submit"
+                                  variant="outline"
+                                  className="border-2"
+                                  disabled={otp.length < 6}
+                                  onClick={() =>
+                                    handleSubmitOtp(inputValue.email, otp)
+                                  }
+                                >
+                                  Save changes
+                                </Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </PopoverContent>
+                    </Popover>
                   </>
                 )}
               </div>
