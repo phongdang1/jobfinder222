@@ -8,4 +8,8 @@ const getAllCode = () => {
   return axios.get("/getAllCode");
 };
 
-export { getAllCodeByType, getAllCode };
+const getValueByCode = (code) => {
+  return axios.get(`/getValueByCode?code=${code}`);
+};
+
+export { getAllCodeByType, getAllCode, getValueByCode };

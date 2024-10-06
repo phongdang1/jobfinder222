@@ -39,7 +39,6 @@ const routes = [
       { path: "/jobs/tab=:page", element: <JobPage /> }, // Thêm route cho phân trang
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
-      { path: "/profile", element: <UserProfilePage /> },
     ],
   },
   // Routes using CompanyLayout

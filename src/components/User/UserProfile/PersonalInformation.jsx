@@ -27,8 +27,7 @@ import {
 } from "@/components/ui/tooltip";
 
 function PersonalInformation() {
-  // const userId = localStorage.getItem("user_id");
-  const userId = 1;
+  const userId = localStorage.getItem("user_id");
   const [date, setDate] = useState();
   const [inputValue, setInputValue] = useState({
     firstName: "",
