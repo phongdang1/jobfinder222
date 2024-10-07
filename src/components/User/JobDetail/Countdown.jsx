@@ -28,27 +28,31 @@ const Countdown = ({ endTime }) => {
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-xl font-bold mb-2">Time remaining:</h1>
+    <div className="flex items-center gap-2">
+      <h1 className="text-sm font-base">Time remaining:</h1>
       {!expired ? (
-        <div className="text-primary text-2xl flex items-end space-x-4">
-          <div className="flex flex-col items-center">
-            <span className="text-4xl font-bold">{timeRemaining.days}</span>
+        <div className="text-third text-2xl flex items-end space-x-2">
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-primary">{timeRemaining.days}</span>
             <span className="text-sm">Days</span>
           </div>
-          <span>|</span>
-          <div className="flex flex-col items-center">
-            <span className="text-4xl font-bold">{timeRemaining.hours}</span>
+
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-primary">{timeRemaining.hours}</span>
             <span className="text-sm">Hours</span>
           </div>
-          <span>|</span>
-          <div className="flex flex-col items-center">
-            <span className="text-4xl font-bold">{timeRemaining.minutes}</span>
+
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-primary">
+              {timeRemaining.minutes}
+            </span>
             <span className="text-sm">Minutes</span>
           </div>
-          <span>|</span>
-          <div className="flex flex-col items-center">
-            <span className="text-4xl font-bold">{timeRemaining.seconds}</span>
+
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-primary">
+              {timeRemaining.seconds}
+            </span>
             <span className="text-sm">Seconds</span>
           </div>
         </div>

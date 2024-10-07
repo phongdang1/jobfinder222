@@ -64,7 +64,7 @@ function BestJob() {
   const uniqueTypes = [...new Set(sort.map((item) => item.type))];
 
   return (
-    <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary xl:max-w-screen-xl 2xl:max-w-screen-2xl">
+    <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary">
       <div className="flex items-center justify-between text-4xl md:text-5xl font-forum mb-4 font-semibold text-start bg-[#4a3d8d] bg-opacity-70 rounded-t-lg p-6">
         <div>
           Best <span className="text-secondary">Job</span> For You
@@ -115,7 +115,7 @@ function BestJob() {
       </div>
       {/* job cards */}
       <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 py-10 px-4">
-        <JobCard />
+        <JobCard expand="" />
       </div>
       {/* pagination */}
       {/* <div className="flex flex-col gap-5 mx-auto">
