@@ -4,6 +4,13 @@ import Hero from "@/components/User/Company/Hero";
 import PaginationComponent from "@/components/User/Company/PaginationComponent";
 import CompanyCard from "@/components/User/Company/CompanyCard";
 import { useSearchParams } from "react-router-dom"; // Import useSearchParams to manage URL state
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const URL = "/getAllCompanies";
 
@@ -102,7 +109,7 @@ function CompanyPage() {
           <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-2 sm:mt-4">
             <select
               id="typeFilter"
-              className="p-1 sm:p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-500 transition duration-200"
+              className="p-1 sm:p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-primary transition duration-200"
               value={filter.typeCompany}
               onChange={(e) => {
                 setFilter({ ...filter, typeCompany: e.target.value });
