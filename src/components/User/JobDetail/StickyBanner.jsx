@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  FaRegArrowAltCircleLeft,
-  FaBuilding,
-  FaMapMarkerAlt,
-  FaBriefcase,
-  FaDollarSign,
-} from "react-icons/fa";
+  ExploreRounded,
+  PaidRounded,
+  WorkHistoryRounded,
+} from "@mui/icons-material";
 
 const StickyBanner = ({ job }) => {
   const [isSticky, setIsSticky] = useState(false);
@@ -29,35 +27,50 @@ const StickyBanner = ({ job }) => {
 
   return (
     <div
-      className={`transition-all duration-500 fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-7xl bg-white border-l-8 border border-primary flex justify-between items-center p-2 lg:p-4 ${
+      className={`transition-all z-30 duration-500 fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-7xl bg-white border-l-8 border border-primary flex flex-col p-2 lg:p-4 ${
         isSticky ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
       }`}
     >
-      <div className="flex flex-col">
-        <span className="font-medium text-lg md:text-xl">
-          {job.data.postDetailData?.name}
-        </span>
-        <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4 text-sm text-gray-700">
-          <div className="flex items-center gap-2">
-            <FaBuilding /> {job.data.companyData?.name}
-          </div>
-          <div className="flex items-center gap-2">
-            <FaMapMarkerAlt />{" "}
-            {job.data.postDetailData?.provincePostData?.value}
-          </div>
-          <div className="flex items-center gap-2">
-            <FaBriefcase /> {job.data.postDetailData?.jobLevelPostData?.value}
-          </div>
-          <div className="flex items-center gap-2">
-            <FaDollarSign />{" "}
-            {job.data.postDetailData?.salaryTypePostData?.value}
+      <p className="text-xl font-semibold pb-4">
+        Role: {job.data.postDetailData?.name}
+      </p>
+      <div className="flex justify-start gap-3 md:gap-24 sm:gap-2 lg:flex-row md:flex-col sm:flex-col flex-col md:items-center sm:items-center items-center">
+        <div className="flex gap-4 items-center justify-center text-center ">
+          <ExploreRounded sx={{ fontSize: 40 }} className="text-primary" />
+
+          <div className="block text-left">
+            <p className="text-gray-500">Location</p>
+            <p className="font-medium">
+              {job.data.postDetailData?.provincePostData?.value}
+            </p>
           </div>
         </div>
-      </div>
 
-      <Button className="bg-white border border-primary text-primary hover:bg-primary hover:border-white hover:text-white ease-in-out duration-300 py-2 px-4 lg:py-3 lg:px-6">
-        Apply Now
-      </Button>
+        <div className="flex gap-4 items-center justify-center text-center">
+          <PaidRounded sx={{ fontSize: 40 }} className="text-primary" />
+
+          <div className="block text-left">
+            <p className="text-gray-500">Salary</p>
+            <p className="font-medium">
+              {job.data.postDetailData?.salaryTypePostData?.value}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-4 items-center justify-center text-center">
+          <WorkHistoryRounded sx={{ fontSize: 40 }} className="text-primary" />
+
+          <div className="block text-left">
+            <p className="text-gray-500">Years of experience</p>
+            <p className="font-medium">
+              {job.data.postDetailData?.expTypePostData?.value}
+            </p>
+          </div>
+        </div>
+        <Button className="ml-auto bg-white border border-primary text-primary hover:bg-primary hover:border-white hover:text-white ease-in-out duration-300 py-2 px-4 lg:py-3 lg:px-6">
+          Apply Now
+        </Button>
+      </div>
     </div>
   );
 };

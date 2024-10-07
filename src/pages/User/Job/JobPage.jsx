@@ -106,9 +106,10 @@ function JobPage() {
     setFilter({
       jobName: "",
       location: "",
-      levels: [],
-      typeWorks: [],
-      expJobs: [],
+      levels: "", // Set as a string for single value selection in RadioGroup
+      typeWorks: "", // Reset to an empty string
+      expJobs: "", // Reset to an empty string
+      postedOn: "All", // Reset to default value
     });
   };
 
@@ -124,13 +125,13 @@ function JobPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-center bg-opacity-80 mx-4 sm:mx-8 md:mx-16 lg:mx-24 my-8 rounded-2xl">
-        <div className="flex flex-col w-full max-w-7xl">
-          <JobHero handleSearch={handleSearch} />
+      <div className="flex items-center justify-center bg-opacity-80 rounded-2xl mb-6">
+        <div className="flex flex-col w-full">
+          <JobHero />
         </div>
       </div>
       <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto px-4">
-        <div className="w-full md:w-1/4 p-4 rounded-lg mb-4 md:mb-0">
+        <div className="w-full md:w-1/4  rounded-lg mb-4 md:mb-0">
           <JobFilter
             filter={filter}
             handleFilterChange={handleFilterChange}
@@ -150,6 +151,7 @@ function JobPage() {
                     currentJobs={currentJobs}
                     totalJobs={filteredJobs.length}
                     currentPage={currentPage}
+                    handleSearch={handleSearch}
                   />
                 </div>
               </div>

@@ -5,7 +5,7 @@ import Pro from "@/components/User/Homepage/Pro";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import { useEffect } from "react";
-import FeaturedCompanies from './../../components/User/Homepage/FeaturedCompanies';
+import FeaturedCompanies from "./../../components/User/Homepage/FeaturedCompanies";
 
 function HomePage() {
   useEffect(() => {
@@ -23,6 +23,7 @@ function HomePage() {
       <HomeCategory />
       <FeaturedCompanies  />
       <Pro  />
+
     </div>
   );
 }
