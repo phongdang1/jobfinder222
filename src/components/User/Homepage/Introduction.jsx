@@ -25,17 +25,17 @@ function Introduction() {
 
     <>
     {/* Text Section */}
-    <div className="flex flex-col justify-center items-center w-full text-center md:text-left mt-36 relative"
+    <div className="flex flex-col justify-center items-center w-full text-center md:text-left mt-16 relative"
     data-aos="fade-up"
     >
       <div className="text-4xl md:text-5xl lg:text-6xl pb-4 md:pb-8 text-center">
         <p className="font-roboto font-semibold">Find your top</p>
-        <p className="font-roboto font-semibold gap-4 text-center">
+        <div className="font-roboto font-semibold gap-4 text-center">
           career opportunities at
           <p className="text-primary font-forum text-5xl md:text-6xl lg:text-7xl font-semibold">
             Job Finder
           </p>
-        </p>
+        </div>
       </div>
       <p className="font-roboto text-sm lg:text-xl md:text-xl pb-4 md:pb-8 text-center px-8 lg:px-60 xl:px-96">
         A system that connects your career opportunities with your passions and talents, helping you thrive in a fulfilling professional journey.
