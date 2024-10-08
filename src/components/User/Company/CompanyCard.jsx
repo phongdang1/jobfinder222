@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import axios from "../../../fetchData/axios";
-import { FmdGoodOutlined } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { FmdGoodOutlined } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const CompanyCard = ({ company }) => {
-  const [coverImage, setCoverImage] = useState(null);
+  const [coverImage, setCoverImage] = useState();
   const [logo, setLogo] = useState(null);
   const [totalJobs, setTotalJobs] = useState(0); // State to hold the total jobs
 
@@ -12,9 +12,13 @@ const CompanyCard = ({ company }) => {
     const fetchCompanyData = async () => {
       try {
         // Fetch company details
-        const response = await axios.get(`http://localhost:5000/getCompanyById?id=${company.id}`);
+        const response = await axios.get(
+          `http://localhost:5000/getCompanyById?id=${company.id}`
+        );
         if (response.data.errCode === 0) {
           const companyData = response.data.data;
+
+          console.log("company ne", companyData);
 
           // Set total jobs from postData length
           if (companyData.postData) {
@@ -22,17 +26,22 @@ const CompanyCard = ({ company }) => {
           }
 
           // Fetch cover image
-          const coverResponse = await axios.get(companyData.coverimage, { responseType: 'blob' });
+          const coverResponse = await axios.get(companyData.coverimage, {
+            responseType: "blob",
+          });
           const coverImageUrl = URL.createObjectURL(coverResponse.data);
-          setCoverImage(coverImageUrl);
+          setCoverImage(companyData);
+          console.log("cover image", coverImage);
 
           // Fetch logo image
-          const logoResponse = await axios.get(companyData.logo, { responseType: 'blob' });
+          const logoResponse = await axios.get(companyData.logo, {
+            responseType: "blob",
+          });
           const logoImageUrl = URL.createObjectURL(logoResponse.data);
           setLogo(logoImageUrl);
         }
       } catch (error) {
-        console.error('Error fetching the company data:', error);
+        console.error("Error fetching the company data:", error);
       }
     };
 
@@ -43,17 +52,11 @@ const CompanyCard = ({ company }) => {
     <Link to={`/companydetail/${company.id}`} className="block">
       {/* Cover Image */}
       <div className="relative">
-        {coverImage ? (
-          <img
-            src={coverImage}
-            alt={`${company.name} cover`}
-            className="w-full h-40 object-cover"
-          />
-        ) : (
-          <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-            <p>Loading cover image...</p>
-          </div>
-        )}
+        <img
+          src={coverImage?.coverimage}
+          alt={`${company.name} cover`}
+          className="w-full h-40 object-cover"
+        />
       </div>
 
       {/* Company Details */}
@@ -75,13 +78,25 @@ const CompanyCard = ({ company }) => {
           </div>
           {/* Company Info */}
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">{company.name}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {company.name}
+            </h3>
             <div className="flex items-center mt-2 text-sm text-gray-700">
-              <FmdGoodOutlined className="text-gray-600 mr-1" fontSize="small" />
-              <p className="text-sm text-gray-700 mt-2 line-clamp-2">Head Office: {company.address}</p>
+              <FmdGoodOutlined
+                className="text-gray-600 mr-1"
+                fontSize="small"
+              />
+              <p className="text-sm text-gray-700 mt-2 line-clamp-2">
+                Head Office: {company.address}
+              </p>
             </div>
-            <p className="text-sm text-gray-700 mt-2 line-clamp-2">{company.description}</p>
-            <p className="text-sm text-gray-700 mt-2 font-medium">Total Job Recruitment: {totalJobs}</p> {/* Display total jobs */}
+            <p className="text-sm text-gray-700 mt-2 line-clamp-2">
+              {company.description}
+            </p>
+            <p className="text-sm text-gray-700 mt-2 font-medium">
+              Total Job Recruitment: {totalJobs}
+            </p>{" "}
+            {/* Display total jobs */}
           </div>
         </div>
       </div>

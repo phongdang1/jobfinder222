@@ -22,35 +22,41 @@ function Introduction() {
   }, []);
   return (
     <>
-
-    {/* Text Section */}
-    <div className="flex flex-col justify-center items-center w-full text-center md:text-left mt-16 relative"
-    data-aos="fade-up"
-    >
-      <div className="text-4xl md:text-5xl lg:text-6xl pb-4 md:pb-8 text-center">
-        <p className="font-roboto font-semibold">Find your top</p>
-        <div className="font-roboto font-semibold gap-4 text-center">
-          career opportunities at
-          <p className="text-primary font-forum text-5xl md:text-6xl lg:text-7xl font-semibold">
-            Job Finder
-          </p>
+      {/* Text Section */}
+      <div
+        className="flex flex-col justify-center items-center w-full text-center md:text-left mt-16 relative"
+        data-aos="fade-up"
+      >
+        <div className="text-4xl md:text-5xl lg:text-6xl pb-4 md:pb-8 text-center">
+          <p className="font-roboto font-semibold">Find your top</p>
+          <div className="font-roboto font-semibold gap-4 text-center">
+            career opportunities at
+            <p className="text-primary font-forum text-5xl md:text-6xl lg:text-7xl font-semibold">
+              Job Finder
+            </p>
+          </div>
         </div>
-      </div>
-      <p className="font-roboto text-sm lg:text-xl md:text-xl pb-4 md:pb-8 text-center px-8 lg:px-60 xl:px-[500px]">
-        A system that connects your career opportunities with your passions and talents, helping you thrive in a fulfilling professional journey.
-      </p>
-      <div className="relative flex w-full max-w-sm items-center gap-2">
-        <Input
-          className="border-r-2"
-          type="email"
-          placeholder="What service are you looking for today?"
-        />
-        <Button type="submit" className="p-3 bg-third absolute right-0 top-0 rounded-r-full">
-          <SearchIcon  sx={{ color: "white" }} />
-        </Button>
-      </div>
-  
-      {/*  Images */}
+
+        <p className="font-roboto text-sm lg:text-xl md:text-xl pb-4 md:pb-8 text-center px-8 lg:px-60 xl:px-[500px]">
+          A system that connects your career opportunities with your passions
+          and talents, helping you thrive in a fulfilling professional journey.
+        </p>
+        <div className="relative flex w-full max-w-2xl items-center gap-2">
+          <Input
+            className="border-r-2"
+            type="email"
+            placeholder="What service are you looking for today?"
+          />
+          <Button
+            type="submit"
+            className="p-3 bg-third absolute right-0 top-0 rounded-r-full"
+          >
+            <SearchIcon sx={{ color: "white" }} />
+          </Button>
+        </div>
+
+        {/*  Images */}
+
 
         {/* Left */}
         <img
