@@ -44,7 +44,7 @@ const FeaturedCompanies = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {Array.isArray(companies) && companies.length > 0 ? (
           companies.map((company, index) => (
-            <Link to={`/companydetail/${company.id}`} key={index}>
+            <Link to={`/companydetail/${company.id}`} key={index} >
               <Card className="relative cursor-pointer hover:bg-[#E6E6FA]/50 hover:outline-2 hover:outline-primary">
                 <CardHeader className="flex items-center justify-center flex-col">
                   <img alt={company.name} className="w-24 h-24" src={image} />
