@@ -215,19 +215,18 @@ function Header() {
               </li>
             </>
           ) : (
-            <li className="flex items-center space-x-4">
-              {/* User Profile Link */}
-              <Link className="flex items-center space-x-2" to="/userProfile">
-                <span className="text-third">{user?.data?.firstName}</span>
-                <Avatar alt={user?.phoneNumber} src={user.data?.image} />
-              </Link>
-
+            <li className="flex items-center space-x-4 relative">
+          
               {/* Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="ring-0 border-0">
-                  <button className="">
+                  <div className="flex active:opacity-60">
+                     <Avatar alt={user?.phoneNumber} src={user.data?.image} className="cursor-pointer" />
+                  <button className="absolute -right-2 bottom-0   bg-background rounded-full">
                     <IoMdArrowDropdown className="w-5 h-5" />
                   </button>
+                  </div>
+                 
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>
