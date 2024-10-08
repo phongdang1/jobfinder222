@@ -9,12 +9,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   AccessTimeRounded,
   CategoryRounded,
   EmojiEventsRounded,
   ExploreRounded,
+  FavoriteRounded,
   GroupsRounded,
   OpenInNewRounded,
   PaidRounded,
@@ -120,21 +121,26 @@ const Head = ({ job }) => {
                   <ScheduleSendRounded className="text-gray-600" />
                   <p>Application deadline: {job.data.timeEnd}</p>
                 </div>
-
-                <div className="mt-2">
-                  <Countdown endTime={job.data.timeEnd} />
-                </div>
               </div>
+              <div className="flex items-center justify-center">
+                <Button
+                  className="bg-secondary text-primary mr-2 px-12 w-full hover:bg-primary hover:text-secondary border-primary items-center gap-1"
+                  variant="outline"
+                >
+                  Apply
+                </Button>
 
-              <Button
-                className="bg-secondary text-primary mt-auto mr-2 hover:bg-primary hover:text-secondary border-primary items-center gap-1"
-                variant="outline"
-              >
-                Apply
-              </Button>
+                <Button className="w-1/5 px-6 text-center bg-primary text-white hover:bg-primary/70 text-base font-medium">
+          <FavoriteRounded />
+        </Button>
+              </div>
             </div>
           </div>
+          {/* countdown */}
 
+          <div className="my-5 bg-white rounded-md shadow-md py-5">
+            <Countdown endTime={job.data.timeEnd} />
+          </div>
           {/* Job Description */}
           <div className="flex flex-col bg-white p-6 rounded-lg">
             <div className="flex gap-2 h-full items-center text-third text-2xl font-medium mb-4">
@@ -230,10 +236,12 @@ const Head = ({ job }) => {
               </div>
             </div>
 
-            <div className="flex gap-1 items-center cursor-pointer hover:underline text-primary mx-auto">
+            
+            <Link to={`/companydetail/${job.data.companyData?.id}`} className="flex gap-1 items-center cursor-pointer hover:underline text-primary mx-auto">
               <p>Go to company page </p>
               <OpenInNewRounded fontSize="small" />
-            </div>
+            </Link>
+
           </div>
 
           <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-6 space-y-4">

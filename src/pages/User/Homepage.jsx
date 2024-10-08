@@ -18,7 +18,7 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-y-16 min-h-screen">
+    <div className="flex flex-col gap-y-10 min-h-screen">
       <Introduction/>
       <BestJob />
       <HomeCategory />

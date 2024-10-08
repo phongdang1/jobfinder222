@@ -10,7 +10,7 @@ const FeaturedCompanies = () => {
   const [totalJobs, setTotalJobs] = useState(0);
   useEffect(() => {
     AOS.init({
-      duration: 1000, // Điều chỉnh thời gian hiệu ứng (ms)
+      duration: 300, // Điều chỉnh thời gian hiệu ứng (ms)
       once: false,    // Để hiệu ứng chạy lại mỗi khi cuộn đến
     });
     AOS.refresh();  // Làm mới lại AOS để đảm bảo nó hoạt động đúng
