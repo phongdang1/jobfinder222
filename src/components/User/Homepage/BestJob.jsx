@@ -29,8 +29,7 @@ function BestJob() {
   const [isLoading, setIsLoading] = useState(true);
   const handleScroll = () => {
     const scrollPosition = window.scrollY + window.innerHeight;
-    const loadPosition = document.documentElement.scrollHeight - 2300; // 300px before reaching the bottom
-console.log('scroll position: ' + scrollPosition + 'load position' + loadPosition);
+    const loadPosition = document.documentElement.scrollHeight - 2300;
     if (scrollPosition >= loadPosition) {
       setIsLoading(false);
     }

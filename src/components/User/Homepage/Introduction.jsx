@@ -16,7 +16,7 @@ import "aos/dist/aos.css";
 function Introduction() {
   useEffect(() => {
     AOS.init({
-      duration: 1200, // Animation duration
+      duration: 3000, // Animation duration
       once: true, // Animation occurs only once
     });
   }, []);
@@ -36,6 +36,7 @@ function Introduction() {
             </p>
           </div>
         </div>
+
         <p className="font-roboto text-sm lg:text-xl md:text-xl pb-4 md:pb-8 text-center px-8 lg:px-60 xl:px-[500px]">
           A system that connects your career opportunities with your passions
           and talents, helping you thrive in a fulfilling professional journey.
@@ -55,6 +56,7 @@ function Introduction() {
         </div>
 
         {/*  Images */}
+
 
         {/* Left */}
         <img

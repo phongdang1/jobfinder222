@@ -229,6 +229,7 @@ function PersonalInformation() {
 
   const handleSendOtp = async (email) => {
     await sendOtp(email);
+    setIsDialogOpen(true);
   };
   const handleSubmitOtp = async (email, otp) => {
     const res = await verifyOtp(email, otp);
@@ -238,6 +239,7 @@ function PersonalInformation() {
       setIsCompleteOTP(true);
       setOtp("");
       fetchUserData();
+      setIsDialogOpen(false);
       toast.success("OTP sent successfully!");
     } else if (res.data.errCode === -1) {
       console.log("abc sai roi");
@@ -454,7 +456,7 @@ function PersonalInformation() {
                           Please verify your email to access all Job Finder
                           features!
                         </h1>
-                        <Dialog ref={dialogRef}>
+                        <Dialog open={isDialogOpen}>
                           <DialogTrigger asChild>
                             <Button
                               onClick={() => handleSendOtp(inputValue.email)}
@@ -489,19 +491,17 @@ function PersonalInformation() {
                               </InputOTPGroup>
                             </InputOTP>
                             <DialogFooter>
-                              <DialogClose>
-                                <Button
-                                  type="submit"
-                                  variant="outline"
-                                  className="border-2"
-                                  disabled={otp.length < 6}
-                                  onClick={() =>
-                                    handleSubmitOtp(inputValue.email, otp)
-                                  }
-                                >
-                                  Save changes
-                                </Button>
-                              </DialogClose>
+                              <Button
+                                type="submit"
+                                variant="outline"
+                                className="border-2"
+                                disabled={otp.length < 6}
+                                onClick={() =>
+                                  handleSubmitOtp(inputValue.email, otp)
+                                }
+                              >
+                                Save changes
+                              </Button>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
