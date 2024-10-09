@@ -33,6 +33,7 @@ function Header() {
   const token = useSelector((state) => state.auth.token);
   const userId = localStorage.getItem("user_id");
   const dispatch = useDispatch();
+  console.log('user ne', user);
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("user");
@@ -43,7 +44,6 @@ function Header() {
   const fetchUser = async (userId) => {
     try {
       const response = await axios.get(`/getUserById?id=${userId}`);
-
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
@@ -143,7 +143,7 @@ function Header() {
               </SheetHeader>
 
               {/* nút logout */}
-              {user === null || user === undefined ? (
+              {userId === null || userId === undefined ? (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
@@ -195,11 +195,11 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {user === null || user === undefined ? (
+          {userId === null || userId === undefined ? (
             <>
               <li>
                 <Button
-                  className="bg-secondary text-third hover:bg-secondary hover:text-primary"
+                  className="font-semibold text-primary"
                   variant="ghost"
                 >
                   <Link to="/signup">Register</Link>
