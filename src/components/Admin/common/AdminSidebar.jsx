@@ -8,12 +8,14 @@ import {
 } from "react-icons/fa";
 import { Link, useMatch } from "react-router-dom";
 
-const AdminSidebar = ({}) => {
+const AdminSidebar = ({ }) => {
   const matchDashBoard = useMatch("/admin/dashboard");
   const matchJobType = useMatch("/admin/jobType");
   const matchSkill = useMatch("/admin/skill");
   const matchLevel = useMatch("/admin/level");
   const matchWorkForm = useMatch("/admin/workForm");
+  const matchCompany = useMatch("/admin/company")
+  const matchPost = useMatch("/admin/post")
 
   const [isOpen, setIsOpen] = useState(true);
   const [isManageJobOpen, setIsManageJobOpen] = useState(false);
@@ -25,6 +27,8 @@ const AdminSidebar = ({}) => {
     if (matchSkill) return "Manage Skill";
     if (matchLevel) return "Manage Level";
     if (matchWorkForm) return "Manage Working Form";
+    if (matchCompany) return "Manage Company";
+    if (matchPost) return "Manage Post";
   };
 
   const title = getTitle();
@@ -32,9 +36,8 @@ const AdminSidebar = ({}) => {
   return (
     <div className="flex">
       <div
-        className={`bg-third ${
-          isOpen ? "w-64" : "w-16"
-        } min-h-screen transition-all duration-300`}
+        className={`bg-third ${isOpen ? "w-64" : "w-16"
+          } min-h-screen transition-all duration-300`}
       >
         <div className="flex justify-end p-4">
           <button
@@ -94,6 +97,27 @@ const AdminSidebar = ({}) => {
             >
               <FaBuilding className="mr-4" />
               {isOpen && <Link to="/admin/workForm">Manage Working Form</Link>}
+            </div>
+          </li>
+
+        
+          <li className="group">
+            <div
+              className={`flex items-center p-4 cursor-pointer text-white hover:bg-primary transition-colors duration-200`}
+              onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
+            >
+              <FaBuilding className="mr-4" />
+              {isOpen && <Link to="/admin/company">Manage Company</Link>}
+            </div>
+          </li>
+
+          <li className="group">
+            <div
+              className={`flex items-center p-4 cursor-pointer text-white hover:bg-primary transition-colors duration-200`}
+              onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
+            >
+              <FaBuilding className="mr-4" />
+              {isOpen && <Link to="/admin/post">Manage Post</Link>}
             </div>
           </li>
         </ul>

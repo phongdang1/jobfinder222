@@ -1,58 +1,45 @@
-import React, { useState, useEffect } from "react";
-import axios from "../../../fetchData/axios";
+import React, { useState, useEffect } from 'react';
 import Hero from "@/components/User/Company/Hero";
 import PaginationComponent from "@/components/User/Company/PaginationComponent";
-import CompanyCard from "@/components/User/Company/CompanyCard";
-import { useSearchParams } from "react-router-dom"; // Import useSearchParams to manage URL state
-
-const URL = "/getAllCompanies";
+import CompanyCard from '@/components/User/Company/CompanyCard';
+import { useSearchParams } from 'react-router-dom';
+import { getAllCompanies } from '@/fetchData/User';
 
 function CompanyPage() {
-  const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [types, setTypes] = useState([]);
-  const [filter, setFilter] = useState({
-    company: "",
-    typeCompany: "Categories",
-  });
+  const [filter, setFilter] = useState({ company: '', typeCompany: 'Categories' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams(); // Hook for URL params
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  ); // Get current page from URL
+  const [totalCount, setCounts] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const companiesPerPage = 6;
-  const totalCompanies = filteredCompanies.length;
   const indexOfLastCompany = currentPage * companiesPerPage;
   const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
-  const currentCompanies = filteredCompanies.slice(
-    indexOfFirstCompany,
-    indexOfLastCompany
-  );
-  const totalPages = Math.ceil(totalCompanies / companiesPerPage);
+  const currentCompanies = filteredCompanies.slice(indexOfFirstCompany, indexOfLastCompany);
+  const tol = Math.ceil(totalCount / companiesPerPage);
 
-  const fetchCompanies = async (searchKey = "", typeCompany = "Categories") => {
+
+  const filterCompanies = (companies, typeCompany) => {
+    const upperCaseType = typeCompany.toUpperCase();
+    return companies.filter(company => 
+      upperCaseType === 'CATEGORIES' || company.typeCompany.toUpperCase() === upperCaseType
+    );
+  };
+
+  const fetchCompanies = async (searchKey = '', typeCompany = 'Categories') => {
     try {
       setLoading(true);
-      const response = await axios.get(URL, {
-        params: {
-          limit: 1000,
-          offset: 0,
-          searchKey,
-        },
-      });
+      const limit = companiesPerPage;
+      const offset = (currentPage-1)*companiesPerPage;
+      const response = await getAllCompanies(limit, offset, searchKey);
+      const length = filterCompanies(response.data.data, typeCompany).length;
       if (response.data.errCode === 0) {
-        setCompanies(response.data.data);
+        setCounts(length);
         setFilteredCompanies(filterCompanies(response.data.data, typeCompany));
-
-        const uniqueTypes = [
-          ...new Set(
-            response.data.data.map((company) =>
-              company.typeCompany.toUpperCase()
-            )
-          ),
-        ];
-        setTypes(uniqueTypes.map((type) => ({ name: type })));
+        const uniqueTypes = [...new Set(response.data.data.map(company => company.typeCompany.toUpperCase()))];
+        setTypes(uniqueTypes.map(type => ({ name: type })));
       } else {
         setError(response.data.errMessage);
       }
@@ -64,14 +51,6 @@ function CompanyPage() {
     }
   };
 
-  const filterCompanies = (companies, typeCompany) => {
-    const upperCaseType = typeCompany.toUpperCase();
-    return companies.filter(
-      (company) =>
-        upperCaseType === "CATEGORIES" ||
-        company.typeCompany.toUpperCase() === upperCaseType
-    );
-  };
 
   useEffect(() => {
     fetchCompanies(filter.company, filter.typeCompany);
@@ -80,22 +59,20 @@ function CompanyPage() {
   useEffect(() => {
     setSearchParams({ page: currentPage });
   }, [currentPage, setSearchParams]);
-
+ 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   return (
     <div className="p-2 sm:p-4 lg:p-8">
-      {" "}
-      {/* Adjusted padding for smaller screens */}
       <div className="flex items-center justify-center bg-opacity-80 mx-2 sm:mx-4 my-4 sm:my-6 rounded-2xl">
         <div className="flex flex-col w-full max-w-7xl">
           <Hero
             filter={filter}
             handleSearch={(searchTerm) => {
               setFilter({ ...filter, company: searchTerm });
-              setCurrentPage(1);
+              setCurrentPage(1); 
             }}
             setFilteredCompanies={setFilteredCompanies}
           />
@@ -125,13 +102,11 @@ function CompanyPage() {
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : filteredCompanies.length === 0 ? (
-          <p className="text-center text-gray-600">
-            No companies match your search criteria.
-          </p>
+          <p className="text-center text-gray-600">No companies match your search criteria.</p>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {currentCompanies.map((company) => (
+              {currentCompanies.map(company => (
                 <div
                   key={company.id}
                   className="w-full bg-white p-4 rounded-lg shadow-md flex items-center justify-center border border-transparent hover:border-primary transition-all"
@@ -147,7 +122,7 @@ function CompanyPage() {
       <div className="flex justify-center mt-6">
         <PaginationComponent
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={tol}
           onPageChange={handlePageChange}
         />
       </div>

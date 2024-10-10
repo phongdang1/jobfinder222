@@ -8,5 +8,8 @@ const getUsersById = (id) => {
   return axios.get(`/getUserById?id=${id}`);
 };
 
-export { handleSetDataUserDetail, getUsersById };
+const getAllCompanies = (limit, offset, searchKey) => {
+  return axios.get(`/getAllCompanies?limit=${limit}&offset=${offset}&searchKey=${searchKey}`);
+};
 
+export { handleSetDataUserDetail, getUsersById, getAllCompanies };

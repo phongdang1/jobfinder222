@@ -3,7 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-function Hero({ filter, handleSearch }) {
+function Hero({ handleSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchInputChange = (e) => {
