@@ -4,6 +4,9 @@ import axios from "./axios";
 const getAllCompanies = (searchKey) => {
     return axios.get(`/getAllCompaniesInactive?searchKey=${searchKey}`);
 }
+const getAllCompaniesUser = (searchKey) => {
+    return axios.get(`/getAllCompanies?searchKey=${searchKey}`);
+}
 const getCompanyById = (companyId) => {
     return axios.get(`/getCompanyById?id=${companyId}`);
 }
@@ -28,4 +31,4 @@ const activeCompany = (companyId) => {
         companyId: companyId
     });
 }
-export {getAllCompanies,getCompanyById, banCompany, inactiveCompany, activeCompany, unbanCompany}
+export {getAllCompanies,getCompanyById, banCompany, inactiveCompany, activeCompany, unbanCompany, getAllCompaniesUser}
