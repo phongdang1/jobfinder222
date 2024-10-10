@@ -77,3 +77,4 @@ const CompanyCard = ({ company }) => {
 };
 
 export default CompanyCard;
+

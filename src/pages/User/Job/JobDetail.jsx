@@ -5,7 +5,7 @@ import Head from "@/components/User/JobDetail/Head";
 import RelatedJob from "@/components/User/JobDetail/RelatedJob";
 
 const JobDetail = () => {
-  const { id } = useParams(); // Get the job ID from the URL
+  const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,12 +33,7 @@ const JobDetail = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  return (
-    <>
-      {job && <Head job={job} />}
-      <RelatedJob />
-    </>
-  );
+  return <>{job && <Head job={job} />}</>;
 };
 
 export default JobDetail;

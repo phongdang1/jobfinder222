@@ -1,17 +1,19 @@
 import CompanyHeader from '../Company/common/CompanyHeader';
 import Sidebar from '../Company/common/Sidebar';
 import { Outlet } from 'react-router-dom';
+import CompanyFooter from './../Company/common/CompanyFooter';
 
 function CompanyLayout() {
   return (
-    <div className=" flex flex-row min-h-screen bg-white ">
+    <div className=" flex flex-col bg-white ">
      
    
-        <Sidebar />
+        {/* <Sidebar /> */}
          <CompanyHeader />
         {/* <div className="flex-grow">
           <Outlet />
         </div> */}
+        <CompanyFooter/>
     
     </div>
   );

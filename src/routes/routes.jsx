@@ -51,7 +51,6 @@ const routes = [
 
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
-      { path: "/profile", element: <UserProfilePage /> },
     ],
   },
   // Routes using CompanyLayout

@@ -29,7 +29,7 @@ const Countdown = ({ endTime }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-xl font-bold mb-2">Time remaining:</h1>
+      <h1 className="text-2xl font-bold mb-2">Time remaining:</h1>
       {!expired ? (
         <div className="text-primary text-2xl flex items-end space-x-4">
           <div className="flex flex-col items-center">

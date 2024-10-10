@@ -1,16 +1,30 @@
 import { Button } from "../../ui/button";
-import React from "react";
-import {
-  FaRegArrowAltCircleLeft,
-  FaBuilding,
-  FaMapMarkerAlt,
-  FaBriefcase,
-  FaDollarSign,
-} from "react-icons/fa";
 import StickyBanner from "./StickyBanner";
 import Countdown from "./Countdown";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  AccessTimeRounded,
+  CategoryRounded,
+  EmojiEventsRounded,
+  ExploreRounded,
+  FavoriteRounded,
+  GroupsRounded,
+  OpenInNewRounded,
+  PaidRounded,
+  PeopleAltRounded,
+  ScheduleSendRounded,
+  WorkHistoryRounded,
+} from "@mui/icons-material";
+import Card from "../Homepage/Common/Card";
 
-import { useNavigate, useLocation } from "react-router-dom";
 const Head = ({ job }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,63 +45,263 @@ const Head = ({ job }) => {
   return (
     <div className="flex flex-col mx-36 ">
       {/* button back to job list */}
-      <div className="my-5">
-        <button
-          onClick={handleBackClick}
-          className="flex items-center text-blue-500 mb-4"
-        >
-          <FaRegArrowAltCircleLeft className="mr-2" /> Back to Job List
-        </button>
-      </div>
-      {/* Cover Image and Avatar */}
-      <div className="">
-        <div className="w-full h-80 rounded-t-xl overflow-hidden">
-          <img
-            src={job.data.companyData?.coverimage || "/default-cover.jpg"}
-            alt="Company Cover"
-            className="w-full h-80 object-cover"
-          />
-        </div>
-        <div
-          className="h-40 w-40 bg-cover bg-center bg-white rounded-full absolute z-30
-                lg:top-[450px] lg:left-72
-                md:top-[360px] md:left-1/2 md:transform md:-translate-x-1/2
-                sm:top-[380px] sm:left-1/2 sm:transform sm:-translate-x-1/2
-                top-[380px] translate-x-1/2"
-          style={{
-            backgroundImage: `url(${
-              job.data.companyData?.thumbnail || "/default-company-logo.png"
-            })`,
-          }}
-        ></div>
-        {/* Job info */}
-        <div
-          className="flex text-secondary bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90
-                     lg:h-[150px] md:h-[200px] sm:h-[300px] h-[280px] shadow-lg mb-8 rounded-b-xl relative"
-        >
-          <div className="my-auto justify-center lg:ml-72 md:mx-auto sm:mx-auto mx-auto">
-            <div className="text-3xl font-medium mb-4 lg:text-left md:text-center sm:text-center text-center">
-              {job.data.postDetailData?.name}
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/jobs">Job Page</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-primary">
+              Hire {job.data.postDetailData?.name}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      <div className="grid grid-cols-3 gap-6">
+        {/* left */}
+        <div className="col-span-2">
+          <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-6">
+            <div className="flex gap-2 text-2xl font-medium mb-4 lg:text-left md:text-center sm:text-center text-center">
+              <div className="border-3 border-primary"></div>
+              <p className="font-semibold">
+                Position: {job.data.postDetailData?.name}
+              </p>
             </div>
-            <div className="flex gap-3 md:gap-4 sm:gap-2 lg:flex-row md:flex-col sm:flex-col flex-col md:items-center sm:items-center items-center">
-              <div className="flex gap-2">
-                <FaBuilding />
-                <div>{job.data.companyData?.name}</div>
+
+            <div className="flex justify-start gap-3 md:gap-24 sm:gap-2 lg:flex-row md:flex-col sm:flex-col flex-col md:items-center sm:items-center items-center">
+              <div className="flex gap-4 items-center justify-center text-center ">
+                <ExploreRounded
+                  sx={{ fontSize: 40 }}
+                  className="text-primary"
+                />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Location</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.provincePostData?.value}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <FaMapMarkerAlt />
-                <div>{job.data.postDetailData?.provincePostData?.value}</div>
+              <div className="flex gap-4 items-center justify-center text-center">
+                <PaidRounded sx={{ fontSize: 40 }} className="text-primary" />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Salary</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.salaryTypePostData?.value}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <FaBriefcase />
-                <div>{job.data.postDetailData?.jobLevelPostData?.value}</div>
+              <div className="flex gap-4 items-center justify-center text-center">
+                <WorkHistoryRounded
+                  sx={{ fontSize: 40 }}
+                  className="text-primary"
+                />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Years of experience</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.expTypePostData?.value}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <div className="flex flex-col">
+                <div className="flex gap-2 items-center mt-6 border-2 w-fit p-1 bg-gray-200 text-sm">
+                  <ScheduleSendRounded className="text-gray-600" />
+                  <p>Application deadline: {job.data.timeEnd}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <Button
+                  className="bg-secondary text-primary mr-2 px-12 w-full hover:bg-primary hover:text-secondary border-primary items-center gap-1"
+                  variant="outline"
+                >
+                  Apply
+                </Button>
+
+                <Button className="w-1/5 px-6 text-center bg-primary text-white hover:bg-primary/70 text-base font-medium">
+          <FavoriteRounded />
+        </Button>
+              </div>
+            </div>
+          </div>
+          {/* countdown */}
+
+          <div className="my-5 bg-white rounded-md shadow-md py-5">
+            <Countdown endTime={job.data.timeEnd} />
+          </div>
+          {/* Job Description */}
+          <div className="flex flex-col bg-white p-6 rounded-lg">
+            <div className="flex gap-2 h-full items-center text-third text-2xl font-medium mb-4">
+              <div className="border-3 border-primary h-7"></div>
+              <p className="font-semibold">Job Detail</p>
+            </div>
+            <div className="flex flex-col mb-2">
+              <p className="text-md font-semibold">Job Description</p>
+              <p className="list-item list-inside">
+                {job.data.postDetailData?.description}
+              </p>
+              <p className="list-item list-inside">{job.data.note}</p>
+              <p className="list-item list-inside">
+                Wage: {job.data.postDetailData?.salaryTypePostData.value}
+              </p>
+            </div>
+
+            <div className="flex flex-col mb-2">
+              <p className="text-md font-semibold">Employee Requirements</p>
+              <p className="list-item list-inside">
+                Gender: {job.data.postDetailData?.genderPostData.value}
+              </p>
+              <p className="list-item list-inside">
+                Years of experience:{" "}
+                {job.data.postDetailData?.expTypePostData.value}
+              </p>
+              <p className="list-item list-inside">
+                Requirements: {job.data.postDetailData?.requirement}
+              </p>
+              <p className="list-item list-inside">
+                Benefits: {job.data.postDetailData?.benefit}
+              </p>
+            </div>
+
+            <div className="flex flex-col mb-2">
+              <p className="text-md font-semibold">Work Location</p>
+              <p className="list-item list-inside">
+                {job.data.companyData?.address}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-6 mt-4">
+            <div className="flex gap-2 text-2xl font-medium mb-4 lg:text-left md:text-center sm:text-center text-center">
+              <div className="border-3 border-primary"></div>
+              <p className="font-semibold">Related Jobs</p>
+            </div>
+            <div className="space-y-4">
+              <Card expand="expand" />
+            </div>
+          </div>
+        </div>
+
+        {/* right */}
+        <div className="col-span-1">
+          <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-6 space-y-4 ">
+            <div className="flex gap-2">
+              <div className="p-8 bg-gray-300">Logo</div>
+              <p className="font-semibold text-xl">
+                {job.data.companyData?.name}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex gap-2 items-center">
+                <CategoryRounded className="text-gray-500" />
+                <div className="flex gap-3 items-start">
+                  <p className="text-gray-500 ">Business Field:</p>
+                  <p className="font-medium text-wrap">
+                    {job.data.companyData?.typeCompany}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <FaDollarSign />
-                <div>{job.data.postDetailData?.salaryTypePostData?.value}</div>
+              <div className="flex gap-2 items-center">
+                <GroupsRounded className="text-gray-500" />
+                <div className="flex gap-20 items-start">
+                  <p className="text-gray-500">Scale:</p>
+                  <p className="font-medium text-wrap">
+                    {job.data.companyData?.amountEmployer} employees
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 items-start">
+                <ExploreRounded className="text-gray-500" />
+                <div className="flex gap-12 items-start">
+                  <p className="text-gray-500">Address:</p>
+                  <p className="font-medium text-wrap ">
+                    {job.data.companyData?.address}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            
+            <Link to={`/companydetail/${job.data.companyData?.id}`} className="flex gap-1 items-center cursor-pointer hover:underline text-primary mx-auto">
+              <p>Go to company page </p>
+              <OpenInNewRounded fontSize="small" />
+            </Link>
+
+          </div>
+
+          <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-6 space-y-4">
+            <p className="font-semibold text-xl">General Information</p>
+
+            <div className="flex flex-col gap-6 items-start">
+              <div className="flex gap-4 items-center justify-center text-center ">
+                <EmojiEventsRounded
+                  sx={{ fontSize: 40 }}
+                  className="text-primary"
+                />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Job Level</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.jobLevelPostData?.value}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-center justify-center text-center">
+                <PeopleAltRounded
+                  sx={{ fontSize: 40 }}
+                  className="text-primary"
+                />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Number of Vacancies</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.amount} person
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-center justify-center text-center">
+                <WorkHistoryRounded
+                  sx={{ fontSize: 40 }}
+                  className="text-primary"
+                />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Years of experience</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.expTypePostData?.value}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-center justify-center text-center">
+                <AccessTimeRounded
+                  sx={{ fontSize: 40 }}
+                  className="text-primary"
+                />
+
+                <div className="block text-left">
+                  <p className="text-gray-500">Job Type</p>
+                  <p className="font-medium">
+                    {job.data.postDetailData?.workTypePostData?.value}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -96,62 +310,6 @@ const Head = ({ job }) => {
 
       <div>
         <StickyBanner job={job} />
-      </div>
-
-      <div className="lg:grid lg:grid-cols-3 md:flex md:flex-col gap-8 lg:mb-8 md:mb-[600px] sm:mb-[600px]">
-        {/* left */}
-        <div className="col-span-2 ">
-          {/* Job Description */}
-          <div>
-            <div className="h-12 w-full bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 rounded-t-lg">
-              <div className="flex h-full items-center pl-6 text-secondary text-xl font-medium">
-                <p>Job Description</p>
-              </div>
-            </div>
-            <div className="px-6 h-60 pt-4 shadow-xl rounded-b-lg pb-4">
-              <p>{job.data.postDetailData?.description}</p>
-            </div>
-          </div>
-          {/* Required */}
-          <div className="mt-7 h-60 shadow-xl">
-            <div className="h-12 w-full bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 rounded-t-lg">
-              <div className="flex h-full items-center pl-6 text-secondary text-xl font-medium">
-                <p>Job Requirements</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-3 my-5 p-4">
-              {job.data.requirements?.map((req, index) => (
-                <span
-                  key={index}
-                  className="bg-white border border-primary rounded-full py-4 flex justify-center items-center"
-                >
-                  {req}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="col-span-1">
-          <div className="h-12 w-full bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 rounded-t-lg">
-            <div className="flex h-full items-center pl-6 text-secondary text-xl font-medium">
-              <p>Time</p>
-            </div>
-
-            <div>
-              <div className="px-6 h-full pt-4 shadow-xl rounded-b-lg">
-                <div className="">
-                  <div className="pb-4 mx-auto md:w-full">
-                    <Countdown endTime={job.data.timeEnd} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Contact Information (Optional Section) */}
-        <div className="col-span-1">
-          {/* Add contact info section if needed */}
-        </div>
       </div>
     </div>
   );

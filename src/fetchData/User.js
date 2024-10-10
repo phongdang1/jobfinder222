@@ -7,9 +7,11 @@ const handleSetDataUserDetail = (userData) => {
 const getUsersById = (id) => {
   return axios.get(`/getUserById?id=${id}`);
 };
-
-const getAllCompanies = (limit, offset, searchKey) => {
-  return axios.get(`/getAllCompanies?limit=${limit}&offset=${offset}&searchKey=${searchKey}`);
-};
-
-export { handleSetDataUserDetail, getUsersById, getAllCompanies };
+const resetPassword = (id, oldPassword, newPassword) => {
+  return axios.post(`/changePassword`,{
+    userId : id,
+    oldPassword : oldPassword,
+    newPassword : newPassword,
+  });
+}
+export { handleSetDataUserDetail, getUsersById , resetPassword };

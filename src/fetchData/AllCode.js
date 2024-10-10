@@ -30,4 +30,9 @@ const getAllCode = () => {
   return axios.get("/getAllCode");
 };
 
-export {handleCreateNewAllCode, handleUpdateAllCode, getAllJobLevel, getAllWorkType, getAllJobType, getAllCodeByType, getAllCode};
+const getValueByCode = (code) => {
+  return axios.get(`/getValueByCode?code=${code}`);
+};
+
+export {handleCreateNewAllCode, handleUpdateAllCode, getAllJobLevel, getAllWorkType, getAllJobType, getAllCodeByType, getAllCode, getValueByCode};
+

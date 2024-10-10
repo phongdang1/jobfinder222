@@ -18,12 +18,22 @@ import { useEffect, useState } from "react";
 import axios from "../../../fetchData/axios";
 import logoText from "../../../assets/images/JobFinder_logoText.png";
 import logo from "../../../assets/images/JobFinder_logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { IoMdArrowDropdown } from "react-icons/io";
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const userId = localStorage.getItem("user_id");
   const dispatch = useDispatch();
+  console.log('user ne', user);
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("user");
@@ -34,7 +44,6 @@ function Header() {
   const fetchUser = async (userId) => {
     try {
       const response = await axios.get(`/getUserById?id=${userId}`);
-
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
@@ -52,7 +61,7 @@ function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 100);
+      setIsScrolled(scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -68,7 +77,7 @@ function Header() {
     ${isScrolled ? "bg-secondary border-b-2 shadow-md " : ""}`}
     >
       {/* Logo */}
-      <div className="flex items-center">
+      <div className="flex items-center ml-16">
         <Link to="/" className="text-lg font-semibold">
           <img
             className="w-full h-16 hidden lg:block"
@@ -94,7 +103,7 @@ function Header() {
               {/* login, register */}
               {(user != null || user != undefined) && (
                 <SheetHeader>
-                  <Link to="/profile">
+                  <Link to="/userProfile">
                     <p className="text-center text-lg font-medium">
                       Hello, {user?.data?.firstName} !
                     </p>
@@ -134,7 +143,7 @@ function Header() {
               </SheetHeader>
 
               {/* nút logout */}
-              {user === null || user === undefined ? (
+              {userId === null || userId === undefined ? (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
@@ -170,7 +179,7 @@ function Header() {
             </SheetContent>
           </Sheet>
         </div>
-        <ul className="hidden md:hidden sm:hidden lg:flex gap-2 items-center text-third text-sm md:text-sm font-medium">
+        <ul className="hidden md:hidden sm:hidden lg:flex gap-8 items-center text-third text-md font-medium">
           <li className="hover:text-primary">
             <Button className=" text-third  hover:text-primary" variant="ghost">
               <Link to="/">Home</Link>
@@ -186,11 +195,11 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {user === null || user === undefined ? (
+          {userId === null || userId === undefined ? (
             <>
               <li>
                 <Button
-                  className="bg-secondary text-third hover:bg-secondary hover:text-primary"
+                  className="font-semibold text-primary"
                   variant="ghost"
                 >
                   <Link to="/signup">Register</Link>
@@ -206,18 +215,60 @@ function Header() {
               </li>
             </>
           ) : (
-            <li className="flex items-center space-x-4">
-              <Link className="flex items-center space-x-2" to="/profile">
-                <Avatar alt={user?.phoneNumber} src={user?.image} />
-                <span className="text-third">{user?.data?.firstName}</span>
-              </Link>
+            <li className="flex items-center space-x-4 relative">
+          
+              {/* Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild className="ring-0 border-0">
+                  <div className="flex active:opacity-60">
+                     <Avatar alt={user?.phoneNumber} src={user.data?.image} className="cursor-pointer" />
+                  <button className="absolute -right-2 bottom-0   bg-background rounded-full">
+                    <IoMdArrowDropdown className="w-5 h-5" />
+                  </button>
+                  </div>
+                 
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>
+                    Hello, {user.data?.firstName}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/userProfile/personalInfo"
+                      className="cursor-pointer"
+                    >
+                      User Profile
+                    </Link>
+                  </DropdownMenuItem>
 
-              <button
-                onClick={handleLogout}
-                className="text-red-500 hover:text-red-700"
-              >
-                Logout
-              </button>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/userProfile/advancedSetting"
+                      className="cursor-pointer"
+                    >
+                      Advance Setting
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/userProfile/changePassword"
+                      className="cursor-pointer"
+                    >
+                      Change Password
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <button
+                      onClick={handleLogout}
+                      className="text-red-500 hover:text-red-700 cursor-pointer w-full"
+                    >
+                      Logout
+                    </button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </li>
           )}
         </ul>
