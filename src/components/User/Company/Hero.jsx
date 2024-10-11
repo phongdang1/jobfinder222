@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import image from "../../../assets/illustration/home/blueberry-business-person-developing-strategy-and-planning.png";
 
-function Hero({ filter, handleSearch }) {
+function Hero({ handleSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchInputChange = (e) => {

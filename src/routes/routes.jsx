@@ -33,6 +33,10 @@ import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
 
+import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
+import ManagePostAdmin from "@/components/Admin/components/ManagePost";
+
+
 const routes = [
   // Routes using DefaultLayout
   {
@@ -91,6 +95,8 @@ const routes = [
       { path: "skill", element: <ManageSkill /> },
       { path: "level", element: <ManageLevel /> },
       { path: "workForm", element: <ManageWorkForm /> },
+      { path: "company", element: <ManageCompanyAdmin /> },
+      { path: "post", element: <ManagePostAdmin /> },
     ],
   },
 ];
