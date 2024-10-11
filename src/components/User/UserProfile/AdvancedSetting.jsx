@@ -253,8 +253,8 @@ function AdvancedSetting() {
 
   return (
     <div className="w-full space-y-4 flex-grow">
-      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium p-4">
-        Welcome, {userSkill.lastName}
+      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium px-4 py-6">
+        Welcome, {userSkill.firstName}
       </div>
       <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2">
         <div>

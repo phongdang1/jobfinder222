@@ -75,7 +75,6 @@ const SignUp = () => {
         const result = await dispatch(signUp(formData)).unwrap();
         // Điều hướng sau khi thành công, nếu cần
         console.log("Sign Up Successful", result);
-        dispatch(setUser(result.user)).unwrap();
         localStorage.setItem("email", formData.email);
         localStorage.setItem("user_id", result.user?.id);
         fetchUser(result.user?.id);

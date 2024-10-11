@@ -24,6 +24,7 @@ import UserProfileLayout from "@/components/layout/UserProfileLayout";
 import PersonalInformation2 from "@/components/User/UserProfile/PersonalInformation";
 import ChangePassword from "@/components/User/UserProfile/ChangePassword";
 import AdvancedSetting from "@/components/User/UserProfile/AdvancedSetting";
+import YourApplication from "@/components/User/UserProfile/YourApplication";
 
 import AdminLayout from "@/components/layout/adminLayout";
 import ManageTypeJob from "@/components/Admin/components/ManageTypeJob";
@@ -31,6 +32,7 @@ import Dashboard from "@/components/Admin/components/Dashboard";
 import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
+
 import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
 import ManagePostAdmin from "@/components/Admin/components/ManagePost";
 
@@ -80,6 +82,7 @@ const routes = [
       { path: "personalInfo", element: <PersonalInformation2 /> },
       { path: "changePassword", element: <ChangePassword /> },
       { path: "advancedSetting", element: <AdvancedSetting /> },
+      { path: "viewApplication", element: <YourApplication /> },
     ],
   },
   // Routes using AdminLayout

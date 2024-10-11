@@ -90,7 +90,7 @@ function PersonalInformation() {
         // verify
         const verifiedData = response.data.data;
         setVerify(verifiedData.isVerify);
-        console.log(verifiedData.isVerify);
+        console.log('data ne',verifiedData);
 
         if (response.data.data.dob) {
           setDate(new Date(response.data.data.dob));
@@ -138,6 +138,7 @@ function PersonalInformation() {
           toast.success("Profile updated successfully!");
           setOriginalUserData(inputValue);
           setIsEditing(false);
+          fetchUserData();
         } else {
           setError(response.data.errMessage || "Failed to update profile.");
           console.log("loi: " + error);
