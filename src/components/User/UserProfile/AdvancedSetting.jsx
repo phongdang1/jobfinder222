@@ -35,8 +35,8 @@ function AdvancedSetting() {
   const [cateJobCode, setCateJobCode] = useState("");
   const [userSkill, setUserSkill] = useState([]);
   const [errorMessage, setErrorMessage] = useState({});
-  const [open, setOpen] = useState(true);
-
+  const [open, setOpen] = useState(false); //open cái skill
+  const [isDialogOpen, setIsDialogOpen] = useState(false); //open cái công việc mơ ước
   const [type, setType] = useState("");
   const [province, setProvince] = useState([]);
   const [jobType, setJobType] = useState([]);
@@ -97,63 +97,62 @@ function AdvancedSetting() {
     };
     fetchJobType();
   }, [type]);
+  const fetchSkill = async () => {
+    if (cateJobCode) {
+      try {
+        const response = await getAllSkillByCategory(cateJobCode);
+        const fetchedSkills = response.data.data;
+        const filteredSkills = fetchedSkills.filter(
+          (skill) =>
+            !selectedSkills.some((s) => s.id === skill.id) &&
+            !userSkill.listSkill.some((us) => us.skillId === skill.id)
+        );
+
+        setSuggestedSkills(filteredSkills);
+        console.log(response.data.data);
+      } catch (error) {
+        console.log("Error fetching skills");
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchSkill = async () => {
-      if (cateJobCode) {
-        try {
-          const response = await getAllSkillByCategory(cateJobCode);
-          const fetchedSkills = response.data.data;
-          const filteredSkills = fetchedSkills.filter(
-            (skill) =>
-              !selectedSkills.some((s) => s.id === skill.id) &&
-              !userSkill.listSkill.some((us) => us.skillId === skill.id)
-          );
-
-          setSuggestedSkills(filteredSkills);
-          console.log(response.data.data);
-        } catch (error) {
-          console.log("Error fetching skills");
-        }
-      }
-    };
     fetchSkill();
   }, [cateJobCode]);
 
   const [dreamJobValue, setDreamJobValue] = useState([]);
+  const fetchUserSkill = async () => {
+    try {
+      const response = await getUsersById(userId);
+      const userData = response.data.data;
+
+      setDreamJobValue(userData);
+      setUserSkill(userData);
+
+      const codes = [
+        userData.UserDetailData.addressCode,
+        userData.UserDetailData.categoryJobCode,
+        userData.UserDetailData.jobLevelCode,
+        userData.UserDetailData.salaryJobCode,
+        userData.UserDetailData.workTypeCode,
+      ];
+
+      const codePromises = codes.map((code) => getValueByCode(code));
+      const results = await Promise.all(codePromises);
+
+      setAddressCode(results[0]?.data.data);
+      setCategoryJobCode(results[1]?.data.data);
+      setJobLevelCode(results[2]?.data.data);
+      setSalaryJobCode(results[3]?.data.data);
+      setWorkTypeCode(results[4]?.data.data);
+
+      console.log(results[0].data.data);
+    } catch (error) {
+      console.log("Error fetching job categories");
+    }
+  };
 
   useEffect(() => {
-    const fetchUserSkill = async () => {
-      try {
-        const response = await getUsersById(userId);
-        const userData = response.data.data;
-
-        setDreamJobValue(userData);
-        setUserSkill(userData);
-
-        const codes = [
-          userData.UserDetailData.addressCode,
-          userData.UserDetailData.categoryJobCode,
-          userData.UserDetailData.jobLevelCode,
-          userData.UserDetailData.salaryJobCode,
-          userData.UserDetailData.workTypeCode,
-        ];
-
-        const codePromises = codes.map((code) => getValueByCode(code));
-        const results = await Promise.all(codePromises);
-
-        setAddressCode(results[0]?.data.data);
-        setCategoryJobCode(results[1]?.data.data);
-        setJobLevelCode(results[2]?.data.data);
-        setSalaryJobCode(results[3]?.data.data);
-        setWorkTypeCode(results[4]?.data.data);
-
-        console.log(results[0].data.data);
-      } catch (error) {
-        console.log("Error fetching job categories");
-      }
-    };
-
     fetchUserSkill();
   }, []);
 
@@ -201,6 +200,8 @@ function AdvancedSetting() {
         setTimeout(() => {
           toast.success("Successfully updated your profile!");
         }, 2000);
+        fetchSkill();
+        fetchUserSkill();
         setOpen(false);
         console.log("Profile updated successfully");
       } else {
@@ -236,7 +237,8 @@ function AdvancedSetting() {
           setTimeout(() => {
             toast.success("Successfully updated your dream job!");
           }, 2000);
-          setOpen(false);
+          fetchUserSkill();
+          setIsDialogOpen(false);
           console.log("Profile updated successfully");
         } else {
           console.log("Profile update failed");
@@ -251,6 +253,7 @@ function AdvancedSetting() {
 
   return (
     <div className="w-full space-y-4 flex-grow">
+
       <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium p-4">
         Welcome, {userSkill?.lastName}
       </div>
@@ -261,8 +264,13 @@ function AdvancedSetting() {
             className="flex justify-between items-center"
           >
             <p className="ml-4 mb-2">Skills</p>
-            <Dialog onOpenChange={setOpen}>
-              <DialogTrigger asChild>
+            <Dialog open={open}>
+              <DialogTrigger
+                asChild
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
                 <EditNoteOutlined className="hover:text-primary mr-4 cursor-pointer" />
               </DialogTrigger>
               <DialogContent className="max-w-screen-sm h-4/5 max-h-screen">
@@ -407,8 +415,13 @@ function AdvancedSetting() {
           <p className="ml-4 mb-2">Dream Job</p>
 
           <form onSubmit={handleDreamJobSubmit}>
-            <Dialog>
-              <DialogTrigger asChild>
+            <Dialog open={isDialogOpen}>
+              <DialogTrigger
+                asChild
+                onClick={() => {
+                  setIsDialogOpen(true);
+                }}
+              >
                 <EditNoteOutlined className="hover:text-primary mr-4 cursor-pointer" />
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-svh h-4/5">
@@ -580,23 +593,23 @@ function AdvancedSetting() {
           <div className="ml-4 text-sm font-normal ">
             <div className="flex gap-1">
               <p className="text-gray-400 w-full max-w-28">Address</p>{" "}
-              {addressCode.value}
+              {addressCode?.value}
             </div>
             <div className="flex gap-1">
               <p className="text-gray-400 w-full max-w-28">Job Category</p>{" "}
-              <p>{categoryJobCode.value}</p>
+              <p>{categoryJobCode?.value}</p>
             </div>
             <div className="flex gap-1">
               <p className="text-gray-400 w-full max-w-28">Job Level</p>{" "}
-              <p>{jobLevelCode.value}</p>
+              <p>{jobLevelCode?.value}</p>
             </div>
             <div className="flex gap-1">
               <p className="text-gray-400 w-full max-w-28">Salary</p>{" "}
-              <p>{salaryJobCode.value}</p>
+              <p>{salaryJobCode?.value}</p>
             </div>
             <div className="flex gap-1">
               <p className="text-gray-400 w-full max-w-28">Work Type</p>{" "}
-              <p>{workTypeCode.value}</p>
+              <p>{workTypeCode?.value}</p>
             </div>
           </div>
         ) : (

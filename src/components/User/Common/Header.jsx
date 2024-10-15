@@ -29,7 +29,7 @@ import {
 import { IoMdArrowDropdown } from "react-icons/io";
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const user = useSelector((state) => state.auth.user);
+  const [user, setUser] = useState();
   const token = useSelector((state) => state.auth.token);
   const userId = localStorage.getItem("user_id");
   const dispatch = useDispatch();
@@ -43,11 +43,10 @@ function Header() {
   const fetchUser = async (userId) => {
     try {
       const response = await axios.get(`/getUserById?id=${userId}`);
-
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
-        dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
+        setUser(response.data);
         localStorage.setItem("user", JSON.stringify(response.data)); // Lưu thông tin người dùng vào localStorage
         console.log("User data set in Redux and localStorage:", response.data);
       }
@@ -101,7 +100,7 @@ function Header() {
             </SheetTrigger>
             <SheetContent className="pt-16 space-y-4">
               {/* login, register */}
-              {(user != null || user != undefined) && (
+              {(userId != null || userId != undefined) && (
                 <SheetHeader>
                   <Link to="/userProfile">
                     <p className="text-center text-lg font-medium">
@@ -143,12 +142,12 @@ function Header() {
               </SheetHeader>
 
               {/* nút logout */}
-              {user === null || user === undefined ? (
+              {userId === null || userId === undefined ? (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
                       <Link
-                        className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                        className="text-center text-primary hover:bg-secondary hover:text-primary text-lg font-medium"
                         to="/signup"
                       >
                         Register
@@ -157,11 +156,10 @@ function Header() {
                   </SheetHeader>
                   <SheetHeader>
                     <SheetClose asChild>
-                      <Link
-                        className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
-                        to="/login"
-                      >
-                        Login
+                      <Link to="/login" className="flex items-center justify-center">
+                        <Button className="text-center border border-primary bg-white hover:bg-secondary hover:text-primary text-lg font-medium">
+                          Login{" "}
+                        </Button>
                       </Link>
                     </SheetClose>
                   </SheetHeader>
@@ -195,13 +193,10 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {user === null || user === undefined ? (
+          {userId === null || userId === undefined ? (
             <>
               <li>
-                <Button
-                  className="bg-secondary text-third hover:bg-secondary hover:text-primary"
-                  variant="ghost"
-                >
+                <Button className="font-semibold text-primary" variant="ghost">
                   <Link to="/signup">Register</Link>
                 </Button>
               </li>
@@ -216,21 +211,23 @@ function Header() {
             </>
           ) : (
             <li className="flex items-center space-x-4 relative">
-          
               {/* Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="ring-0 border-0">
                   <div className="flex active:opacity-60">
-                     <Avatar alt={user?.phoneNumber} src={user.data?.image} className="cursor-pointer" />
-                  <button className="absolute -right-2 bottom-0   bg-background rounded-full">
-                    <IoMdArrowDropdown className="w-5 h-5" />
-                  </button>
+                    <Avatar
+                      alt={user?.data?.phoneNumber}
+                      src={user?.data?.image}
+                      className="cursor-pointer"
+                    />
+                    <button className="absolute -right-2 bottom-0   bg-background rounded-full">
+                      <IoMdArrowDropdown className="w-5 h-5" />
+                    </button>
                   </div>
-                 
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>
-                    Hello, {user.data?.firstName}
+                    Hello, {user?.data?.firstName}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>

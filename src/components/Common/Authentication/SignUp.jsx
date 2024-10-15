@@ -74,7 +74,7 @@ const SignUp = () => {
       try {
         const result = await dispatch(signUp(formData)).unwrap();
         // Điều hướng sau khi thành công, nếu cần
-        console.log("Sign Up Successful", authState);
+        console.log("Sign Up Successful", result);
         localStorage.setItem("email", formData.email);
         localStorage.setItem("user_id", result.user?.id);
         fetchUser(result.user?.id);
@@ -95,7 +95,6 @@ const SignUp = () => {
       console.log("Response from /getUserById:", response.data);
 
       if (response.data) {
-        dispatch(setUser(response.data)); // Cập nhật thông tin người dùng vào Redux store
         localStorage.setItem("user", JSON.stringify(response.data)); // Lưu thông tin người dùng vào localStorage
         console.log("User data set in Redux and localStorage:", response.data);
       }

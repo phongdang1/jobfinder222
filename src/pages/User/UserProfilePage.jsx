@@ -7,6 +7,8 @@ import Bg from "../../../src/assets/Home/Home/defaultavatar.png"; // Default ima
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUsersById, handleSetDataUserDetail } from "@/fetchData/User";
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import SettingsSuggestOutlinedIcon from '@mui/icons-material/SettingsSuggestOutlined';
 
 function UserProfilePage() {
   const [image, setImage] = useState(null);
@@ -112,7 +114,7 @@ function UserProfilePage() {
 
         <Link to="/userProfile/advancedSetting">
           <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
-            <AccountCircleOutlinedIcon />
+            <SettingsSuggestOutlinedIcon />
             <p>Advanced Settings</p>
           </li>
         </Link>
@@ -121,6 +123,13 @@ function UserProfilePage() {
           <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
             <AdminPanelSettingsOutlinedIcon />
             <p>Account Security</p>
+          </li>
+        </Link>
+
+        <Link to="/userProfile/viewApplication">
+          <li className="flex gap-2 cursor-pointer w-full mx-auto items-center hover:bg-primary hover:text-white p-2 hover:rounded-md">
+            <DescriptionOutlinedIcon />
+            <p>Your Application</p>
           </li>
         </Link>
       </ul>

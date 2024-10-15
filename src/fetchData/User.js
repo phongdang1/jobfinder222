@@ -14,6 +14,4 @@ const resetPassword = (id, oldPassword, newPassword) => {
     newPassword : newPassword,
   });
 }
-
 export { handleSetDataUserDetail, getUsersById , resetPassword };
-
