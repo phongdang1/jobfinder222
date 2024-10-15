@@ -44,7 +44,7 @@ function Hero({ filter, handleSearch }) {
                   <Input
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md rounded-r-none hover:border-primary transition ease-in-out duration-700"
                     type="text"
-                    placeholder="What position are you looking for?"
+                    placeholder="Find a company?"
                     value={searchTerm}
                     onChange={handleSearchInputChange}
                     onKeyDown={handleKeyDown}
@@ -58,7 +58,7 @@ function Hero({ filter, handleSearch }) {
                   onClick={handleSearchSubmit}
                   className="p-3 bg-third hover:text-white rounded-md rounded-l-none flex-shrink-0"
                 >
-                  <p className="text-white">Search Job</p>
+                  <p className="text-white">Search</p>
                 </Button>
               </div>
             </div>

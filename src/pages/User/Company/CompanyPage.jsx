@@ -116,7 +116,7 @@ function CompanyPage() {
           <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-8 mb-10 right-6 ">
             <select
               id="typeFilter"
-              className="p-1 sm:p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-primary transition duration-200 cursor-pointer"
+              className="p-1 sm:p-2 border w-full max-w-sm border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-primary transition duration-200 cursor-pointer"
               value={filter.typeCompany}
               onChange={(e) => {
                 setFilter({ ...filter, typeCompany: e.target.value });
@@ -147,7 +147,7 @@ function CompanyPage() {
                 {currentCompanies.map((company) => (
                   <div
                     key={company.id}
-                    className="w-full bg-white p-4 rounded-lg shadow-lg border-t-1 border-slate-200 flex items-center justify-center border border-transparent hover:border-primary transition-all"
+                    className="w-full bg-white p-4 rounded-lg hover:shadow-lg flex items-center justify-center border border-gray-200 hover:border-primary transition-all"
                   >
                     <CompanyCard company={company} />
                   </div>

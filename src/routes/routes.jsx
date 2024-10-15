@@ -31,6 +31,8 @@ import Dashboard from "@/components/Admin/components/Dashboard";
 import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
+
+import CreateJobPost from "@/components/Company/components/CreateJobPost";
 const routes = [
   // Routes using DefaultLayout
   {
@@ -58,6 +60,7 @@ const routes = [
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
+      { path: "createJobPost", element: <CreateJobPost /> },
     ],
   },
   {
