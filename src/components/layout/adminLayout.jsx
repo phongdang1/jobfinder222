@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AdminHeader from "../Admin/common/AdminHeader";
 import AdminSidebar from "../Admin/common/AdminSidebar";
-import { Link, useMatch, useParams, Outlet } from "react-router-dom";
+import { Link, useMatch, useParams, Outlet, Navigate } from "react-router-dom";
 
 function AdminLayout() {
   const matchDashBoard = useMatch("/admin/dashboard");
@@ -9,6 +9,7 @@ function AdminLayout() {
   const matchSkill = useMatch("/admin/skill");
   const matchLevel = useMatch("/admin/level");
   const matchWorkForm = useMatch("/admin/workForm");
+  const matchPackage = useMatch("/admin/package");
   const matchCompany = useMatch("/admin/company");
   const matchPost = useMatch("/admin/post");
 
@@ -18,11 +19,24 @@ function AdminLayout() {
     if (matchSkill) return "Manage Skill";
     if (matchLevel) return "Manage Level";
     if (matchWorkForm) return "Manage Working Form";
+    if (matchPackage) return "Manage Package";
     if (matchCompany) return "Manage Company";
     if (matchPost) return "Manage Post";
+    return "DashBoard";
   };
 
   const title = getTitle();
+
+  if (
+    !matchDashBoard &&
+    !matchJobType &&
+    !matchSkill &&
+    !matchLevel &&
+    !matchWorkForm &&
+    !matchPackage
+  ) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
 
   return (
     <div className="flex h-full">
@@ -31,7 +45,11 @@ function AdminLayout() {
         <AdminHeader />
 
         <main className="flex-1 bg-gray-100 p-6">
-          {(matchJobType || matchSkill || matchLevel || matchWorkForm) && (
+          {(matchJobType ||
+            matchSkill ||
+            matchLevel ||
+            matchWorkForm ||
+            matchPackage) && (
             <>
               {/* Banner Image */}
               <img

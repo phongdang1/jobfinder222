@@ -284,7 +284,12 @@ const ManageLevel = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <Button type="submit">Create</Button>
+              <Button
+                type="submit"
+                className="bg-third hover:text-white text-white rounded-md"
+              >
+                Create
+              </Button>
             </div>
           </form>
         </DialogContent>
@@ -321,7 +326,12 @@ const ManageLevel = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <Button type="submit">Update</Button>
+              <Button
+                type="submit"
+                className="bg-third hover:text-white text-white rounded-md"
+              >
+                Update
+              </Button>
             </div>
           </form>
         </DialogContent>
