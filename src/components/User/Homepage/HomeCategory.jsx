@@ -8,7 +8,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
+import "aos/dist/aos.css";
+import AOS from "aos";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
 import { Image } from "@nextui-org/react";
 import { useEffect } from "react";
@@ -18,6 +19,15 @@ import { getAllPost } from "@/fetchData/Post";
 function HomeCategory() {
   const [data, setData] = useState();
   const [count, setCount] = useState();
+  useEffect(() => {
+    AOS.init({
+
+      duration: 300, // Điều chỉnh thời gian hiệu ứng (ms)
+      once: false,    // Để hiệu ứng chạy lại mỗi khi cuộn đến
+
+    });
+    AOS.refresh(); // Làm mới lại AOS để đảm bảo nó hoạt động đúng
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +48,9 @@ function HomeCategory() {
   }, []);
 
   return (
-    <div className="flex flex-col pb-20 mt-10 mx-10 sm:mx-12 md:mx-16 lg:mx-36 font-poppins ">
+
+    <div  data-aos="fade-up" className="flex flex-col pb-20 mx-10 sm:mx-12 md:mx-16 lg:mx-36 font-poppins ">
+
       <div className="text-4xl md:text-5xl font-forum mb-8 font-semibold text-start">
         Occupation <span className="text-primary">Category</span>
       </div>

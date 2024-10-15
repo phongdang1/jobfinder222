@@ -1,9 +1,34 @@
 import axios from "./axios";
 
-const getAllCompanies = () => {
-    return axios.get("/getAllCompanies");
+
+const getAllCompanies = (searchKey) => {
+    return axios.get(`/getAllCompaniesInactive?searchKey=${searchKey}`);
+}
+const getAllCompaniesUser = (searchKey) => {
+    return axios.get(`/getAllCompanies?searchKey=${searchKey}`);
 }
 const getCompanyById = (companyId) => {
     return axios.get(`/getCompanyById?id=${companyId}`);
 }
-export {getAllCompanies,getCompanyById}
+const banCompany = (companyId) => {
+    return axios.post(`/banCompany`, {
+        companyId: companyId
+    });
+}
+const unbanCompany = (companyId) => {
+    return axios.post(`/unBanCompany`, {
+        companyId: companyId
+    });
+}
+
+const inactiveCompany = (companyId) => {
+    return axios.post(`/rejectCompany`, {
+        companyId: companyId
+    });
+}
+const activeCompany = (companyId) => {
+    return axios.post(`/approveCompany`, {
+        companyId: companyId
+    });
+}
+export {getAllCompanies,getCompanyById, banCompany, inactiveCompany, activeCompany, unbanCompany, getAllCompaniesUser}

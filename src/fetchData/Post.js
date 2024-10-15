@@ -8,8 +8,10 @@ const getDetailPostById = (id) => {
   return axios.get(`getDetailPostById?id=${id}`);
 };
 
-const getAllPost = (searchKey) => {
-  return axios.get(`getAllPost?searchKey=${searchKey}`);
+const getAllPost = () => {
+  return axios.get(`/getAllPost`);
 };
+
+
 
 export { getAllPostWithLimit, getDetailPostById, getAllPost };

@@ -10,6 +10,8 @@ function AdminLayout() {
   const matchLevel = useMatch("/admin/level");
   const matchWorkForm = useMatch("/admin/workForm");
   const matchPackage = useMatch("/admin/package");
+  const matchCompany = useMatch("/admin/company");
+  const matchPost = useMatch("/admin/post");
 
   const getTitle = () => {
     if (matchDashBoard) return "DashBoard";
@@ -18,6 +20,8 @@ function AdminLayout() {
     if (matchLevel) return "Manage Level";
     if (matchWorkForm) return "Manage Working Form";
     if (matchPackage) return "Manage Package";
+    if (matchCompany) return "Manage Company";
+    if (matchPost) return "Manage Post";
     return "DashBoard";
   };
 

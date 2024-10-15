@@ -24,6 +24,7 @@ import UserProfileLayout from "@/components/layout/UserProfileLayout";
 import PersonalInformation2 from "@/components/User/UserProfile/PersonalInformation";
 import ChangePassword from "@/components/User/UserProfile/ChangePassword";
 import AdvancedSetting from "@/components/User/UserProfile/AdvancedSetting";
+import YourApplication from "@/components/User/UserProfile/YourApplication";
 
 import AdminLayout from "@/components/layout/adminLayout";
 import ManageTypeJob from "@/components/Admin/components/ManageTypeJob";
@@ -32,6 +33,10 @@ import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
 import ManagePackages from "@/components/Admin/components/ManagePackages";
+import CreateJobPost from "@/components/Company/components/CreateJobPost";
+import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
+import ManagePostAdmin from "@/components/Admin/components/ManagePost";
+
 const routes = [
   // Routes using DefaultLayout
   {
@@ -48,7 +53,6 @@ const routes = [
 
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
-      { path: "/profile", element: <UserProfilePage /> },
     ],
   },
   // Routes using CompanyLayout
@@ -60,6 +64,7 @@ const routes = [
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
+      { path: "createJobPost", element: <CreateJobPost /> },
     ],
   },
   {
@@ -78,6 +83,7 @@ const routes = [
       { path: "personalInfo", element: <PersonalInformation2 /> },
       { path: "changePassword", element: <ChangePassword /> },
       { path: "advancedSetting", element: <AdvancedSetting /> },
+      { path: "viewApplication", element: <YourApplication /> },
     ],
   },
   // Routes using AdminLayout
@@ -91,6 +97,8 @@ const routes = [
       { path: "level", element: <ManageLevel /> },
       { path: "workForm", element: <ManageWorkForm /> },
       { path: "package", element: <ManagePackages /> },
+      { path: "company", element: <ManageCompanyAdmin /> },
+      { path: "post", element: <ManagePostAdmin /> },
     ],
   },
 ];

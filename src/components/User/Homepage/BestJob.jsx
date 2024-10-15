@@ -16,17 +16,24 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Pagination, Button } from "@nextui-org/react";
-
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { getAllCode, getAllCodeByType } from "@/fetchData/AllCode";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function BestJob() {
   const [sort, setSort] = useState([]);
   const [sortValue, setSortValue] = useState([]);
   const [selectedType, setSelectedType] = useState("PROVINCE");
-
+  const [isLoading, setIsLoading] = useState(true);
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const loadPosition = document.documentElement.scrollHeight - 2300;
+    if (scrollPosition >= loadPosition) {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const fetchSort = async () => {
       try {
@@ -37,21 +44,19 @@ function BestJob() {
         if (selectedType) {
           const response2 = await getAllCodeByType(selectedType);
           setSortValue(response2.data.data);
-          console.log("type  " + selectedType);
-          console.log(
-            "sort value ",
-            JSON.stringify(response2.data.data, null, 2)
-          );
-        } else {
-          console.log("Error!!!");
         }
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchSort();
-  }, [selectedType]);
+    window.addEventListener("scroll", handleScroll);
+    if (!isLoading) {
+      fetchSort();
+    }
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [selectedType, isLoading]);
 
   const requiredTypes = [
     "SALARYTYPE",
@@ -64,7 +69,7 @@ function BestJob() {
   const uniqueTypes = [...new Set(sort.map((item) => item.type))];
 
   return (
-    <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary xl:max-w-screen-xl 2xl:max-w-screen-2xl">
+    <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary">
       <div className="flex items-center justify-between text-4xl md:text-5xl font-forum mb-4 font-semibold text-start bg-[#4a3d8d] bg-opacity-70 rounded-t-lg p-6">
         <div>
           Best <span className="text-secondary">Job</span> For You
@@ -73,7 +78,7 @@ function BestJob() {
           <Link to="/jobs">See All Jobs </Link>
         </div>
       </div>
-      {/* sort and carousel */}
+      {/* Sort and carousel */}
       <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center w-full mx-4 space-y-4 lg:space-y-0 mt-4">
         <Select
           className="flex items-center"
@@ -107,26 +112,27 @@ function BestJob() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-
             <CarouselPrevious className="border-2 border-primary text-primary bg-white hover:text-white hover:bg-primary" />
             <CarouselNext className="border-2 border-primary text-primary bg-white hover:text-white hover:bg-primary" />
           </Carousel>
         </div>
       </div>
-      {/* job cards */}
+      {/* Job cards */}
       <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 py-10 px-4">
-        <JobCard />
+        {isLoading ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="flex space-x-6">
+              <Skeleton className="  w-[100px] h-[100px] shrink-0" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+              </div>
+            </div>
+          ))
+        ) : (
+          <JobCard expand="" />
+        )}
       </div>
-      {/* pagination */}
-      {/* <div className="flex flex-col gap-5 mx-auto">
-        <Pagination
-          variant="border"
-          showControls
-          total={10}
-          initialPage={1}
-          color="secondary"
-        />
-      </div> */}
     </div>
   );
 }

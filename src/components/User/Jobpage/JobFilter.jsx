@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+
+import { RadioGroup, Radio } from "@nextui-org/radio";
+import { Button } from "@/components/ui/button";
 
 function JobFilter({ filter, handleFilterChange, handleResetAll }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -11,13 +14,10 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
     setIsOpen(!isOpen);
   };
 
-  const handleCheckboxChange = (e) => {
-    const { name, value, checked } = e.target;
-    handleFilterChange({
-      [name]: checked
-        ? [...(filter[name] || []), value]
-        : (filter[name] || []).filter((item) => item !== value),
-    });
+  // Generalized function to handle radio button changes
+  const handleRadioChange = (e, name) => {
+    const { value } = e.target;
+    handleFilterChange({ [name]: value }); // Update the respective filter with the selected value
   };
 
   return (
@@ -37,79 +37,66 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
           isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div>
+        <div className="ml-2">
           {/* Job Level Filter */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Experience Level
-            </label>
-            <div className="flex flex-col mt-2">
-              {["Nhân viên", "Trưởng phòng"].map((level) => (
-                <label key={level} className="inline-flex items-center mt-2">
-                  <input
-                    type="checkbox"
-                    name="levels"
-                    value={level}
-                    checked={(filter.levels || []).includes(level)}
-                    onChange={handleCheckboxChange}
-                    className="form-checkbox h-5 w-5 rounded border-gray-300"
-                  />
-                  <span className="ml-2">{level}</span>
-                </label>
+            <RadioGroup
+              label="Experience Level"
+              color="primary"
+              className="text-primary"
+              value={filter.levels || ""} // Single value for radio group
+              onChange={(e) => handleRadioChange(e, "levels")} // Specify the name for the filter
+            >
+              {["Nhân viên", "Trưởng phòng"].map((level, index) => (
+                <Radio key={index} value={level} size="sm">
+                  {level}
+                </Radio>
               ))}
-            </div>
+            </RadioGroup>
           </div>
 
           {/* Type of Work Filter */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Type of Work
-            </label>
-            <div className="flex flex-col mt-2">
-              {["Toàn thời gian", "Remote"].map((typeWork) => (
-                <label key={typeWork} className="inline-flex items-center mt-2">
-                  <input
-                    type="checkbox"
-                    name="typeWorks"
-                    value={typeWork}
-                    checked={(filter.typeWorks || []).includes(typeWork)}
-                    onChange={handleCheckboxChange}
-                    className="form-checkbox h-5 w-5 rounded border-gray-300"
-                  />
-                  <span className="ml-2">{typeWork}</span>
-                </label>
+            <RadioGroup
+              label="Type of Work"
+              color="primary"
+              className="text-primary"
+              value={filter.typeWorks || ""} // Single value for type of work
+              onChange={(e) => handleRadioChange(e, "typeWorks")}
+            >
+              {["Toàn thời gian", "Remote"].map((typeWork, index) => (
+                <Radio key={index} value={typeWork} size="sm">
+                  {typeWork}
+                </Radio>
               ))}
-            </div>
+            </RadioGroup>
           </div>
 
           {/* Experience Work Filter */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Experience
-            </label>
-            <div className="flex flex-col mt-2">
-              {["1 năm", "2 năm", "3 năm"].map((expJob) => (
-                <label key={expJob} className="inline-flex items-center mt-2">
-                  <input
-                    type="checkbox"
-                    name="expJobs"
-                    value={expJob}
-                    checked={(filter.expJobs || []).includes(expJob)}
-                    onChange={handleCheckboxChange}
-                    className="form-checkbox h-5 w-5 rounded border-gray-300"
-                  />
-                  <span className="ml-2">{expJob}</span>
-                </label>
+            <RadioGroup
+              label="Experience"
+              color="primary"
+              className="text-primary"
+              value={filter.expJobs || ""} // Single value for experience
+              onChange={(e) => handleRadioChange(e, "expJobs")}
+            >
+              {["1 năm", "2 năm", "3 năm"].map((expJob, index) => (
+                <Radio key={index} value={expJob} size="sm">
+                  {expJob}
+                </Radio>
               ))}
-            </div>
+            </RadioGroup>
           </div>
         </div>
-        <button
+
+        <Button
           onClick={handleResetAll}
-          className="mt-4 px-4 py-2 bg-gray-300 text-white rounded"
+          className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1 w-full"
+          variant="outline"
         >
           Reset All
-        </button>
+        </Button>
       </div>
     </div>
   );

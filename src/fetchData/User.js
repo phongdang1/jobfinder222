@@ -7,6 +7,11 @@ const handleSetDataUserDetail = (userData) => {
 const getUsersById = (id) => {
   return axios.get(`/getUserById?id=${id}`);
 };
-
-export { handleSetDataUserDetail, getUsersById };
-
+const resetPassword = (id, oldPassword, newPassword) => {
+  return axios.post(`/changePassword`,{
+    userId : id,
+    oldPassword : oldPassword,
+    newPassword : newPassword,
+  });
+}
+export { handleSetDataUserDetail, getUsersById , resetPassword };

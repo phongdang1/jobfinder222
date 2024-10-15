@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,23 +14,24 @@ import PeopleIcon from "@mui/icons-material/People";
 import PlaceIcon from "@mui/icons-material/Place";
 import MapSharpIcon from "@mui/icons-material/MapSharp";
 import { Separator } from "@/components/ui/separator";
-import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
-import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+
+import JobCard from "@/components/User/Homepage/Common/Card";
 
 function CompanyDetail() {
   const { id } = useParams();
   const [companyDetail, setCompanyDetail] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchCompanyData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/getCompanyById?id=${id}`);
+        const response = await axios.get(
+          `http://localhost:5000/getCompanyById?id=${id}`
+        );
         if (response.data.errCode === 0) {
+          console.log("company ne", response.data.data);
           setCompanyDetail(response.data.data);
         } else {
           setError(response.data.errMessage);
@@ -68,12 +69,18 @@ function CompanyDetail() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{companyDetail.name}</BreadcrumbPage>
+              <BreadcrumbLink href="/companypage">Company Page</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-primary">
+                {companyDetail.name}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div>
+      <div className="mx-6">
         <div
           className="w-full h-60 sm:h-72 md:h-80 lg:h-96 bg-cover bg-center rounded-t-xl"
           style={{
@@ -82,10 +89,10 @@ function CompanyDetail() {
         ></div>
         <div
           className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 bg-cover bg-center bg-white rounded-full absolute z-30
-                lg:top-[450px] lg:left-72
-                md:top-[360px] md:left-1/2 md:transform md:-translate-x-1/2
-                sm:top-[320px] sm:left-1/2 sm:transform sm:-translate-x-1/2
-                top-[300px] left-1/2 transform -translate-x-1/2"
+                lg:top-[500px] lg:left-72
+                md:top-[390px] md:left-1/2 md:transform md:-translate-x-1/2
+                sm:top-[400px] sm:left-1/2 sm:transform sm:-translate-x-1/2
+                top-[370px] left-1/2 transform -translate-x-1/2"
           style={{
             backgroundImage: `url(${companyDetail.thumbnail})`,
           }}
@@ -116,9 +123,11 @@ function CompanyDetail() {
       </div>
 
       {/* Company Info */}
-      <div className="lg:grid lg:grid-cols-3 md:flex md:flex-col gap-8 lg:mb-8 md:mb-12 sm:mb-12 mb-12">
+      <div className="lg:grid lg:grid-cols-3 md:flex md:flex-col lg:mb-8 md:mb-12 sm:mb-12 mb-12">
         {/* Left */}
-        <div className="col-span-2 px-4 sm:px-6"> {/* Added padding for small screens */}
+        <div className="col-span-2 px-4 sm:px-6">
+          {" "}
+          {/* Added padding for small screens */}
           {/* About Us */}
           <div>
             <div className="h-12 w-full bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 rounded-t-lg">
@@ -126,7 +135,7 @@ function CompanyDetail() {
                 <p>Company Description</p>
               </div>
             </div>
-            <div className="px-6 h-40 sm:h-52 md:h-60 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto">
+            <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white">
               {companyDetail.description}
             </div>
           </div>
@@ -139,57 +148,13 @@ function CompanyDetail() {
             </div>
           </div>
           {/* Job Listings */}
-          <div>
-              {companyDetail.postData && companyDetail.postData.length > 0 ? (
-                companyDetail.postData.map((job, index) => (
-                  <div
-                    key={index}
-                    className="bg-slate-200 w-full shadow-md rounded-b-lg p-4 pr-3 flex flex-col space-y-4"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-1">
-                        <p className="text-black font-medium text-sm mb-1">
-                          {job.postDetailData.companyName || "Company Name"}
-                        </p>
-                        <div className="flex items-center">
-                          <h4 className="text-lg font-semibold">{job.postDetailData.name || "Job Title"}</h4>
-                          <span className="bg-purple-100 text-purple-700 px-2 py-1 text-xs font-semibold rounded-full ml-4">
-                            {job.postDetailData.jobTypePostData?.value || "Job Type"}
-                          </span>
-                        </div>
-                        <div className="flex flex-row items-center text-gray-700 text-sm mt-2 space-x-4">
-                          <div className="flex items-center space-x-1">
-                            <WorkOutlineOutlinedIcon className="text-gray-600" fontSize="small" />
-                            <p>{job.postDetailData.jobLevelPostData?.value || "Job Level"}</p>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <FmdGoodOutlinedIcon className="text-gray-600" fontSize="small" />
-                            <p>{job.postDetailData.provincePostData?.value || "Location"}</p>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <AttachMoneyIcon className="text-gray-600" fontSize="small" />
-                            <p>{job.postDetailData.salaryTypePostData?.value || "Salary"}</p>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <AccessTimeOutlinedIcon className="text-gray-600" fontSize="small" />
-                            <p>{job.timePost || "Posted Time"}</p>
-                          </div>
-                        </div>
-                        <div className="text-gray-700 text-sm mt-2">
-                          <p>{job.postDetailData.description || "Job Description"}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="bg-slate-200 w-full shadow-md rounded-b-lg p-4 pr-3 flex flex-col space-y-4">No job listings available.</div>
-              )}
-            </div>
+          <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white space-y-4">
+            <JobCard />
+          </div>
         </div>
 
         {/* Right */}
-        <div className="mt-8">
+
         <div className="col-span-1 px-4 sm:px-6">
           <div className="h-12 w-full bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 rounded-t-lg">
             <div className="flex h-full items-center pl-6 text-secondary text-xl font-medium">
@@ -221,8 +186,6 @@ function CompanyDetail() {
               </div>
             </div>
           </div>
-
-        </div>
         </div>
       </div>
     </div>
