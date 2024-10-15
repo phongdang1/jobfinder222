@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const StatisticsCard = ({ color, icon, title, value, footer }) => {
   return (
-    <div className="border border-blue-gray-100 shadow-sm rounded-lg overflow-hidden">
+    <div className="border border-blue-gray-100 shadow-sm rounded-lg overflow-hidden bg-white">
       {/* Icon header */}
       <div
         className={`absolute grid h-12 w-12 place-items-center bg-gradient-to-tr from-${color}-400 to-${color}-600 rounded-full -translate-y-1/ translate-x-1/4 shadow-md`}

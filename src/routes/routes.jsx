@@ -31,6 +31,7 @@ import Dashboard from "@/components/Admin/components/Dashboard";
 import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
+import ManagePackages from "@/components/Admin/components/ManagePackages";
 const routes = [
   // Routes using DefaultLayout
   {
@@ -89,6 +90,7 @@ const routes = [
       { path: "skill", element: <ManageSkill /> },
       { path: "level", element: <ManageLevel /> },
       { path: "workForm", element: <ManageWorkForm /> },
+      { path: "package", element: <ManagePackages /> },
     ],
   },
 ];

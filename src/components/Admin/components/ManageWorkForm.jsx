@@ -289,7 +289,10 @@ const ManageWorkForm = () => {
               </div>
             </div>
             <div className="flex justify-end mt-4">
-              <Button type="submit" className="bg-green-500 text-white">
+              <Button
+                type="submit"
+                className="bg-third hover:text-white text-white rounded-md"
+              >
                 Create
               </Button>
             </div>
@@ -330,7 +333,10 @@ const ManageWorkForm = () => {
               </div>
             </div>
             <div className="flex justify-end mt-4">
-              <Button type="submit" className="bg-blue-500 text-white">
+              <Button
+                type="submit"
+                className="bg-third hover:text-white text-white rounded-md"
+              >
                 Update
               </Button>
             </div>
