@@ -9,6 +9,11 @@ import {
 } from "@/components/ui/tooltip";
 import TooltipBox from "./TooltipBox";
 import { getAllPostWithLimit } from "@/fetchData/Post";
+import {
+  Favorite,
+  FavoriteBorderOutlined,
+  FavoriteBorderRounded,
+} from "@mui/icons-material";
 
 function JobCard({ expand }) {
   const [data, setData] = useState([]);
@@ -32,7 +37,7 @@ function JobCard({ expand }) {
       {data.map((card, index) => (
         <Card
           key={index}
-          className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group  hover:outline-2 hover:outline-primary cursor-pointer"
+          className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer"
           shadow=""
         >
           <CardBody>
@@ -52,7 +57,7 @@ function JobCard({ expand }) {
                 <TooltipProvider>
                   <Tooltip className="">
                     <TooltipTrigger className="text-start">
-                      <p className="text-base font-medium group-hover:text-primary">
+                      <p className="text-base font-medium group-hover:text-primary w-fit">
                         {card.userPostData.userCompanyData.name}
                       </p>
                     </TooltipTrigger>
@@ -82,12 +87,20 @@ function JobCard({ expand }) {
                   {expand === "" ? (
                     ""
                   ) : (
-                    <Button
-                      className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary ml-auto absolute -right-1"
-                      variant="outline"
-                    >
-                      Apply
-                    </Button>
+                    <div className="flex gap-2 items-center ml-auto absolute -right-1">
+                      <Button
+                        className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
+                        variant="outline"
+                      >
+                        Apply
+                      </Button>
+                      <Button
+                        className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
+                        variant="outline"
+                      >
+                        <Favorite />
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>

@@ -1,9 +1,18 @@
 import { useState } from "react";
-import JobCard from "./JobCard";
 import { Input } from "@/components/ui/input";
 import SearchIcon from "@mui/icons-material/Search";
 import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
 import { Button } from "@/components/ui/button";
+import { Card, CardBody, Image } from "@nextui-org/react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import TooltipBox from "../Homepage/Common/TooltipBox";
+import { Favorite } from "@mui/icons-material";
 
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +35,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
       handleSearchSubmit();
     }
   };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <div className="flex flex-col justify-start text-right mb-4">
@@ -72,7 +82,67 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
       <div className="grid grid-cols-1 gap-6">
         {currentJobs.map((job) => (
           <div key={job.id} className="w-full">
-            <JobCard job={job} currentPage={currentPage} />
+            <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
+              <CardBody>
+                <div className="flex gap-8 items-center justify-start w-full ">
+                  <div className="relative bg-transparent shrink-0">
+                    <Image
+                      alt="Job cover"
+                      className="object-cover rounded-lg"
+                      height={90}
+                      shadow="md"
+                      src="https://nextui.org/images/album-cover.png" // Replace with actual image URL
+                      width={90}
+                    />
+                  </div>
+                  <div className="flex flex-col w-full">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="text-start">
+                          <p className="text-base font-medium group-hover:text-primary">
+                            {job.userPostData.userCompanyData.name}
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <TooltipBox id={job.id} />
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <p className="font-normal text-base text-gray-500">
+                      {job.postDetailData.name}
+                    </p>
+                    <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                      <Badge
+                        variant="outline"
+                        className="bg-white w-fit text-nowrap rounded-lg"
+                      >
+                        {job.postDetailData.salaryTypePostData.value}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="bg-white w-fit text-nowrap rounded-lg"
+                      >
+                        {job.postDetailData.provincePostData.value}
+                      </Badge>
+                      <div className="flex gap-2 items-center ml-auto absolute -right-1">
+                        <Button
+                          className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
+                          variant="outline"
+                        >
+                          Apply
+                        </Button>
+                        <Button
+                          className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
+                          variant="outline"
+                        >
+                          <Favorite />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           </div>
         ))}
       </div>

@@ -253,8 +253,9 @@ function AdvancedSetting() {
 
   return (
     <div className="w-full space-y-4 flex-grow">
-      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium px-4 py-6">
-        Welcome, {userSkill.firstName}
+
+      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium p-4">
+        Welcome, {userSkill?.lastName}
       </div>
       <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2">
         <div>
@@ -299,7 +300,7 @@ function AdvancedSetting() {
                     <div className="flex flex-col w-full max-w-lg gap-1.5">
                       <div className="space-x-2">
                         {/* Chosen Skills */}
-                        {Array.isArray(userSkill.listSkill) &&
+                        {Array.isArray(userSkill?.listSkill) &&
                           userSkill.listSkill.length > 0 && (
                             <>
                               <p className="text-sm mb-1">Chosen skills: </p>
@@ -384,7 +385,7 @@ function AdvancedSetting() {
 
         {/* userSkill */}
 
-        {Array.isArray(userSkill.listSkill) &&
+        {Array.isArray(userSkill?.listSkill) &&
         userSkill.listSkill.length > 0 ? (
           <div className="flex gap-2 ml-4 space-x-2">
             {userSkill.listSkill.map((skill, index) => (
@@ -588,7 +589,7 @@ function AdvancedSetting() {
         </div>
         {/* info of dream job */}
         {/* dreamJob */}
-        {userSkill.UserDetailData ? (
+        {userSkill?.UserDetailData ? (
           <div className="ml-4 text-sm font-normal ">
             <div className="flex gap-1">
               <p className="text-gray-400 w-full max-w-28">Address</p>{" "}
