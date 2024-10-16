@@ -50,7 +50,7 @@ const VipFeature = () => {
       </div>
 
       {/* VIP Package Cards Section */}
-      <div className="my-52">
+      <div className="my-2">
         <h1 className="my-10 text-4xl font-semibold  text-center">
           Our <span className="text-primary ">Features</span>
         </h1>
