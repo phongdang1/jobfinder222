@@ -51,9 +51,11 @@ const Head = ({ job }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [cvData, setCvData] = useState();
+  const [isApplied, setIsApplied] = useState(false);
+  const jobId = job.data.id;
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [userId, jobId]);
   const handleBackClick = () => {
     if (prevLocation) {
       navigate(prevLocation, { state: { page: fromPage } });
@@ -67,15 +69,32 @@ const Head = ({ job }) => {
   }
 
   const fetchUserData = async () => {
+    // const jobId = job.data.id;
     try {
       const response = await axios.get(`/getUserById?id=${userId}`);
-      const cvResponse = await getCvByUserId(userId);
+      const cvResponse = await axios.get(`getAllListCvByPost?postId=${jobId}`);
+
       if (response.data.errCode === 0 && cvResponse.data.errCode === 0) {
         setUser(response.data.data);
         setCvData(cvResponse.data.count);
-        console.log("user cv",cvResponse.data.count);
+        if (Array.isArray(cvResponse.data.data)) {
+          let userApplied = false;
+          for (let cv of cvResponse.data.data) {
+            if (cv.userId == userId) {
+              userApplied = true;
+              setIsApplied(userApplied);
+              break;
+            }
+          }
+          // setIsApplied(userApplied);
+          console.log("userApplied", userApplied);
+        } else {
+          console.error("Khong phai mang");
+        }
+
+        console.log("user cv", cvResponse.data.data);
       } else {
-        console.log("loi roi", cvResponse)
+        console.log("loi roi", cvResponse);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -87,12 +106,13 @@ const Head = ({ job }) => {
   };
 
   const applyJobSubmit = async () => {
-    const jobId = job.data.id;
+    // const jobId = job.data.id;
     try {
       const response = await handleApplyJob(userId, jobId, description);
       if (response.data.errCode === 0) {
         setIsOpen(false);
         toast.success(response.data.errMessage);
+        fetchUserData();
       } else {
         console.log(response);
       }
@@ -175,7 +195,7 @@ const Head = ({ job }) => {
             </div>
 
             <div className="flex flex-col md:flex-row justify-between gap-4 mt-6">
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center items-center">
                 <div className="flex gap-2 justify-center items-center border-2 w-fit p-1 bg-gray-200 text-sm">
                   <ScheduleSendRounded className="text-gray-600" />
                   <p>Application deadline: {job.data.timeEnd}</p>
@@ -183,81 +203,82 @@ const Head = ({ job }) => {
               </div>
 
               {/* nút nộp CV chỗ này */}
-              <div className="flex items-center justify-center">
-                {cvData === 0 ? (
+              <div className="flex items-center justify-center gap-x-2">
+                {!isApplied || !userId ? (
                   <Dialog open={isOpen}>
-                  <DialogTrigger>
-                    <Button
-                      className="w-full lg:w-auto bg-secondary text-primary mr-2 px-6 lg:px-12 hover:bg-primary hover:text-secondary border-primary items-center gap-1"
-                      variant="outline"
-                      onClick={() => setIsOpen(true)}
-                    >
-                      Apply
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>
-                        Apply for{" "}
-                        <span className="text-primary">
-                          {job.data.postDetailData?.name}
-                        </span>
-                      </DialogTitle>
-                      <DialogDescription>
-                        <div className="flex flex-col gap-y-4">
-                          {/* CV */}
-                          <div>
-                            <div className="flex items-center gap-x-2 my-3 font-medium">
-                              <RiFileUserFill className="w-5 h-5" /> Your CV :
+                    <DialogTrigger
+                    onClick={() => setIsOpen(true)}
+                     className="w-full lg:w-auto bg-secondary text-primary mr-2 px-6 py-2 rounded-lg border lg:px-12 hover:bg-primary hover:text-secondary border-primary items-center gap-1 font-medium transition">
+                      <div >Apply</div>
+                    </DialogTrigger>
+                    <DialogContent className="text-sm">
+                      <DialogHeader>
+                        <DialogTitle>
+                          Apply for{" "}
+                          <span className="text-primary">
+                            {job.data.postDetailData?.name}
+                          </span>
+                        </DialogTitle>
+                        <div>
+                          <div className="flex flex-col gap-y-4">
+                            {/* CV */}
+                            <div>
+                              <div className="flex items-center gap-x-2 my-3 font-medium">
+                                <RiFileUserFill className="w-5 h-5" /> Your CV :
+                              </div>
+                              <iframe
+                                width={"100%"}
+                                height={"500px"}
+                                src={user?.UserDetailData?.file}
+                              ></iframe>
                             </div>
-                            <iframe
-                              width={"100%"}
-                              height={"500px"}
-                              src={user?.UserDetailData?.file}
-                            ></iframe>
-                          </div>
 
-                          {/* giới thiệu */}
-                          <div>
-                            <div className="flex items-center gap-x-2 my-3 font-medium">
-                              <FaPenFancy className="w-5 h-5" /> Introduction :
-                            </div>
-                            <textarea
-                              value={description}
-                              onChange={handleInputChange}
-                              placeholder="Write a brief introduction of yourself ( strength, weakness ) and your desire as well as your reason of choosing this job"
-                              className="w-full max-h-80 h-full border border-gray-200 p-3 focus:border-primary"
-                            />
+                            {/* giới thiệu */}
+                            <>
+                              <div className="flex items-center gap-x-2 my-1 font-medium">
+                                <FaPenFancy className="w-5 h-5" /> Introduction
+                                :
+                              </div>
+                              <textarea
+                                value={description}
+                                onChange={handleInputChange}
+                                placeholder="Write a brief introduction of yourself ( strength, weakness ) and your desire as well as your reason of choosing this job"
+                                className="w-full max-h-96 border border-gray-200 p-3 focus:border-primary"
+                              />
+                            </>
                           </div>
                         </div>
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <Button
-                        onClick={() => {
-                          setIsOpen(false);
-                        }}
-                        className="bg-white border border-primary text-primary hover:text-white"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={applyJobSubmit}
-                        className="bg-primary border border-primary text-white hover:text-white"
-                      >
-                        Apply
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button
+                          onClick={() => {
+                            setIsOpen(false);
+                          }}
+                          className="bg-white border border-primary text-primary hover:text-white"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={applyJobSubmit}
+                          className="bg-primary border border-primary text-white hover:text-white"
+                        >
+                          Apply
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 ) : (
-                <Button
-                  className="w-full flex gap-2 py-4 mr-3  lg:w-auto px-6 text-center bg-white text-primary hover:bg-primary hover:text-white border-primary text-base font-medium"
-                  variant="outline"
-                  onClick={() => { console.log(cvData)}}
-                ><MdOutlineDoubleArrow/><span>View Applied Status</span></Button>
+                  <Button
+                    className="w-full flex gap-2 py-4 mr-3  lg:w-auto px-6 text-center bg-white text-primary hover:bg-primary hover:text-white border-primary text-base font-medium"
+                    variant="outline"
+                    onClick={() => {
+                      console.log(isApplied);
+                    }}
+                  >
+                    <MdOutlineDoubleArrow />
+                    <span>View Applied Status</span>
+                  </Button>
                 )}
-                
 
                 <Button className="w-1/5 lg:w-auto px-6 text-center bg-primary text-white hover:bg-primary/70 text-base font-medium">
                   <FavoriteRounded />
@@ -297,9 +318,15 @@ const Head = ({ job }) => {
                 Years of experience:{" "}
                 {job.data.postDetailData?.expTypePostData.value}
               </p>
-              <p className="list-item list-inside">
-                Requirements: {job.data.postDetailData?.requirement}
-              </p>
+              <div className="list-item list-inside">
+                <span>Requirements:</span>
+                <div
+                  className="ml-8"
+                  dangerouslySetInnerHTML={{
+                    __html: job.data.postDetailData?.requirement,
+                  }}
+                />
+              </div>
               <p className="list-item list-inside">
                 Benefits: {job.data.postDetailData?.benefit}
               </p>

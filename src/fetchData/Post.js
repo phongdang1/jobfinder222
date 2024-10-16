@@ -11,7 +11,10 @@ const getDetailPostById = (id) => {
 const getAllPost = () => {
   return axios.get(`/getAllPost`);
 };
+const createNewPost = (data) => {
+  return axios.post(`/createNewPost`, data);
+}
 
 
 
-export { getAllPostWithLimit, getDetailPostById, getAllPost };
+export { getAllPostWithLimit, getDetailPostById, getAllPost, createNewPost };

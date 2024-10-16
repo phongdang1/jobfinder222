@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../fetchData/axios";
 import { getCvByUserId } from "../../../fetchData/CvPost";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const YourApplication = () => {
   const userId = localStorage.getItem("user_id");
@@ -35,15 +37,56 @@ const YourApplication = () => {
       <div className="bg-white h-fit p-4">
         <h1 className="text-xl">Your Application :</h1>
 
-        {/* card  */}
-        {cvData.map((cv, index) =>{
-          return (
-            <div key={index} className="flex flex-col gap-y-2">
-              <h2 className="text-lg font-medium">{cv.postCvData?.postDetailData?.name}</h2>
-              <p>{cv.postCvData?.postDetailData?.description}</p>
-            </div>
-          )
-        })}
+        <div className="space-y-6">
+  {cvData.map((cv, index) => (
+    <Card
+      key={index}
+      className="flex flex-col gap-y-4 border border-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white"
+    >
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">
+          {cv.postCvData?.postDetailData?.name || "N/A"}
+        </h2>
+        <span
+          className={`px-3 py-1 text-sm font-medium rounded-full ${
+            cv.statusCode === "PENDING"
+              ? "bg-yellow-100 text-yellow-800"
+              : cv.statusCode === "APPROVED"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {cv.statusCode}
+        </span>
+      </div>
+
+      <div className="text-sm text-gray-600 leading-relaxed space-y-2">
+        <p>
+          <strong className="font-semibold">Description:</strong>{" "}
+          {cv.description || "No description provided."}
+        </p>
+        <p>
+          <strong className="font-semibold">Job Level:</strong>{" "}
+          {cv.postCvData?.postDetailData?.jobLevelPostData?.value || "N/A"}
+        </p>
+        <p>
+          <strong className="font-semibold">Location:</strong>{" "}
+          {cv.postCvData?.postDetailData?.provincePostData?.value || "N/A"}
+        </p>
+        <p>
+          <strong className="font-semibold">Salary:</strong>{" "}
+          {cv.postCvData?.postDetailData?.salaryTypePostData?.value || "Negotiable"}
+        </p>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between">
+        <p className="text-sm text-gray-500">
+          Applied on: {new Date(cv.createdAt).toLocaleDateString()}
+        </p>
+      </div>
+    </Card>
+  ))}
+</div>
       </div>
     </div>
   );

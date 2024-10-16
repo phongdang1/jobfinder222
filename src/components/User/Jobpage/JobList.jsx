@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import TooltipBox from "../Homepage/Common/TooltipBox";
 import { Favorite } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -84,7 +85,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
           <div key={job.id} className="w-full">
             <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
               <CardBody>
-                <div className="flex gap-8 items-center justify-start w-full ">
+                <Link to={`/job-detail/${job.id}`} className="flex gap-8 items-center justify-start w-full ">
                   <div className="relative bg-transparent shrink-0">
                     <Image
                       alt="Job cover"
@@ -140,7 +141,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </CardBody>
             </Card>
           </div>
