@@ -36,6 +36,7 @@ import ManagePackages from "@/components/Admin/components/ManagePackages";
 import CreateJobPost from "@/components/Company/components/CreateJobPost";
 import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
 import ManagePostAdmin from "@/components/Admin/components/ManagePost";
+import DashboardCompany from "@/components/Company/components/DashboardCompany";
 
 const routes = [
   // Routes using DefaultLayout
@@ -60,6 +61,7 @@ const routes = [
     path: "/company",
     element: <CompanyLayout />,
     children: [
+      { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },

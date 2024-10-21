@@ -37,7 +37,7 @@ export const chartConfig = {
 
 export function LineChartLabel() {
   return (
-    <Card className="flex flex-col h-[29.5rem]">
+    <Card className="flex flex-col h-[29.5rem] w-[25]">
       <CardHeader>
         <CardTitle>Line Chart</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
