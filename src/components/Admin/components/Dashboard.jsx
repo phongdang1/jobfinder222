@@ -1,9 +1,8 @@
 import React from "react";
-import StatisticsCard from "./StatisticsCard"; // Import component StatisticsCard
+import CardDashboard from "./CardDashboard"; // Import component StatisticsCard
 import { FaUsers, FaBuilding, FaBriefcase, FaHistory } from "react-icons/fa"; // Các biểu tượng ví dụ
 import { Typography } from "@mui/material";
-import TransactionChart from "./TransactionChart";
-import BuyerProfilePieChart from "./BuyerProfilePieChart";
+
 import Chart from "./Chart";
 import { Component } from "./Component";
 import { LineChartLabel } from "./LineChart";
@@ -58,7 +57,7 @@ const Dashboard = () => {
     <div className="flex flex-col gap-4">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
         {statisticsCardsData.map(({ icon, title, value, footer, color }) => (
-          <StatisticsCard
+          <CardDashboard
             key={title}
             icon={React.createElement(icon, {
               className: "w-6 h-6",

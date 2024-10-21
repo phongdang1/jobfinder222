@@ -14,8 +14,8 @@ const AdminSidebar = ({}) => {
   // const matchSkill = useMatch("/admin/skill");
   // const matchLevel = useMatch("/admin/level");
   // const matchWorkForm = useMatch("/admin/workForm");
-  const matchCompany = useMatch("/admin/company")
-  const matchPost = useMatch("/admin/post")
+  const matchCompany = useMatch("/admin/company");
+  const matchPost = useMatch("/admin/post");
   const [isOpen, setIsOpen] = useState(true);
   const [isManageJobOpen, setIsManageJobOpen] = useState(false);
   const [isManageCompanyOpen, setIsManageCompanyOpen] = useState(false);
@@ -25,14 +25,14 @@ const AdminSidebar = ({}) => {
     if (matchPost) return "Manage Post";
   };
 
-
   // const title = getTitle();
 
   return (
     <div className="flex">
       <div
-        className={`bg-third ${isOpen ? "w-64" : "w-16"
-          } min-h-screen transition-all duration-300`}
+        className={`bg-third ${
+          isOpen ? "w-64" : "w-16"
+        } min-h-screen transition-all duration-300`}
       >
         <div className="flex justify-end p-4">
           <button
@@ -111,25 +111,26 @@ const AdminSidebar = ({}) => {
             </Link>
           </li>
 
-        
           <li className="group">
-            <div
+            <Link
               className={`flex items-center p-4 cursor-pointer text-white hover:bg-primary transition-colors duration-200`}
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
+              to="/admin/company"
             >
               <FaBuilding className="mr-4" />
-              {isOpen && <Link to="/admin/company">Manage Company</Link>}
-            </div>
+              {isOpen && "Manage Company"}
+            </Link>
           </li>
 
           <li className="group">
-            <div
+            <Link
               className={`flex items-center p-4 cursor-pointer text-white hover:bg-primary transition-colors duration-200`}
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
+              to="/admin/post"
             >
               <FaBuilding className="mr-4" />
-              {isOpen && <Link to="/admin/post">Manage Post</Link>}
-            </div>
+              {isOpen && "Manage Post"}
+            </Link>
           </li>
         </ul>
       </div>

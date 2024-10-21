@@ -33,7 +33,9 @@ function AdminLayout() {
     !matchSkill &&
     !matchLevel &&
     !matchWorkForm &&
-    !matchPackage
+    !matchPackage &&
+    !matchCompany &&
+    !matchPost
   ) {
     return <Navigate to="/admin/dashboard" replace />;
   }
@@ -49,7 +51,9 @@ function AdminLayout() {
             matchSkill ||
             matchLevel ||
             matchWorkForm ||
-            matchPackage) && (
+            matchPackage ||
+            matchCompany ||
+            matchPost) && (
             <>
               {/* Banner Image */}
               <img
