@@ -10,4 +10,7 @@ const handleApplyJob = (userId, postId, description) => {
 const getCvByUserId = (userId) => {
   return axios.get(`/getAllCvPostByUserId?userId=${userId}`);
 }
-export { handleApplyJob, getCvByUserId };
+const getAllCvPostByCompanyId = (companyId) => {
+  return axios.get(`/getAllCvPostByCompanyId?companyId=${companyId}`);
+}
+export { handleApplyJob, getCvByUserId, getAllCvPostByCompanyId };

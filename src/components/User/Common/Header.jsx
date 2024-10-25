@@ -56,7 +56,7 @@ function Header() {
   };
   useEffect(() => {
     fetchUser(userId);
-  }, []);
+  }, [userId , user]);
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
