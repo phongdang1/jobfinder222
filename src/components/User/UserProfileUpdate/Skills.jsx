@@ -54,7 +54,7 @@ function Skills() {
           );
 
           setSuggestedSkills(filteredSkills);
-          console.log(response.data.data);
+          console.log('data',response.data.data);
         } catch (error) {
           console.log("Error fetching skills");
         }

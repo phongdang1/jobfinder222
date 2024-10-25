@@ -131,7 +131,7 @@ function CreateJobPost() {
         amount: form.amount,
         timeEnd: form.timeEnd,
         jobLevelCode: form.jobLevel,
-        userId: 17, // TODO: Replace with user id
+        userId: 11, // TODO: Replace with user id
         workTypeCode: form.workType,
         experienceJobCode: form.experience,
         genderPostCode: form.gender,
