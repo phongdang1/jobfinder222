@@ -20,6 +20,19 @@ const unbanCompany = (companyId) => {
         companyId: companyId
     });
 }
+const updateCompany = (companyId, name, address, description, phonenumber, amountEmployer, coverimage, thumbnail, file) => {
+    return axios.post(`/updateCompany`, {
+        companyId: companyId, 
+        name: name,
+        address: address,
+        description: description,
+        phonenumber: phonenumber, 
+        amountEmployer: amountEmployer,
+        coverimage: coverimage, 
+        thumbnail: thumbnail, 
+        file: file
+    });
+}
 
 const inactiveCompany = (companyId) => {
     return axios.post(`/rejectCompany`, {
@@ -31,4 +44,4 @@ const activeCompany = (companyId) => {
         companyId: companyId
     });
 }
-export {getAllCompanies,getCompanyById, banCompany, inactiveCompany, activeCompany, unbanCompany, getAllCompaniesUser}
+export {getAllCompanies,getCompanyById, banCompany, inactiveCompany, activeCompany, unbanCompany, getAllCompaniesUser, updateCompany}
