@@ -40,7 +40,7 @@ const CompanyCard = ({ company }) => {
           />
         ) : (
           <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-            <p>Loading cover image...</p>
+            <p>cover image</p>
           </div>
         )}
       </div>
@@ -56,7 +56,7 @@ const CompanyCard = ({ company }) => {
               />
             ) : (
               <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-full">
-                <p>Loading logo...</p>
+                <p>logo</p>
               </div>
             )}
           </div>

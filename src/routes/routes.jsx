@@ -33,6 +33,7 @@ import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
 import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
 import ManagePostAdmin from "@/components/Admin/components/ManagePost";
+import CompanyInfo from "@/components/Company/components/profile";
 
 
 const routes = [
@@ -59,6 +60,7 @@ const routes = [
     element: <CompanyLayout />,
     children: [
       { path: "jobPost", element: <ManageJobPost /> },
+      { path: "profile", element: <CompanyInfo /> },
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },

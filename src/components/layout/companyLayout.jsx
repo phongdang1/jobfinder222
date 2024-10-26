@@ -10,9 +10,9 @@ function CompanyLayout() {
    
         {/* <Sidebar /> */}
          <CompanyHeader />
-        {/* <div className="flex-grow">
+        <div className="flex-grow">
           <Outlet />
-        </div> */}
+        </div>
         <CompanyFooter/>
     
     </div>
