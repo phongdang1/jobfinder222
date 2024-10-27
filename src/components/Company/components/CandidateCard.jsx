@@ -26,7 +26,7 @@ function CandidateCard({ candidates }) {
 
   const handleProceedClick = async (userId) => {
     try {
-      const response = await checkViewCompany(3);
+      const response = await checkViewCompany(userId);
       const allowCv = response.data.allowCv;
       console.log(response.data.allowCv);
       if (response.data) {
@@ -147,7 +147,6 @@ function CandidateCard({ candidates }) {
                   <Button
                     variant="outline"
                     className="text-primary border border-primary hover:bg-primary hover:text-white w-60"
-                    onClick={() => handleProceedClick(c.UserDetailData.id)}
                   >
                     Detail Profile
                   </Button>
@@ -178,6 +177,9 @@ function CandidateCard({ candidates }) {
                         <Button
                           variant="outline"
                           className="text-primary border border-primary hover:bg-primary hover:text-white w-1/2"
+                          onClick={() =>
+                            handleProceedClick(c.UserDetailData.id)
+                          }
                         >
                           Proceed ?
                         </Button>

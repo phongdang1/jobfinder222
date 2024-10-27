@@ -53,7 +53,7 @@ const CompanyHeader = () => {
               </li>
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
-                  to=""
+                  to="/company/candidate"
                   className="hover:text-primary text-third block font-semibold text-[15px]"
                 >
                   Candidate
@@ -79,7 +79,7 @@ const CompanyHeader = () => {
           </div>
           {/* logo */}
           <div className="flex-1 flex justify-center">
-            <Link to="/company">
+            <Link to="/company/dashboard">
               <img src={logo} alt="logo" className="w-52" />
             </Link>
           </div>
@@ -88,14 +88,14 @@ const CompanyHeader = () => {
           <div className="hidden lg:flex items-center ml-auto space-x-6">
             <button className="font-semibold text-[15px] border-none outline-none">
               <Link
-                to=""
+                to="/signup"
                 className="hover:text-primary text-third block font-semibold text-[15px]"
               >
-                Login
+                Sign up
               </Link>
             </button>
             <Button className="px-4 py-2 text-sm rounded-sm font-bold text-white border-2 border-primary bg-primary transition-all ease-in-out duration-300 hover:bg-transparent hover:text-primary">
-              Sign up
+              Login
             </Button>
           </div>
         </div>
