@@ -5,7 +5,7 @@ import CompanyFooter from "./../Company/common/CompanyFooter";
 
 function CompanyLayout() {
   return (
-    <div className=" flex flex-col bg-white ">
+    <div className=" flex flex-col bg-[#E6E6FA]/50 ">
       {/* <Sidebar /> */}
       <CompanyHeader />
       <div className="flex-grow mx-36">

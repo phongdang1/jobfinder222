@@ -33,10 +33,11 @@ import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
 
-
 import CreateJobPost from "@/components/Company/components/CreateJobPost";
 import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
 import ManagePostAdmin from "@/components/Admin/components/ManagePost";
+
+import CandidateDetail from "@/components/Company/components/CandidateDetail";
 
 const routes = [
   // Routes using DefaultLayout
@@ -66,6 +67,10 @@ const routes = [
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
       { path: "createJobPost", element: <CreateJobPost /> },
+      {
+        path: "candidateDetail/:userId/:allowCv",
+        element: <CandidateDetail />,
+      },
     ],
   },
   {

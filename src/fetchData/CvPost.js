@@ -9,5 +9,14 @@ const handleApplyJob = (userId, postId, description) => {
 };
 const getCvByUserId = (userId) => {
   return axios.get(`/getAllCvPostByUserId?userId=${userId}`);
-}
-export { handleApplyJob, getCvByUserId };
+};
+
+const handleFindCv = (userData) => {
+  return axios.post("/handleFindCv", userData);
+};
+
+const checkViewCompany = (userId) => {
+  return axios.get(`/checkViewCompany?userId=${userId}`);
+};
+
+export { handleApplyJob, getCvByUserId, handleFindCv, checkViewCompany };

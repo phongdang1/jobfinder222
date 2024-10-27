@@ -149,7 +149,8 @@ function Skills() {
                   ))}
 
                   <Input
-                    placeholder="Add skill"
+                    placeholder="Choose Skill"
+                    disabled
                     className="h-10 w-28 border-none flex-grow"
                   />
                 </div>
