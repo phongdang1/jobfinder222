@@ -87,7 +87,7 @@ const ManageJobPost = () => {
   }, []);
 
   return (
-    <div className="mt-8 bg-white p-4 mb-8 shadow-lg rounded-lg">
+    <div className="mt-8 my-60">
       <h1 className="text-3xl font-semibold my-4">
         Total Post ({post.length})
       </h1>
@@ -226,9 +226,7 @@ const ManageJobPost = () => {
                                   {userCv.file}
                                 </span>
                               </TableCell>
-                              <TableCell className="max-w-[300px] break-words whitespace-normal">
-                                {userCv.description}
-                              </TableCell>
+                              <TableCell className="max-w-[300px] break-words whitespace-normal">{userCv.description}</TableCell>
                               {/* <TableCell>
                                 {userDetails[userCv.userId]?.listSkill &&
                                 userDetails[userCv.userId].listSkill.length >
@@ -268,9 +266,7 @@ const ManageJobPost = () => {
                                   </DialogTrigger>
                                   <DialogContent className="max-w-[1000px]">
                                     <div>
-                                      <h1 className="border-b-2 font-semibold text-xl">
-                                        User Detail
-                                      </h1>
+                                      <h1 className="border-b-2 font-semibold text-xl">User Detail</h1>
                                       <div className="flex gap-2">
                                         <h1 className="font-semibold">
                                           Address:{" "}
@@ -284,16 +280,11 @@ const ManageJobPost = () => {
                                           Phone Number:{" "}
                                         </h1>
                                         <span>
-                                          {
-                                            userDetails[userCv.userId]
-                                              ?.phoneNumber
-                                          }
+                                          {userDetails[userCv.userId]?.phoneNumber}
                                         </span>
                                       </div>
                                     </div>
-                                    <h1 className="border-b-2 font-semibold text-xl">
-                                      User CV
-                                    </h1>
+                                    <h1 className="border-b-2 font-semibold text-xl">User CV</h1>
                                     <iframe
                                       width={"100%"}
                                       height={"700px"}
