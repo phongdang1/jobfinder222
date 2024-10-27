@@ -25,7 +25,7 @@ import { format } from "date-fns";
 import axios from "../../../fetchData/axios";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css';
+import "react-quill/dist/quill.snow.css";
 function CreateJobPost() {
   const section1Ref = useRef(null);
   const section2Ref = useRef(null);
@@ -56,7 +56,7 @@ function CreateJobPost() {
   const [workType, setWorkType] = useState([]);
   const [gender, setGender] = useState([]);
   const [experience, setExperience] = useState([]);
-  const [value , setValue] = useState('');
+  const [value, setValue] = useState("");
   const typeKey = [
     "PROVINCE",
     "JOBTYPE",
@@ -194,7 +194,7 @@ function CreateJobPost() {
     fetchJobType();
   }, []);
   return (
-    <div className="flex flex-col lg:flex-row mx-4 lg:mx-20 xl:mx-32 gap-4">
+    <div className="flex flex-col lg:flex-row mx-4 lg:mx-20 xl:mx-32 ">
       {/* Left Trigger Menu - Make it sticky */}
       <div className="w-4/5 mx-24 col-span-1 mt-8 p-4 sticky top-[120px] self-start bg-white rounded-xl shadow-md border-2 border-gray-200 mb-8">
         <ul className="space-y-3 text-center">
@@ -301,12 +301,12 @@ function CreateJobPost() {
                       });
                       console.log("time end", form);
                     }}
-                    fromYear={currentYear}
+                    fromYear={1960}
                     toYear={currentYear}
                     className="text-black"
-                    disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
-                    }
+                    // disabled={(date) =>
+                    //   date < new Date() || date < new Date("1900-01-01")
+                    // }
                     value={form.timeEnd}
                   />
                 </PopoverContent>

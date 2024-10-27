@@ -189,7 +189,7 @@ function CandidateDetail() {
                     Date of Birth
                   </TableCell>
                   <TableCell className="text-black font-normal">
-                    {candidate.dob}
+                    {new Date(candidate.dob).toLocaleDateString()}
                   </TableCell>
                 </TableRow>
 
@@ -213,7 +213,7 @@ function CandidateDetail() {
 
                 <TableRow className="border-none  hover:bg-transparent">
                   <TableCell className="font-medium text-black">
-                    Desired Address
+                    Desired Work Address
                   </TableCell>
                   <TableCell className="text-black font-normal">
                     {candidateValues.address}
@@ -223,10 +223,15 @@ function CandidateDetail() {
                   <TableCell className="font-medium text-black">
                     Skills
                   </TableCell>
-                  <TableCell className="text-black font-normal">
-                    {candidate?.listSkill?.map((skill, index) => {
-                      <Badge key={index}>{skill?.skillData?.name}</Badge>;
-                    })}
+                  <TableCell className="text-black font-normal flex gap-2">
+                    {candidate?.listSkill?.map((skill, index) => (
+                      <Badge
+                        key={index}
+                        className="bg-white text-primary border border-primary hover:bg-primary hover:text-white"
+                      >
+                        <div>{skill?.skillData?.name}</div>
+                      </Badge>
+                    ))}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -237,7 +242,7 @@ function CandidateDetail() {
             <Separator className="my-4" />
             <iframe
               width={"100%"}
-              height={"1100px"}
+              height={"900px"}
               src={candidate?.UserDetailData?.file}
             ></iframe>
           </div>
