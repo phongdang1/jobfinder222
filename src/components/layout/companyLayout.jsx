@@ -5,16 +5,15 @@ import CompanyFooter from './../Company/common/CompanyFooter';
 
 function CompanyLayout() {
   return (
-    <div className=" flex flex-col bg-white ">
-     
-   
-        {/* <Sidebar /> */}
-         <CompanyHeader />
-        <div className="flex-grow">
-          <Outlet />
-        </div>
-        <CompanyFooter/>
-    
+
+    <div className=" flex flex-col bg-[#E6E6FA]/50 ">
+      {/* <Sidebar /> */}
+      <CompanyHeader />
+      <div className="flex-grow mx-36">
+        <Outlet />
+      </div>
+      <CompanyFooter />
+
     </div>
   );
 }

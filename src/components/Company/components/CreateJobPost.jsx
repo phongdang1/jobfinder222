@@ -196,7 +196,7 @@ function CreateJobPost() {
   return (
     <div className="flex flex-col lg:flex-row mx-4 lg:mx-20 xl:mx-32 gap-4">
       {/* Left Trigger Menu - Make it sticky */}
-      <div className="lg:w-2/5 mx-auto mt-8 p-4 sticky top-[120px] self-start bg-white rounded-xl shadow-lg border-2 border-gray-200 mb-8">
+      <div className="w-4/5 mx-24 col-span-1 mt-8 p-4 sticky top-[120px] self-start bg-white rounded-xl shadow-md border-2 border-gray-200 mb-8">
         <ul className="space-y-3 text-center">
           <li className="flex items-center justify-between gap-4 hover:bg-primary py-1 rounded-lg hover:text-white cursor-pointer group xl:px-24">
             <button

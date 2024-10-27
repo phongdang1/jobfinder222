@@ -7,8 +7,8 @@ import Bg from "../../../src/assets/Home/Home/defaultavatar.png"; // Default ima
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUsersById, handleSetDataUserDetail } from "@/fetchData/User";
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import SettingsSuggestOutlinedIcon from '@mui/icons-material/SettingsSuggestOutlined';
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import SettingsSuggestOutlinedIcon from "@mui/icons-material/SettingsSuggestOutlined";
 
 function UserProfilePage() {
   const [image, setImage] = useState(null);
@@ -44,7 +44,6 @@ function UserProfilePage() {
     try {
       const userDataImage = {
         userId: userId,
-
         image: image,
         data: {},
       };

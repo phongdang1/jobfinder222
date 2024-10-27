@@ -97,6 +97,7 @@ function AdvancedSetting() {
     };
     fetchJobType();
   }, [type]);
+  
   const fetchSkill = async () => {
     if (cateJobCode) {
       try {

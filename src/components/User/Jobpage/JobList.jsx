@@ -125,7 +125,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                       >
                         {job.postDetailData.provincePostData.value}
                       </Badge>
-                      <div className="flex gap-2 items-center ml-auto absolute -right-1">
+                      {/* <div className="flex gap-2 items-center ml-auto absolute -right-1">
                         <Button
                           className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
                           variant="outline"
@@ -138,7 +138,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                         >
                           <Favorite />
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </Link>
