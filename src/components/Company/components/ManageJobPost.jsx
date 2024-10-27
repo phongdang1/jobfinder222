@@ -87,7 +87,7 @@ const ManageJobPost = () => {
   }, []);
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 my-60">
       <h1 className="text-3xl font-semibold my-4">
         Total Post ({post.length})
       </h1>

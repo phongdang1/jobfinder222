@@ -13,7 +13,7 @@ import { CiMail } from "react-icons/ci";
 import { FaPhoneAlt } from "react-icons/fa";
 function CompanyFooter() {
   return (
-    <div className="flex flex-col bg-white mx-36">
+    <div className="flex flex-col bg-white px-36">
       <div className="flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 md:mb-4 sm:mb-4 mb-2 w-full">
         <img src={logo} className="w-52" />
 
