@@ -281,7 +281,12 @@ const ManageTypeJob = () => {
                 className="mb-2"
               />
             </div>
-            <Button type="submit">Create</Button>
+            <Button
+              type="submit"
+              className="bg-third hover:text-white text-white rounded-md"
+            >
+              Create
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -317,7 +322,12 @@ const ManageTypeJob = () => {
                 className="mb-2"
               />
             </div>
-            <Button type="submit">Update</Button>
+            <Button
+              type="submit"
+              className="bg-third hover:text-white text-white rounded-md"
+            >
+              Update
+            </Button>
           </form>
         </DialogContent>
       </Dialog>

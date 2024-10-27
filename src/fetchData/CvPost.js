@@ -19,4 +19,14 @@ const checkViewCompany = (userId) => {
   return axios.get(`/checkViewCompany?userId=${userId}`);
 };
 
-export { handleApplyJob, getCvByUserId, handleFindCv, checkViewCompany };
+const getAllCvPostByCompanyId = (companyId) => {
+  return axios.get(`/getAllCvPostByCompanyId?companyId=${companyId}`);
+};
+
+export {
+  handleApplyJob,
+  getCvByUserId,
+  handleFindCv,
+  checkViewCompany,
+  getAllCvPostByCompanyId,
+};

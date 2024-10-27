@@ -33,10 +33,12 @@ import ManageSkill from "@/components/Admin/components/ManageSkill";
 import ManageLevel from "@/components/Admin/components/ManageLevel";
 import ManageWorkForm from "@/components/Admin/components/ManageWorkForm";
 
+import ManagePackages from "@/components/Admin/components/ManagePackages";
 import CreateJobPost from "@/components/Company/components/CreateJobPost";
 import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
 import ManagePostAdmin from "@/components/Admin/components/ManagePost";
-
+import CompanyInfo from "@/components/Company/components/profile";
+import DashboardCompany from "@/components/Company/components/DashboardCompany";
 import CandidateDetail from "@/components/Company/components/CandidateDetail";
 
 const routes = [
@@ -62,7 +64,9 @@ const routes = [
     path: "/company",
     element: <CompanyLayout />,
     children: [
+      { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
+      { path: "profile", element: <CompanyInfo /> },
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
@@ -102,6 +106,7 @@ const routes = [
       { path: "skill", element: <ManageSkill /> },
       { path: "level", element: <ManageLevel /> },
       { path: "workForm", element: <ManageWorkForm /> },
+      { path: "package", element: <ManagePackages /> },
       { path: "company", element: <ManageCompanyAdmin /> },
       { path: "post", element: <ManagePostAdmin /> },
     ],

@@ -357,7 +357,7 @@ const ManageSkill = () => {
             </div>
             <Button
               type="submit"
-              className="bg-green-500 hover:bg-green-600 text-white"
+              className="bg-third hover:text-white text-white rounded-md"
             >
               Create
             </Button>
@@ -405,7 +405,7 @@ const ManageSkill = () => {
             </div>
             <Button
               type="submit"
-              className="bg-primary/80 hover:bg-primary text-white"
+              className="bg-third hover:text-white text-white rounded-md"
             >
               Update
             </Button>
@@ -428,13 +428,13 @@ const ManageSkill = () => {
           <div className="flex justify-end gap-2">
             <Button
               onClick={() => setDeleteModalOpen(false)}
-              className="bg-primary/80   hover:bg-primary text-white"
+              className="bg-third hover:text-white text-white rounded-md"
             >
               Cancel
             </Button>
             <Button
               onClick={confirmDeleteSkill}
-              className="bg-primary/80 hover:bg-primary text-white"
+              className="bg-third hover:text-white text-white rounded-md"
             >
               Confirm
             </Button>
