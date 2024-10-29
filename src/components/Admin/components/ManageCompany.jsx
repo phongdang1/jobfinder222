@@ -253,7 +253,7 @@ const ManageCompanyAdmin = () => {
                             </TableCell>
                             <TableCell className="text-center">
                                 <span
-                                    className={`py-1 px-2 rounded-full text-xs ${company.statusCode.toUpperCase() === "ACTIVE"
+                                    className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${company.statusCode.toUpperCase() === "ACTIVE"
                                         ? "bg-green-500 text-white"
                                         : company.statusCode.toUpperCase() === "PENDING"
                                             ? "bg-gray-500 text-white"

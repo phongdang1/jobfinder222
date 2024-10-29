@@ -253,7 +253,7 @@ const ManagePostAdmin = () => {
                             <TableCell className="text-center">{post.isHot === 1 ? "Yes" : "No"}</TableCell>
                             <TableCell className="text-center">
                                 <span
-                                    className={`py-1 px-2 rounded-full text-xs ${post.statusCode.toUpperCase() === "ACTIVE"
+                                    className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${post.statusCode.toUpperCase() === "ACTIVE"
                                         ? "bg-green-500 text-white"
                                         : post.statusCode.toUpperCase() === "PENDING"
                                             ? "bg-gray-500 text-white"
