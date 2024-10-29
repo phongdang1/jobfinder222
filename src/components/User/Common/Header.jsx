@@ -56,7 +56,7 @@ function Header() {
   };
   useEffect(() => {
     fetchUser(userId);
-  }, [userId , user]);
+  }, []);
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -156,7 +156,10 @@ function Header() {
                   </SheetHeader>
                   <SheetHeader>
                     <SheetClose asChild>
-                      <Link to="/login" className="flex items-center justify-center">
+                      <Link
+                        to="/login"
+                        className="flex items-center justify-center"
+                      >
                         <Button className="text-center border border-primary bg-white hover:bg-secondary hover:text-primary text-lg font-medium">
                           Login{" "}
                         </Button>

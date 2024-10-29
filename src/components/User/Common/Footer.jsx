@@ -12,7 +12,6 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 function Footer() {
   return (
     <div className="flex flex-col bg-white">
-      <Separator className="" />
       <div className="lg:hidden md:hidden sm:hidden">
         <Accordion type="multiple" collapsible="true">
           <AccordionItem value="aboutus" className="mx-8">
@@ -121,7 +120,13 @@ function Footer() {
           <div className="flex gap-4 md:mb-4 sm:mb-4 mb-2">
             <div>Logo</div>
             <p>© 2024 JobFinder. All rights reserved.</p>
-            <p>Illustration by <a href="https://icons8.com/illustrations/author/ZQDZn9ZZj5aQ">Violetta Barsuk</a> from <a href="https://icons8.com/illustrations">Ouch!</a></p>
+            <p>
+              Illustration by{" "}
+              <a href="https://icons8.com/illustrations/author/ZQDZn9ZZj5aQ">
+                Violetta Barsuk
+              </a>{" "}
+              from <a href="https://icons8.com/illustrations">Ouch!</a>
+            </p>
           </div>
           {/* right */}
           <div className="flex gap-2 items-center">

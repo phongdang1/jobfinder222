@@ -2,13 +2,26 @@ function Validation(inputValue) {
   const error = {};
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^(0[2|3|5|7|8|9])+([0-9]{8})$/;
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  const nameRegex = /^[a-zA-Z\s]+$/;
 
-  if (inputValue.firstName !== undefined && inputValue.firstName === "") {
-    error.firstName = "First name is required!";
+  if (inputValue.firstName !== undefined) {
+    if (inputValue.firstName === "") {
+      error.firstName = "First name is required!";
+    } else if (!nameRegex.test(inputValue.firstName)) {
+      error.firstName =
+        "First name cannot contain numbers or special characters!";
+    }
   }
 
-  if (inputValue.lastName !== undefined && inputValue.lastName === "") {
-    error.lastName = "Last name is required!";
+  if (inputValue.lastName !== undefined) {
+    if (inputValue.lastName === "") {
+      error.lastName = "Last name is required!";
+    } else if (!nameRegex.test(inputValue.lastName)) {
+      error.lastName =
+        "Last name cannot contain numbers or special characters!";
+    }
   }
 
   if (inputValue.dob !== undefined && inputValue.dob === "") {
@@ -23,8 +36,13 @@ function Validation(inputValue) {
     error.address = "Address is required!";
   }
 
-  if (inputValue.password !== undefined && inputValue.password === "") {
-    error.password = "Password is required!";
+  if (inputValue.password !== undefined) {
+    if (inputValue.password === "") {
+      error.password = "Password is required!";
+    } else if (!passwordRegex.test(inputValue.password)) {
+      error.password =
+        "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character.";
+    }
   }
 
   if (inputValue.retypePassword !== undefined) {
