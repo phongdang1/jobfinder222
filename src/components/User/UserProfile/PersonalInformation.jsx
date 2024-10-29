@@ -90,7 +90,7 @@ function PersonalInformation() {
         // verify
         const verifiedData = response.data.data;
         setVerify(verifiedData.isVerify);
-        console.log('data ne',verifiedData);
+        console.log("data ne", verifiedData);
 
         if (response.data.data.dob) {
           setDate(new Date(response.data.data.dob));
@@ -252,21 +252,22 @@ function PersonalInformation() {
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md space-y-4 pb-4">
-      <div className="flex justify-end gap-4 px-6 mt-4">
-        {!isEditing && (
-          <Button
-            className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1"
-            variant="outline"
-            onClick={() => setIsEditing(true)}
-          >
-            Edit
-          </Button>
-        )}
+      <div className="flex justify-between items-center text-center ">
+        <p className="font-poppins text-xl md:text-2xl font-medium p-4 ml-2 mt-2 italic">
+          User Profile
+        </p>
+        <div className="flex justify-end gap-4 px-6">
+          {!isEditing && (
+            <Button
+              className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1"
+              variant="outline"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
       </div>
-
-      <p className="font-poppins text-xl md:text-2xl font-medium ml-6 my-6">
-        Hello, {inputValue.firstName || "User"}
-      </p>
       <div className="px-6">
         <Separator />
       </div>

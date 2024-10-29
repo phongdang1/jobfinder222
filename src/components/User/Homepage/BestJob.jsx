@@ -16,11 +16,20 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Pagination, Button } from "@nextui-org/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { getAllCode, getAllCodeByType } from "@/fetchData/AllCode";
+import {
+  getAllCode,
+  getAllCodeByType,
+  getValueByCode,
+} from "@/fetchData/AllCode";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  getAllPost,
+  getAllPostsInactive,
+  getAllPostWithLimit,
+} from "@/fetchData/Post";
 
 function BestJob() {
   const [sort, setSort] = useState([]);
@@ -40,10 +49,12 @@ function BestJob() {
         const response = await getAllCode();
         const jobData = response.data.data;
         setSort(jobData);
+        console.log("Job data", jobData);
 
         if (selectedType) {
           const response2 = await getAllCodeByType(selectedType);
           setSortValue(response2.data.data);
+          console.log(response2.data.data);
         }
       } catch (error) {
         console.log(error);
@@ -60,13 +71,38 @@ function BestJob() {
 
   const requiredTypes = [
     "SALARYTYPE",
-    "EXPTYPE",
+    "EXPIERNCETYPE",
     "PROVINCE",
     "JOBTYPE",
     "WORKTYPE",
     "JOBLEVEL",
   ];
   const uniqueTypes = [...new Set(sort.map((item) => item.type))];
+
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchAllPosts = async () => {
+      try {
+        const response = await getAllPostWithLimit(9, 0);
+        setData(response.data.data);
+        console.log(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAllPosts();
+  }, []);
+
+  const handleSortByValue = async (code) => {
+    try {
+      const response = await getAllPostsInactive(code);
+      setData(response.data.data);
+      console.log(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary">
@@ -104,8 +140,11 @@ function BestJob() {
             <CarouselContent className="flex">
               {sortValue.map((value, index) => (
                 <CarouselItem key={index} className="basis-1/3 items-center">
-                  <Card className="h-10 text-center text-black rounded-3xl cursor-pointer hover:bg-primary hover:text-white flex justify-center">
-                    <button className="text-xs font-normal ">
+                  <Card
+                    onClick={() => handleSortByValue(value.code)}
+                    className="h-10 text-center text-black rounded-3xl cursor-pointer hover:bg-primary hover:text-white flex justify-center"
+                  >
+                    <button type="button" className="text-xs font-medium">
                       {value.value}
                     </button>
                   </Card>
@@ -129,8 +168,12 @@ function BestJob() {
               </div>
             </div>
           ))
+        ) : data && data.length > 0 ? (
+          <JobCard expand="" data={data} />
         ) : (
-          <JobCard expand="" />
+          <div className="text-center mx-auto text-gray-500">
+            No jobs available
+          </div>
         )}
       </div>
     </div>
