@@ -22,6 +22,14 @@ const checkViewCompany = (userId) => {
 const getAllCvPostByCompanyId = (companyId) => {
   return axios.get(`/getAllCvPostByCompanyId?companyId=${companyId}`);
 };
+const handleCreateInterviewSchedule = (data) => {
+  return axios.post(`/createInterviewSchedule`, data)
+}
+const handleRejectCvPost = (cvPostId) => {
+  return axios.post(`/handleRejectCvPost`, {
+    cvPostId : cvPostId
+  })
+}
 
 export {
   handleApplyJob,
@@ -29,4 +37,6 @@ export {
   handleFindCv,
   checkViewCompany,
   getAllCvPostByCompanyId,
+  handleCreateInterviewSchedule,
+  handleRejectCvPost
 };
