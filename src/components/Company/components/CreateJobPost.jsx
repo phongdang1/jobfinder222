@@ -304,9 +304,9 @@ function CreateJobPost() {
                     fromYear={1960}
                     toYear={currentYear}
                     className="text-black"
-                    // disabled={(date) =>
-                    //   date < new Date() || date < new Date("1900-01-01")
-                    // }
+                    disabled={(date) =>
+                      date < new Date() || date < new Date("1900-01-01")
+                    }
                     value={form.timeEnd}
                   />
                 </PopoverContent>
