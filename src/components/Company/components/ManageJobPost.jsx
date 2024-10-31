@@ -34,6 +34,7 @@ import {
 import axios from "../../../fetchData/axios";
 import { Badge } from "@/components/ui/badge";
 import {
+  handleApproveCvPost,
   handleCreateInterviewSchedule,
   handleRejectCvPost,
 } from "@/fetchData/CvPost";
@@ -49,6 +50,7 @@ const ManageJobPost = () => {
   const [post, setPost] = useState([]);
   const [userCVs, setUserCVs] = useState({});
   const [userDetails, setUserDetails] = useState({});
+  const [schedule, setSchedule] = useState({});
   const [openSchedule, setOpenSchedule] = useState(null);
   const currentYear = new Date().getFullYear();
   const [scheduleForm, setScheduleForm] = useState({
@@ -58,6 +60,8 @@ const ManageJobPost = () => {
     cvPostId: "",
     companyId: "",
   });
+  const [rejectDialog, setRejectDialog] = useState(false);
+  const [approveDialog, setApproveDialog] = useState(false);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setScheduleForm((prevForm) => ({
@@ -71,33 +75,53 @@ const ManageJobPost = () => {
       if (res.data.errCode === 0) {
         setCompany(res.data.data);
         setPost(res.data.data.postData);
-
-        // Fetch user CV data for each post
         const userCvData = {};
         const userDetailsData = {};
+        const scheduleData = {};
 
         for (let i = 0; i < res.data.data.postData.length; i++) {
           const cvEntry = res.data.data.postData[i];
           const id = cvEntry.id;
+          console.log(`Fetching CVs for post ID: ${id}`);
+
           const resUserCV = await axios.get(`/getAllListCvByPost?postId=${id}`);
+          console.log(`CV Response for post ID ${id}:`, resUserCV);
           userCvData[id] = resUserCV.data.data || [];
 
-          // Fetch user details for each user in the userCV list
-          for (const userCv of resUserCV.data.data) {
+          for (const userCv of resUserCV.data.data || []) {
             const userId = userCv.userId;
+            console.log(`Fetching details for user ID: ${userId}`);
             if (!userDetailsData[userId]) {
               const resUserDetail = await axios.get(
                 `/getUserById?id=${userId}`
               );
+              const resSchedule = await axios.get(
+                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`
+              );
+              console.log(
+                `User Details Response for user ID ${userId}:`,
+                resUserDetail
+              );
               userDetailsData[userId] = resUserDetail.data.data;
-              console.log("detail cua user", resUserDetail.data.data);
+              scheduleData[userCv.id] = resSchedule.data.data;
+              console.log(
+                `Stored schedule for user ID ${userId}:`,
+                scheduleData[userCv.id]
+              );
+              console.log(
+                `Stored details for user ID ${userId}:`,
+                userDetailsData[userId]
+              );
             }
           }
         }
+
+        // Set the final data in state
         setUserCVs(userCvData);
         setUserDetails(userDetailsData);
-        console.log("User CVs by Post ID: userCvs", userCvData);
-        console.log("User Details: userDetails", userDetailsData);
+        setSchedule(scheduleData);
+        console.log("Final User CVs by Post ID:", userCvData);
+        console.log("Final User Details:", userDetailsData);
       } else {
         console.log("Error: ", res.data.errMessage);
       }
@@ -105,7 +129,6 @@ const ManageJobPost = () => {
       console.log("Error fetching data: ", error);
     }
   };
-
   const handleSubmitForm = async () => {
     try {
       const res = await axios.post(`/createInterviewSchedule`, {
@@ -135,12 +158,28 @@ const ManageJobPost = () => {
       if (res.data.errCode === 0) {
         console.log("CV Rejected !!!", res);
         toast.success("CV Rejected !!");
+        setRejectDialog(false);
         fetchCompanyData();
       } else {
         console.log("loi rejected");
       }
     } catch (error) {
       console.log("error reject", error);
+    }
+  };
+  const handleApprove = async (id) => {
+    try {
+      const res = await handleApproveCvPost(id);
+      if (res.data.errCode === 0) {
+        console.log("CV Approved!!!", res);
+        toast.success("CV Approved");
+        fetchCompanyData();
+        setApproveDialog(false);
+      } else {
+        console.log("loi approved");
+      }
+    } catch (error) {
+      console.log("error approve", error);
     }
   };
 
@@ -326,7 +365,7 @@ const ManageJobPost = () => {
                                           </DialogContent>
                                         </Dialog>
                                       </TableCell>
-                                      <TableCell className="flex gap-4">
+                                      <TableCell className="flex gap-4 my-2">
                                         <Popover
                                           key={userCv.id}
                                           open={openSchedule === userCv.id}
@@ -345,7 +384,7 @@ const ManageJobPost = () => {
                                                 companyId: company.id,
                                               });
                                             }}
-                                            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md font-medium transition px-3"
+                                            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md font-medium transition px-3 py-2"
                                           >
                                             Set Schedule
                                           </PopoverTrigger>
@@ -465,14 +504,58 @@ const ManageJobPost = () => {
                                             </div>
                                           </PopoverContent>
                                         </Popover>
-                                        <Button
-                                          onClick={() =>
-                                            handleReject(userCv.id)
-                                          }
-                                          className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white"
-                                        >
-                                          Reject
-                                        </Button>
+                                        {/* dialog confirm reject */}
+                                        <Dialog open={rejectDialog}>
+                                          <DialogTrigger
+                                            onClick={() =>
+                                              setRejectDialog(true)
+                                            }
+                                            className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white px-4 py-2 font-medium transition rounded-md"
+                                          >
+                                            Reject
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>
+                                                Reject{" "}
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }{" "}
+                                                  ?
+                                                </span>
+                                              </DialogTitle>
+                                              <DialogDescription className="text-lg py-3">
+                                                This action cannot be undone.
+                                              </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                onClick={() =>
+                                                  setRejectDialog(false)
+                                                }
+                                                variant="outline"
+                                              >
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleReject(userCv.id)
+                                                }
+                                                className="border border-red-600 text-red-600 hover:text-white hover:bg-red-600"
+                                              >
+                                                Reject
+                                              </Button>
+                                            </div>
+                                          </DialogContent>
+                                        </Dialog>
                                       </TableCell>
                                     </TableRow>
                                   ) : null
@@ -508,6 +591,7 @@ const ManageJobPost = () => {
                                 <TableHead>Status</TableHead>
                                 <TableHead>Interview Date</TableHead>
                                 <TableHead>Interview Location</TableHead>
+                                <TableHead>CV</TableHead>
                                 <TableHead>Note</TableHead>
                                 <TableHead>Action</TableHead>
                               </TableRow>
@@ -544,6 +628,274 @@ const ManageJobPost = () => {
                 ${
                   userCv.statusCode === "INTERVIEW"
                     ? "bg-blue-100 text-blue-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "REJECTED"
+                    ? "bg-red-100 text-red-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "PENDING"
+                    ? "bg-slate-200 text-black"
+                    : ""
+                }
+              `}
+                                        >
+                                          {userCv.statusCode}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell>
+                                        <span>
+                                          {new Date(
+                                            schedule[userCv.id].interviewDate
+                                          ).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                          })}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell className="max-w-[300px] break-words whitespace-normal">
+                                        {schedule[userCv.id].interviewLocation}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Dialog className="w-[1500px]">
+                                          <DialogTrigger>
+                                            <AiOutlineEye className="w-5 h-5 mr-2 text-primary bg-white hover:text-primary/50 border border-none rounded font-semibold" />
+                                          </DialogTrigger>
+                                          <DialogContent className="max-w-[1000px]">
+                                            <div>
+                                              <h1 className="border-b-2 font-semibold text-xl">
+                                                User Detail
+                                              </h1>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Address:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.address
+                                                  }
+                                                </span>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Phone Number:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.phoneNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <h1 className="border-b-2 font-semibold text-xl">
+                                              User CV
+                                            </h1>
+                                            <iframe
+                                              width="100%"
+                                              height="700px"
+                                              src={
+                                                userDetails[userCv.userId]
+                                                  ?.UserDetailData?.file
+                                              }
+                                            ></iframe>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                      <TableCell>
+                                        {schedule[userCv.id].interviewNote}
+                                      </TableCell>
+                                      <TableCell className="flex gap-4">
+                                        <Dialog open={approveDialog}>
+                                          <DialogTrigger
+                                            onClick={() => {
+                                              setApproveDialog(true);
+                                            }}
+                                            className="border border-primary text-primary hover:text-white hover:bg-primary px-3 py-3 rounded-md transition font-medium"
+                                          >
+                                            Approve
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>
+                                                Approve{" "}
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }
+                                                </span>
+                                              </DialogTitle>
+                                              <DialogDescription className="text-black">
+                                                This action cannot be undone.
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }
+                                                </span>{" "}
+                                                will be your employee !!!
+                                              </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                onClick={() =>
+                                                  setApproveDialog(false)
+                                                }
+                                                variant="outline"
+                                              >
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                  handleApprove(userCv.id);
+                                                }}
+                                                className="border border-primary text-primary hover:text-white hover:bg-primary"
+                                              >
+                                                Approve
+                                              </Button>
+                                            </div>
+                                          </DialogContent>
+                                        </Dialog>
+                                        {/* dialog confirm reject */}
+                                        <Dialog open={rejectDialog}>
+                                          <DialogTrigger
+                                            onClick={() =>
+                                              setRejectDialog(true)
+                                            }
+                                            className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white px-4 py-2 font-medium transition rounded-md"
+                                          >
+                                            Reject
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>
+                                                Reject{" "}
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }{" "}
+                                                  ?
+                                                </span>
+                                              </DialogTitle>
+                                              <DialogDescription className="text-lg py-3">
+                                                This action cannot be undone.
+                                              </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                onClick={() =>
+                                                  setRejectDialog(false)
+                                                }
+                                                variant="outline"
+                                              >
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleReject(userCv.id)
+                                                }
+                                                className="border border-red-600 text-red-600 hover:text-white hover:bg-red-600"
+                                              >
+                                                Reject
+                                              </Button>
+                                            </div>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : null
+                                )
+                              ) : (
+                                <TableRow>
+                                  <TableCell
+                                    colSpan={6}
+                                    className="text-center font-medium"
+                                  >
+                                    No CV here !!!
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                    {/* table reject */}
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger className="text-red-700">
+                          REJECTED
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Image</TableHead>
+                                <TableHead>Name</TableHead>
+
+                                <TableHead>Status</TableHead>
+                                <TableHead>Percentage Match</TableHead>
+                                <TableHead className="text-left">
+                                  Description
+                                </TableHead>
+                                <TableHead>CV</TableHead>
+                              </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                              {userCVs[post.id]?.some(
+                                (userCv) => userCv.statusCode === "REJECTED"
+                              ) ? (
+                                userCVs[post.id].map((userCv, index) =>
+                                  userCv.statusCode === "REJECTED" ? (
+                                    <TableRow key={index}>
+                                      <TableCell className="font-medium">
+                                        <img
+                                          className="rounded-full w-14 h-14"
+                                          src={
+                                            userDetails[userCv.userId]?.image
+                                          }
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        {userDetails[userCv.userId]?.firstName}{" "}
+                                        {userDetails[userCv.userId]?.lastName}
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                px-2 py-1 rounded font-semibold
+                ${
+                  userCv.statusCode === "ACTIVE"
+                    ? "bg-green-100 text-green-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "INACTIVE"
+                    ? "bg-yellow-100 text-yellow-700"
                     : ""
                 }
                 ${
@@ -627,156 +979,13 @@ const ManageJobPost = () => {
                                           </DialogContent>
                                         </Dialog>
                                       </TableCell>
-                                      <TableCell className="flex gap-4">
-                                        <Popover
-                                          key={userCv.id}
-                                          open={openSchedule === userCv.id}
-                                          onOpenChange={(isOpen) =>
-                                            setOpenSchedule(
-                                              isOpen ? userCv.id : null
-                                            )
-                                          }
-                                        >
-                                          <PopoverTrigger
-                                            onClick={() => {
-                                              setOpenSchedule(userCv.id);
-                                              setScheduleForm({
-                                                ...scheduleForm,
-                                                cvPostId: userCv.id,
-                                                companyId: company.id,
-                                              });
-                                            }}
-                                            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md font-medium transition px-3"
-                                          >
-                                            Approve
-                                          </PopoverTrigger>
-                                          <PopoverContent className="w-[500px] flex flex-col gap-6">
-                                            <div className="flex flex-col gap-y-3">
-                                              <Label>Interview Date</Label>
-                                              <Popover>
-                                                <PopoverTrigger asChild>
-                                                  <Button
-                                                    variant="outline"
-                                                    className={`justify-start text-left font-normal ${
-                                                      !scheduleForm.interviewDate &&
-                                                      "text-muted-foreground"
-                                                    }`}
-                                                  >
-                                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                                    {scheduleForm.interviewDate ? (
-                                                      format(
-                                                        scheduleForm.interviewDate,
-                                                        "PPP"
-                                                      )
-                                                    ) : (
-                                                      <span>Pick a date</span>
-                                                    )}
-                                                  </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent
-                                                  align="start"
-                                                  className="w-full p-0"
-                                                >
-                                                  <Calendar
-                                                    mode="single"
-                                                    captionLayout="dropdown-buttons"
-                                                    selected={
-                                                      scheduleForm.timeEnd
-                                                    }
-                                                    onSelect={(
-                                                      selectedDate
-                                                    ) => {
-                                                      const datetime = new Date(
-                                                        selectedDate
-                                                      );
-                                                      const formattedDateTime =
-                                                        format(
-                                                          datetime,
-                                                          "yyyy-MM-dd HH:mm:ss"
-                                                        );
-                                                      setScheduleForm({
-                                                        ...scheduleForm,
-                                                        interviewDate:
-                                                          formattedDateTime,
-                                                      });
-                                                    }}
-                                                    fromYear={1960}
-                                                    toYear={currentYear}
-                                                    className="text-black w-full"
-                                                    disabled={(date) =>
-                                                      date < new Date() ||
-                                                      date <
-                                                        new Date("1900-01-01")
-                                                    }
-                                                    value={
-                                                      scheduleForm.interviewDate
-                                                    }
-                                                  />
-                                                </PopoverContent>
-                                              </Popover>
-                                            </div>
-                                            <div>
-                                              <Label>Interview Location</Label>
-                                              <Input
-                                                type="text"
-                                                name="interviewLocation"
-                                                placeholder="Give the meeting position..."
-                                                className="rounded-lg border border-slate-200 my-3"
-                                                value={
-                                                  scheduleForm.interviewLocation
-                                                }
-                                                onChange={handleInputChange}
-                                              />
-                                            </div>
-                                            <div className="flex flex-col">
-                                              <Label>Interview Note</Label>
-                                              <textarea
-                                                type="text"
-                                                name="interviewNote"
-                                                placeholder="Give some notes for candidate..."
-                                                className="rounded-lg border border-slate-200 my-3 p-2"
-                                                value={
-                                                  scheduleForm.interviewNote
-                                                }
-                                                onChange={handleInputChange}
-                                              />
-                                            </div>
-                                            <div className="flex justify-between">
-                                              <Button
-                                                className="bg-white border border-black text-black hover:bg-slate-200"
-                                                onClick={() => {
-                                                  setOpenSchedule(null);
-                                                  setScheduleForm({
-                                                    interviewDate: "",
-                                                    interviewLocation: "",
-                                                    interviewNote: "",
-                                                    companyId: "",
-                                                    cvPostId: "",
-                                                  });
-                                                }}
-                                              >
-                                                Close
-                                              </Button>
-                                              <Button
-                                                onClick={handleSubmitForm}
-                                                className="bg-white border border-primary hover:text-white"
-                                              >
-                                                Set Schedule
-                                              </Button>
-                                            </div>
-                                          </PopoverContent>
-                                        </Popover>
-                                        <Button className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">
-                                          Reject
-                                        </Button>
-                                      </TableCell>
                                     </TableRow>
                                   ) : null
                                 )
                               ) : (
                                 <TableRow>
                                   <TableCell
-                                    colSpan={6}
+                                    colSpan={7}
                                     className="text-center font-medium"
                                   >
                                     No CV here !!!
@@ -788,11 +997,12 @@ const ManageJobPost = () => {
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
-                    {/* table reject */}
+
+                    {/* table approve */}
                     <Accordion type="single" collapsible>
                       <AccordionItem value="item-1">
-                        <AccordionTrigger className="text-red-700">
-                          REJECTED
+                        <AccordionTrigger className="text-green-700">
+                          APPROVED
                         </AccordionTrigger>
                         <AccordionContent>
                           <Table>
@@ -807,16 +1017,15 @@ const ManageJobPost = () => {
                                   Description
                                 </TableHead>
                                 <TableHead>CV</TableHead>
-                                <TableHead>Action</TableHead>
                               </TableRow>
                             </TableHeader>
 
                             <TableBody>
                               {userCVs[post.id]?.some(
-                                (userCv) => userCv.statusCode === "REJECTED"
+                                (userCv) => userCv.statusCode === "APPROVED"
                               ) ? (
                                 userCVs[post.id].map((userCv, index) =>
-                                  userCv.statusCode === "REJECTED" ? (
+                                  userCv.statusCode === "APPROVED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
                                         <img
@@ -835,7 +1044,7 @@ const ManageJobPost = () => {
                                           className={`
                 px-2 py-1 rounded font-semibold
                 ${
-                  userCv.statusCode === "ACTIVE"
+                  userCv.statusCode === "APPROVED"
                     ? "bg-green-100 text-green-700"
                     : ""
                 }

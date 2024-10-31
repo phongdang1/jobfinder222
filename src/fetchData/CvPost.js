@@ -30,6 +30,11 @@ const handleRejectCvPost = (cvPostId) => {
     cvPostId : cvPostId
   })
 }
+const handleApproveCvPost = (cvPostId) => {
+  return axios.post(`/handleApproveCvPost`, {
+    cvPostId : cvPostId
+  })
+}
 
 export {
   handleApplyJob,
@@ -38,5 +43,6 @@ export {
   checkViewCompany,
   getAllCvPostByCompanyId,
   handleCreateInterviewSchedule,
-  handleRejectCvPost
+  handleRejectCvPost,
+  handleApproveCvPost
 };
