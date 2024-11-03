@@ -23,9 +23,10 @@ import { getAllJobType } from "../../../fetchData/AllCode";
 import {
   handleCreateNewAllCode,
   handleUpdateAllCode,
+  handleDeleteAllCode,
 } from "../../../fetchData/AllCode";
 import { Label } from "@/components/ui/label";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 import AdminPagination from "./AdminPagination";
 
 const ManageTypeJob = () => {
@@ -172,6 +173,23 @@ const ManageTypeJob = () => {
     }
   };
 
+  const handleDeleteJobType = async (code) => {
+    try {
+      const response = await handleDeleteAllCode({ code });
+      if (response.data && response.data.errCode === 0) {
+        // Xóa thành công: cập nhật lại danh sách job types
+        setJobTypes((prev) => prev.filter((jobType) => jobType.code !== code));
+      } else {
+        console.error(
+          "Failed to delete job type:",
+          response.data.errMessage || "No message"
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting job type:", error);
+    }
+  };
+
   const filteredJobTypes = jobTypes.filter((jobType) =>
     jobType.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -227,12 +245,18 @@ const ManageTypeJob = () => {
                 {index + 1 + (currentPage - 1) * jobTypesPerPage}
               </TableCell>
               <TableCell className="text-center">{jobType.value}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center flex space-x-3 items-center justify-center">
                 <Button
                   onClick={() => handleOpenUpdateModal(jobType)} // Open update modal with jobType data
                   className="text-white bg-third hover:bg-primary rounded-md w-10 h-9"
                 >
                   <EditNoteOutlinedIcon />
+                </Button>
+                <Button
+                  onClick={() => handleDeleteJobType(jobType.code)}
+                  className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
+                >
+                  <DeleteIcon />
                 </Button>
               </TableCell>
             </TableRow>

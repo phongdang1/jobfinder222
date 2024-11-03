@@ -5,6 +5,10 @@ const handleCreateNewAllCode = (userData) => {
 
 }
 
+const handleDeleteAllCode = (userData) => {
+  return axios.post("deleteCode", userData)
+}
+
 const handleUpdateAllCode = (userData) => {
     return axios.post("updateCode", userData)
 }
@@ -34,5 +38,5 @@ const getValueByCode = (code) => {
   return axios.get(`/getValueByCode?code=${code}`);
 };
 
-export {handleCreateNewAllCode, handleUpdateAllCode, getAllJobLevel, getAllWorkType, getAllJobType, getAllCodeByType, getAllCode, getValueByCode};
+export {handleCreateNewAllCode, handleUpdateAllCode, getAllJobLevel, getAllWorkType, getAllJobType, getAllCodeByType, getAllCode, getValueByCode, handleDeleteAllCode};
 

@@ -16,6 +16,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Input } from "@/components/ui/input";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
   getAllWorkType,
   handleCreateNewAllCode,
   handleUpdateAllCode,
+  handleDeleteAllCode,
 } from "../../../fetchData/AllCode";
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
@@ -169,6 +171,25 @@ const ManageWorkForm = () => {
     }
   };
 
+  const handleDelete = async (code) => {
+    try {
+      const response = await handleDeleteAllCode({ code });
+      if (response.data && response.data.errCode === 0) {
+        setWorkTypes((prev) =>
+          prev.filter((workType) => workType.code !== code)
+        );
+        setTotalCount((prev) => prev - 1);
+      } else {
+        console.error(
+          "Failed to delete job type:",
+          response.data.errMessage || "No message"
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting job type:", error);
+    }
+  };
+
   // Filter work types based on search term
   const filteredWorkTypes = workTypes.filter((workType) =>
     workType.value.toLowerCase().includes(searchTerm.toLowerCase())
@@ -232,12 +253,19 @@ const ManageWorkForm = () => {
                 {index + 1 + (currentPage - 1) * itemsPerPage}
               </TableCell>
               <TableCell className="text-center">{workType.value}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center flex space-x-3 items-center justify-center">
                 <Button
                   onClick={() => handleOpenUpdateModal(workType)}
                   className="text-white bg-third hover:bg-primary rounded-md w-10 h-9"
                 >
                   <EditNoteOutlinedIcon />
+                </Button>
+
+                <Button
+                  onClick={() => handleDelete(workType.code)}
+                  className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
+                >
+                  <DeleteIcon />
                 </Button>
               </TableCell>
             </TableRow>
