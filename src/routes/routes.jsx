@@ -40,6 +40,8 @@ import ManagePostAdmin from "@/components/Admin/components/ManagePost";
 import CompanyInfo from "@/components/Company/components/profile";
 import DashboardCompany from "@/components/Company/components/DashboardCompany";
 import CandidateDetail from "@/components/Company/components/CandidateDetail";
+import ProductPage from "@/components/Company/components/ProductPage";
+import ProductCart from "@/components/Company/components/ProductCart";
 
 const routes = [
   // Routes using DefaultLayout
@@ -70,7 +72,9 @@ const routes = [
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
+      { path: "product", element: <ProductPage /> },
       { path: "createJobPost", element: <CreateJobPost /> },
+      { path: "cart", element: <ProductCart /> },
       {
         path: "candidateDetail/:userId/:allowCv",
         element: <CandidateDetail />,

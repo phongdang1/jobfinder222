@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useMatch, useParams } from "react-router-dom";
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown, FaShoppingCart } from "react-icons/fa";
 import logo from "../../../assets/images/JobFinder_logoText.png";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import MenuIcon from "@mui/icons-material/Menu";
+
 const CompanyHeader = () => {
   return (
     <>
@@ -61,10 +62,10 @@ const CompanyHeader = () => {
               </li>
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
-                  to=""
+                  to="/company/product"
                   className="hover:text-primary text-third block font-semibold text-[15px]"
                 >
-                  Transaction
+                  Product
                 </Link>
               </li>
               <li className="max-lg:border-b max-lg:py-3 px-3">
@@ -97,6 +98,12 @@ const CompanyHeader = () => {
             <Button className="px-4 py-2 text-sm rounded-sm font-bold text-white border-2 border-primary bg-primary transition-all ease-in-out duration-300 hover:bg-transparent hover:text-primary">
               Login
             </Button>
+            {/* Cart icon button */}
+            <div className="px-3 py-2 rounded-sm hover:bg-primary group">
+              <Link to="/company/cart" className="relative">
+                <FaShoppingCart className="text-xl text-gray-700 group-hover:text-white" />
+              </Link>
+            </div>
           </div>
         </div>
 
