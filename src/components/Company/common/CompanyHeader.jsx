@@ -103,10 +103,10 @@ const CompanyHeader = () => {
               </li>
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
-                  to=""
+                  to="/company/product"
                   className="hover:text-primary text-third block font-semibold text-[15px]"
                 >
-                  Transaction
+                  Product
                 </Link>
               </li>
               <li className="max-lg:border-b max-lg:py-3 px-3">

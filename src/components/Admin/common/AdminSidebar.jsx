@@ -5,7 +5,14 @@ import {
   FaUsers,
   FaHistory,
   FaBars,
+  FaNetworkWired,
 } from "react-icons/fa";
+import WorkIcon from "@mui/icons-material/Work";
+import { GiSkills } from "react-icons/gi";
+import { MdWorkHistory, MdSpaceDashboard } from "react-icons/md";
+import { SiLevelsdotfyi } from "react-icons/si";
+import { LuPackageSearch } from "react-icons/lu";
+import { BsFilePost } from "react-icons/bs";
 import { Link, useMatch } from "react-router-dom";
 
 const AdminSidebar = ({}) => {
@@ -49,7 +56,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageJobOpen(!isManageJobOpen)}
               to="/admin/dashboard"
             >
-              <FaBriefcase className="mr-4" />
+              <MdSpaceDashboard className="mr-4" />
 
               {isOpen && "Dashboard"}
             </Link>
@@ -61,7 +68,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
               to="/admin/jobType"
             >
-              <FaBuilding className="mr-4" />
+              <FaNetworkWired className="mr-4" />
 
               {isOpen && "Manage Type Of Job"}
             </Link>
@@ -73,7 +80,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
               to="/admin/skill"
             >
-              <FaBuilding className="mr-4" />
+              <GiSkills className="mr-4" />
               {isOpen && "Manage Skill"}
             </Link>
           </li>
@@ -84,7 +91,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
               to="/admin/level"
             >
-              <FaBuilding className="mr-4" />
+              <SiLevelsdotfyi className="mr-4" />
               {isOpen && "Manage Level"}
             </Link>
           </li>
@@ -95,7 +102,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
               to="/admin/workForm"
             >
-              <FaBuilding className="mr-4" />
+              <MdWorkHistory className="mr-4" />
               {isOpen && "Manage Working Form"}
             </Link>
           </li>
@@ -106,7 +113,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
               to="/admin/package"
             >
-              <FaBuilding className="mr-4" />
+              <LuPackageSearch className="mr-4" />
               {isOpen && "Manage Package"}
             </Link>
           </li>
@@ -128,7 +135,7 @@ const AdminSidebar = ({}) => {
               onClick={() => setIsManageCompanyOpen(!isManageCompanyOpen)}
               to="/admin/post"
             >
-              <FaBuilding className="mr-4" />
+              <BsFilePost className="mr-4" />
               {isOpen && "Manage Post"}
             </Link>
           </li>

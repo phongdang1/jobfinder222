@@ -90,6 +90,7 @@ const CompanyInfo = () => {
         companyData.thumbnail,
         companyData.file
       );
+      console.log("submit: ",response.data);
       if (response.data.errCode === 0) {
         fetchCompany();
         setIsEditable(false);

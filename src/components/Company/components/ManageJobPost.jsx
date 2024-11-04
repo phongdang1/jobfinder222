@@ -27,58 +27,159 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import axios from "../../../fetchData/axios";
 import { Badge } from "@/components/ui/badge";
-
+import {
+  handleApproveCvPost,
+  handleCreateInterviewSchedule,
+  handleRejectCvPost,
+} from "@/fetchData/CvPost";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
 const ManageJobPost = () => {
   const [company, setCompany] = useState([]);
   const [post, setPost] = useState([]);
   const [userCVs, setUserCVs] = useState({});
   const [userDetails, setUserDetails] = useState({});
-
+  const [schedule, setSchedule] = useState({});
+  const [openSchedule, setOpenSchedule] = useState(null);
+  const currentYear = new Date().getFullYear();
+  const [scheduleForm, setScheduleForm] = useState({
+    interviewDate: "",
+    interviewLocation: "",
+    interviewNote: "",
+    cvPostId: "",
+    companyId: "",
+  });
+  const [rejectDialog, setRejectDialog] = useState(false);
+  const [approveDialog, setApproveDialog] = useState(false);
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setScheduleForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
   const fetchCompanyData = async () => {
     try {
       const res = await axios.get(`/getCompanyById?id=${1}`);
       if (res.data.errCode === 0) {
         setCompany(res.data.data);
         setPost(res.data.data.postData);
-
-        // Fetch user CV data for each post
         const userCvData = {};
         const userDetailsData = {};
+        const scheduleData = {};
 
         for (let i = 0; i < res.data.data.postData.length; i++) {
           const cvEntry = res.data.data.postData[i];
           const id = cvEntry.id;
+          console.log(`Fetching CVs for post ID: ${id}`);
+
           const resUserCV = await axios.get(`/getAllListCvByPost?postId=${id}`);
+          console.log(`CV Response for post ID ${id}:`, resUserCV);
           userCvData[id] = resUserCV.data.data || [];
 
-          // Fetch user details for each user in the userCV list
-          for (const userCv of resUserCV.data.data) {
+          for (const userCv of resUserCV.data.data || []) {
             const userId = userCv.userId;
+            console.log(`Fetching details for user ID: ${userId}`);
             if (!userDetailsData[userId]) {
               const resUserDetail = await axios.get(
                 `/getUserById?id=${userId}`
               );
+              const resSchedule = await axios.get(
+                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`
+              );
+              console.log(
+                `User Details Response for user ID ${userId}:`,
+                resUserDetail
+              );
               userDetailsData[userId] = resUserDetail.data.data;
-              console.log("detail cua user", resUserDetail.data.data);
+              scheduleData[userCv.id] = resSchedule.data.data;
+              console.log(
+                `Stored schedule for user ID ${userId}:`,
+                scheduleData[userCv.id]
+              );
+              console.log(
+                `Stored details for user ID ${userId}:`,
+                userDetailsData[userId]
+              );
             }
           }
         }
+
+        // Set the final data in state
         setUserCVs(userCvData);
         setUserDetails(userDetailsData);
-        console.log("User CVs by Post ID: ", userCvData);
-        console.log("User Details: ", userDetailsData);
+        setSchedule(scheduleData);
+        console.log("Final User CVs by Post ID:", userCvData);
+        console.log("Final User Details:", userDetailsData);
       } else {
         console.log("Error: ", res.data.errMessage);
       }
     } catch (error) {
       console.log("Error fetching data: ", error);
+    }
+  };
+  const handleSubmitForm = async () => {
+    try {
+      const res = await axios.post(`/createInterviewSchedule`, {
+        interviewDate: scheduleForm.interviewDate,
+        interviewLocation: scheduleForm.interviewLocation,
+        interviewNote: scheduleForm.interviewNote,
+        cvPostId: scheduleForm.cvPostId,
+        companyId: scheduleForm.companyId,
+      });
+      if (res.data.errCode === 0) {
+        console.log("form ne", res);
+        setOpenSchedule(null);
+        toast.success("Set interview schedule successfully !!!");
+        fetchCompanyData();
+      } else {
+        toast.error(res.data.errMessage);
+        console.log("loi roi", res);
+      }
+    } catch (error) {
+      console.log("error j j day", error);
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      const res = await handleRejectCvPost(id);
+      if (res.data.errCode === 0) {
+        console.log("CV Rejected !!!", res);
+        toast.success("CV Rejected !!");
+        setRejectDialog(false);
+        fetchCompanyData();
+      } else {
+        console.log("loi rejected");
+      }
+    } catch (error) {
+      console.log("error reject", error);
+    }
+  };
+  const handleApprove = async (id) => {
+    try {
+      const res = await handleApproveCvPost(id);
+      if (res.data.errCode === 0) {
+        console.log("CV Approved!!!", res);
+        toast.success("CV Approved");
+        fetchCompanyData();
+        setApproveDialog(false);
+      } else {
+        console.log("loi approved");
+      }
+    } catch (error) {
+      console.log("error approve", error);
     }
   };
 
@@ -87,7 +188,7 @@ const ManageJobPost = () => {
   }, []);
 
   return (
-    <div className="mt-8 bg-white p-4 mb-8 shadow-lg rounded-lg">
+    <div className="mt-8 my-60">
       <h1 className="text-3xl font-semibold my-4">
         Total Post ({post.length})
       </h1>
@@ -121,207 +222,936 @@ const ManageJobPost = () => {
                       View CV
                     </div>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[1300px] h-1/2">
+                  <DialogContent className="sm:max-w-[1500px] h-3/4 overflow-auto">
                     <DialogHeader>
                       <DialogTitle>{post.postDetailData.name}</DialogTitle>
                       <DialogDescription>
                         User CV Details for this post.
                       </DialogDescription>
                     </DialogHeader>
-                    {/* table của user */}
+                    {/* table CV pending */}
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>PENDING</AccordionTrigger>
+                        <AccordionContent>
+                          {/* table pending */}
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Image</TableHead>
+                                <TableHead>Name</TableHead>
 
-                    <Table>
-                      <TableCaption>
-                        A list of your recent invoices.
-                      </TableCaption>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Image</TableHead>
-                          <TableHead>Name</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Percentage Match</TableHead>
+                                <TableHead className="text-left">
+                                  Description
+                                </TableHead>
+                                <TableHead>CV</TableHead>
+                                <TableHead>Action</TableHead>
+                              </TableRow>
+                            </TableHeader>
 
-                          <TableHead>Status</TableHead>
-                          <TableHead>Percentage Match</TableHead>
-                          <TableHead className="text-left">
-                            Description
-                          </TableHead>
-                          <TableHead>CV</TableHead>
-                          <TableHead>Action</TableHead>
-                        </TableRow>
-                      </TableHeader>
-
-                      <TableBody>
-                        {userCVs[post.id]?.map((userCv, index) => (
-                          // accordion cv của user
-                          <>
-                            <TableRow key={index}>
-                              <TableCell className="font-medium">
-                                <img
-                                  className="rounded-full w-14 h-14"
-                                  src={userDetails[userCv.userId]?.image}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                {userDetails[userCv.userId]?.firstName}{" "}
-                                {userDetails[userCv.userId]?.lastName}
-                              </TableCell>
-                              {/* <TableCell className="w-1/5 max-w-[1rem] whitespace-nowrap overflow-hidden text-ellipsis">
-                                {userDetails[userCv.userId]?.address}
-                              </TableCell> */}
-                              {/* <TableCell
-                                className={`${
-                                  userDetails[userCv.userId]?.UserDetailData
-                                    ?.genderCode == "M"
-                                    ? "text-blue-700"
-                                    : "text-pink-600"
-                                } font-semibold`}
-                              >
-                                {
-                                  userDetails[userCv.userId]?.UserDetailData
-                                    ?.genderCode
-                                }
-                              </TableCell> */}
-                              <TableCell>
-                                <span
-                                  className={`
-                        px-2 py-1 rounded font-semibold
-                        ${
-                          userCv.statusCode === "ACTIVE"
-                            ? "bg-green-100 text-green-700"
-                            : ""
-                        }
-                        ${
-                          userCv.statusCode === "INACTIVE"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : ""
-                        }
-                        ${
-                          userCv.statusCode === "BANNED"
-                            ? "bg-red-100 text-red-700"
-                            : ""
-                        }
-                         ${
-                           userCv.statusCode === "PENDING"
-                             ? "bg-slate-200 text-black"
-                             : ""
-                         }
-                      `}
-                                >
-                                  {userCv.statusCode}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                <span
-                                  className={`
-    ${
-      parseInt(userCv.file) < 25
-        ? "text-red-500"
-        : parseInt(userCv.file) < 50
-        ? "text-orange-500"
-        : parseInt(userCv.file) < 75
-        ? "text-yellow-500"
-        : "text-green-500"
-    } font-semibold
-  `}
-                                >
-                                  {userCv.file}
-                                </span>
-                              </TableCell>
-                              <TableCell className="max-w-[300px] break-words whitespace-normal">
-                                {userCv.description}
-                              </TableCell>
-                              {/* <TableCell>
-                                {userDetails[userCv.userId]?.listSkill &&
-                                userDetails[userCv.userId].listSkill.length >
-                                  0 ? (
-                                  <div className="flex flex-wrap justify-evenly">
-                                    {userDetails[userCv.userId].listSkill.map(
-                                      (skill, index) => {
-                                        return (
-                                          <div
-                                            key={index}
-                                            className="w-auto my-1"
-                                          >
-                                            <Badge
-                                              variant="outline"
-                                              className="bg-secondary hover:cursor-pointer border-2 hover:border-primary my-1 w-[110px] flex items-center justify-center text-center"
-                                            >
-                                              {skill.skillData?.name ||
-                                                skill.skillId ||
-                                                "Unknown Skill"}
-                                            </Badge>
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                ) : (
-                                  <p>No skills available</p>
-                                )}
-                              </TableCell> */}
-
-                              {/* mở dialog coi cv */}
-                              <TableCell>
-                                <Dialog className="w-[1500px]">
-                                  <DialogTrigger>
-                                    {" "}
-                                    <AiOutlineEye className="w-5 h-5 mr-2 text-primary bg-white  hover:text-primary/50 border border-none rounded font-semibold" />
-                                  </DialogTrigger>
-                                  <DialogContent className="max-w-[1000px]">
-                                    <div>
-                                      <h1 className="border-b-2 font-semibold text-xl">
-                                        User Detail
-                                      </h1>
-                                      <div className="flex gap-2">
-                                        <h1 className="font-semibold">
-                                          Address:{" "}
-                                        </h1>
-                                        <span>
-                                          {userDetails[userCv.userId]?.address}
-                                        </span>
-                                      </div>
-                                      <div className="flex gap-2">
-                                        <h1 className="font-semibold">
-                                          Phone Number:{" "}
-                                        </h1>
-                                        <span>
-                                          {
-                                            userDetails[userCv.userId]
-                                              ?.phoneNumber
+                            <TableBody>
+                              {userCVs[post.id]?.some(
+                                (userCv) => userCv.statusCode === "PENDING"
+                              ) ? (
+                                userCVs[post.id].map((userCv, index) =>
+                                  userCv.statusCode === "PENDING" ? (
+                                    <TableRow key={index}>
+                                      <TableCell className="font-medium">
+                                        <img
+                                          className="rounded-full w-14 h-14"
+                                          src={
+                                            userDetails[userCv.userId]?.image
                                           }
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        {userDetails[userCv.userId]?.firstName}{" "}
+                                        {userDetails[userCv.userId]?.lastName}
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                px-2 py-1 rounded font-semibold
+                ${
+                  userCv.statusCode === "ACTIVE"
+                    ? "bg-green-100 text-green-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "INACTIVE"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "BANNED"
+                    ? "bg-red-100 text-red-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "PENDING"
+                    ? "bg-slate-200 text-black"
+                    : ""
+                }
+              `}
+                                        >
+                                          {userCv.statusCode}
                                         </span>
-                                      </div>
-                                    </div>
-                                    <h1 className="border-b-2 font-semibold text-xl">
-                                      User CV
-                                    </h1>
-                                    <iframe
-                                      width={"100%"}
-                                      height={"700px"}
-                                      src={
-                                        userDetails[userCv.userId]
-                                          ?.UserDetailData?.file
-                                      }
-                                    ></iframe>
-                                    {/* <DialogFooter>
-                                      <Button>ABC</Button>
-                                    </DialogFooter> */}
-                                  </DialogContent>
-                                </Dialog>
-                              </TableCell>
-                              {/* 2 cái nút */}
-                              <TableCell className="flex gap-4">
-                                <Button className="bg-white border border-primary hover:bg-primary hover:text-white">
-                                  Approve
-                                </Button>
-                                <Button className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">
-                                  Reject
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          </>
-                        ))}
-                      </TableBody>
-                    </Table>
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                ${parseInt(userCv.file) < 25 ? "text-red-500" : ""}
+                ${parseInt(userCv.file) < 50 ? "text-orange-500" : ""}
+                ${
+                  parseInt(userCv.file) < 75
+                    ? "text-yellow-500"
+                    : "text-green-500"
+                }
+                font-semibold
+              `}
+                                        >
+                                          {userCv.file}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell className="max-w-[300px] break-words whitespace-normal">
+                                        {userCv.description}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Dialog className="w-[1500px]">
+                                          <DialogTrigger>
+                                            <AiOutlineEye className="w-5 h-5 mr-2 text-primary bg-white hover:text-primary/50 border border-none rounded font-semibold" />
+                                          </DialogTrigger>
+                                          <DialogContent className="max-w-[1000px]">
+                                            <div>
+                                              <h1 className="border-b-2 font-semibold text-xl">
+                                                User Detail
+                                              </h1>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Address:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.address
+                                                  }
+                                                </span>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Phone Number:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.phoneNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <h1 className="border-b-2 font-semibold text-xl">
+                                              User CV
+                                            </h1>
+                                            <iframe
+                                              width="100%"
+                                              height="700px"
+                                              src={
+                                                userDetails[userCv.userId]
+                                                  ?.UserDetailData?.file
+                                              }
+                                            ></iframe>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                      <TableCell className="flex gap-4 my-2">
+                                        <Popover
+                                          key={userCv.id}
+                                          open={openSchedule === userCv.id}
+                                          onOpenChange={(isOpen) =>
+                                            setOpenSchedule(
+                                              isOpen ? userCv.id : null
+                                            )
+                                          }
+                                        >
+                                          <PopoverTrigger
+                                            onClick={() => {
+                                              setOpenSchedule(userCv.id);
+                                              setScheduleForm({
+                                                ...scheduleForm,
+                                                cvPostId: userCv.id,
+                                                companyId: company.id,
+                                              });
+                                            }}
+                                            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md font-medium transition px-3 py-2"
+                                          >
+                                            Set Schedule
+                                          </PopoverTrigger>
+                                          <PopoverContent className="w-[500px] flex flex-col gap-6">
+                                            <div className="flex flex-col gap-y-3">
+                                              <Label>Interview Date</Label>
+                                              <Popover>
+                                                <PopoverTrigger asChild>
+                                                  <Button
+                                                    variant="outline"
+                                                    className={`justify-start text-left font-normal ${
+                                                      !scheduleForm.interviewDate &&
+                                                      "text-muted-foreground"
+                                                    }`}
+                                                  >
+                                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                                    {scheduleForm.interviewDate ? (
+                                                      format(
+                                                        scheduleForm.interviewDate,
+                                                        "PPP"
+                                                      )
+                                                    ) : (
+                                                      <span>Pick a date</span>
+                                                    )}
+                                                  </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent
+                                                  align="start"
+                                                  className="w-full p-0"
+                                                >
+                                                  <Calendar
+                                                    mode="single"
+                                                    captionLayout="dropdown-buttons"
+                                                    selected={
+                                                      scheduleForm.timeEnd
+                                                    }
+                                                    onSelect={(
+                                                      selectedDate
+                                                    ) => {
+                                                      const datetime = new Date(
+                                                        selectedDate
+                                                      );
+                                                      const formattedDateTime =
+                                                        format(
+                                                          datetime,
+                                                          "yyyy-MM-dd HH:mm:ss"
+                                                        );
+                                                      setScheduleForm({
+                                                        ...scheduleForm,
+                                                        interviewDate:
+                                                          formattedDateTime,
+                                                      });
+                                                    }}
+                                                    fromYear={1960}
+                                                    toYear={currentYear}
+                                                    className="text-black w-full"
+                                                    disabled={(date) =>
+                                                      date < new Date() ||
+                                                      date <
+                                                        new Date("1900-01-01")
+                                                    }
+                                                    value={
+                                                      scheduleForm.interviewDate
+                                                    }
+                                                  />
+                                                </PopoverContent>
+                                              </Popover>
+                                            </div>
+                                            <div>
+                                              <Label>Interview Location</Label>
+                                              <Input
+                                                type="text"
+                                                name="interviewLocation"
+                                                placeholder="Give the meeting position..."
+                                                className="rounded-lg border border-slate-200 my-3"
+                                                value={
+                                                  scheduleForm.interviewLocation
+                                                }
+                                                onChange={handleInputChange}
+                                              />
+                                            </div>
+                                            <div className="flex flex-col">
+                                              <Label>Interview Note</Label>
+                                              <textarea
+                                                type="text"
+                                                name="interviewNote"
+                                                placeholder="Give some notes for candidate..."
+                                                className="rounded-lg border border-slate-200 my-3 p-2"
+                                                value={
+                                                  scheduleForm.interviewNote
+                                                }
+                                                onChange={handleInputChange}
+                                              />
+                                            </div>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                className="bg-white border border-black text-black hover:bg-slate-200"
+                                                onClick={() => {
+                                                  setOpenSchedule(null);
+                                                  setScheduleForm({
+                                                    interviewDate: "",
+                                                    interviewLocation: "",
+                                                    interviewNote: "",
+                                                    companyId: "",
+                                                    cvPostId: "",
+                                                  });
+                                                }}
+                                              >
+                                                Close
+                                              </Button>
+                                              <Button
+                                                onClick={handleSubmitForm}
+                                                className="bg-white border border-primary hover:text-white"
+                                              >
+                                                Set Schedule
+                                              </Button>
+                                            </div>
+                                          </PopoverContent>
+                                        </Popover>
+                                        {/* dialog confirm reject */}
+                                        <Dialog open={rejectDialog}>
+                                          <DialogTrigger
+                                            onClick={() =>
+                                              setRejectDialog(true)
+                                            }
+                                            className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white px-4 py-2 font-medium transition rounded-md"
+                                          >
+                                            Reject
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>
+                                                Reject{" "}
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }{" "}
+                                                  ?
+                                                </span>
+                                              </DialogTitle>
+                                              <DialogDescription className="text-lg py-3">
+                                                This action cannot be undone.
+                                              </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                onClick={() =>
+                                                  setRejectDialog(false)
+                                                }
+                                                variant="outline"
+                                              >
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleReject(userCv.id)
+                                                }
+                                                className="border border-red-600 text-red-600 hover:text-white hover:bg-red-600"
+                                              >
+                                                Reject
+                                              </Button>
+                                            </div>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : null
+                                )
+                              ) : (
+                                <TableRow>
+                                  <TableCell
+                                    colSpan={7}
+                                    className="text-center font-medium"
+                                  >
+                                    No CV here !!!
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+
+                    {/* table interview */}
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger className="text-blue-700">
+                          INTERVIEW
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Image</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Interview Date</TableHead>
+                                <TableHead>Interview Location</TableHead>
+                                <TableHead>CV</TableHead>
+                                <TableHead>Note</TableHead>
+                                <TableHead>Action</TableHead>
+                              </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                              {userCVs[post.id]?.some(
+                                (userCv) => userCv.statusCode === "INTERVIEW"
+                              ) ? (
+                                userCVs[post.id].map((userCv, index) =>
+                                  userCv.statusCode === "INTERVIEW" ? (
+                                    <TableRow key={index}>
+                                      <TableCell className="font-medium">
+                                        <img
+                                          className="rounded-full w-14 h-14"
+                                          src={
+                                            userDetails[userCv.userId]?.image
+                                          }
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        {userDetails[userCv.userId]?.firstName}{" "}
+                                        {userDetails[userCv.userId]?.lastName}
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                px-2 py-1 rounded font-semibold
+                ${
+                  userCv.statusCode === "APPROVED"
+                    ? "bg-green-100 text-green-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "INTERVIEW"
+                    ? "bg-blue-100 text-blue-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "REJECTED"
+                    ? "bg-red-100 text-red-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "PENDING"
+                    ? "bg-slate-200 text-black"
+                    : ""
+                }
+              `}
+                                        >
+                                          {userCv.statusCode}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell>
+                                        <span>
+                                          {new Date(
+                                            schedule[userCv.id].interviewDate
+                                          ).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                          })}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell className="max-w-[300px] break-words whitespace-normal">
+                                        {schedule[userCv.id].interviewLocation}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Dialog className="w-[1500px]">
+                                          <DialogTrigger>
+                                            <AiOutlineEye className="w-5 h-5 mr-2 text-primary bg-white hover:text-primary/50 border border-none rounded font-semibold" />
+                                          </DialogTrigger>
+                                          <DialogContent className="max-w-[1000px]">
+                                            <div>
+                                              <h1 className="border-b-2 font-semibold text-xl">
+                                                User Detail
+                                              </h1>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Address:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.address
+                                                  }
+                                                </span>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Phone Number:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.phoneNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <h1 className="border-b-2 font-semibold text-xl">
+                                              User CV
+                                            </h1>
+                                            <iframe
+                                              width="100%"
+                                              height="700px"
+                                              src={
+                                                userDetails[userCv.userId]
+                                                  ?.UserDetailData?.file
+                                              }
+                                            ></iframe>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                      <TableCell>
+                                        {schedule[userCv.id].interviewNote}
+                                      </TableCell>
+                                      <TableCell className="flex gap-4">
+                                        <Dialog open={approveDialog}>
+                                          <DialogTrigger
+                                            onClick={() => {
+                                              setApproveDialog(true);
+                                            }}
+                                            className="border border-primary text-primary hover:text-white hover:bg-primary px-3 py-3 rounded-md transition font-medium"
+                                          >
+                                            Approve
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>
+                                                Approve{" "}
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }
+                                                </span>
+                                              </DialogTitle>
+                                              <DialogDescription className="text-black">
+                                                This action cannot be undone.
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }
+                                                </span>{" "}
+                                                will be your employee !!!
+                                              </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                onClick={() =>
+                                                  setApproveDialog(false)
+                                                }
+                                                variant="outline"
+                                              >
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                  handleApprove(userCv.id);
+                                                }}
+                                                className="border border-primary text-primary hover:text-white hover:bg-primary"
+                                              >
+                                                Approve
+                                              </Button>
+                                            </div>
+                                          </DialogContent>
+                                        </Dialog>
+                                        {/* dialog confirm reject */}
+                                        <Dialog open={rejectDialog}>
+                                          <DialogTrigger
+                                            onClick={() =>
+                                              setRejectDialog(true)
+                                            }
+                                            className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white px-4 py-2 font-medium transition rounded-md"
+                                          >
+                                            Reject
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>
+                                                Reject{" "}
+                                                <span>
+                                                  {" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.firstName
+                                                  }{" "}
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.lastName
+                                                  }{" "}
+                                                  ?
+                                                </span>
+                                              </DialogTitle>
+                                              <DialogDescription className="text-lg py-3">
+                                                This action cannot be undone.
+                                              </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                onClick={() =>
+                                                  setRejectDialog(false)
+                                                }
+                                                variant="outline"
+                                              >
+                                                Cancel
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() =>
+                                                  handleReject(userCv.id)
+                                                }
+                                                className="border border-red-600 text-red-600 hover:text-white hover:bg-red-600"
+                                              >
+                                                Reject
+                                              </Button>
+                                            </div>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : null
+                                )
+                              ) : (
+                                <TableRow>
+                                  <TableCell
+                                    colSpan={6}
+                                    className="text-center font-medium"
+                                  >
+                                    No CV here !!!
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                    {/* table reject */}
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger className="text-red-700">
+                          REJECTED
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Image</TableHead>
+                                <TableHead>Name</TableHead>
+
+                                <TableHead>Status</TableHead>
+                                <TableHead>Percentage Match</TableHead>
+                                <TableHead className="text-left">
+                                  Description
+                                </TableHead>
+                                <TableHead>CV</TableHead>
+                              </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                              {userCVs[post.id]?.some(
+                                (userCv) => userCv.statusCode === "REJECTED"
+                              ) ? (
+                                userCVs[post.id].map((userCv, index) =>
+                                  userCv.statusCode === "REJECTED" ? (
+                                    <TableRow key={index}>
+                                      <TableCell className="font-medium">
+                                        <img
+                                          className="rounded-full w-14 h-14"
+                                          src={
+                                            userDetails[userCv.userId]?.image
+                                          }
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        {userDetails[userCv.userId]?.firstName}{" "}
+                                        {userDetails[userCv.userId]?.lastName}
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                px-2 py-1 rounded font-semibold
+                ${
+                  userCv.statusCode === "ACTIVE"
+                    ? "bg-green-100 text-green-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "INACTIVE"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "REJECTED"
+                    ? "bg-red-100 text-red-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "PENDING"
+                    ? "bg-slate-200 text-black"
+                    : ""
+                }
+              `}
+                                        >
+                                          {userCv.statusCode}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                ${parseInt(userCv.file) < 25 ? "text-red-500" : ""}
+                ${parseInt(userCv.file) < 50 ? "text-orange-500" : ""}
+                ${
+                  parseInt(userCv.file) < 75
+                    ? "text-yellow-500"
+                    : "text-green-500"
+                }
+                font-semibold
+              `}
+                                        >
+                                          {userCv.file}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell className="max-w-[300px] break-words whitespace-normal">
+                                        {userCv.description}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Dialog className="w-[1500px]">
+                                          <DialogTrigger>
+                                            <AiOutlineEye className="w-5 h-5 mr-2 text-primary bg-white hover:text-primary/50 border border-none rounded font-semibold" />
+                                          </DialogTrigger>
+                                          <DialogContent className="max-w-[1000px]">
+                                            <div>
+                                              <h1 className="border-b-2 font-semibold text-xl">
+                                                User Detail
+                                              </h1>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Address:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.address
+                                                  }
+                                                </span>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Phone Number:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.phoneNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <h1 className="border-b-2 font-semibold text-xl">
+                                              User CV
+                                            </h1>
+                                            <iframe
+                                              width="100%"
+                                              height="700px"
+                                              src={
+                                                userDetails[userCv.userId]
+                                                  ?.UserDetailData?.file
+                                              }
+                                            ></iframe>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : null
+                                )
+                              ) : (
+                                <TableRow>
+                                  <TableCell
+                                    colSpan={7}
+                                    className="text-center font-medium"
+                                  >
+                                    No CV here !!!
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+
+                    {/* table approve */}
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger className="text-green-700">
+                          APPROVED
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Image</TableHead>
+                                <TableHead>Name</TableHead>
+
+                                <TableHead>Status</TableHead>
+                                <TableHead>Percentage Match</TableHead>
+                                <TableHead className="text-left">
+                                  Description
+                                </TableHead>
+                                <TableHead>CV</TableHead>
+                              </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                              {userCVs[post.id]?.some(
+                                (userCv) => userCv.statusCode === "APPROVED"
+                              ) ? (
+                                userCVs[post.id].map((userCv, index) =>
+                                  userCv.statusCode === "APPROVED" ? (
+                                    <TableRow key={index}>
+                                      <TableCell className="font-medium">
+                                        <img
+                                          className="rounded-full w-14 h-14"
+                                          src={
+                                            userDetails[userCv.userId]?.image
+                                          }
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        {userDetails[userCv.userId]?.firstName}{" "}
+                                        {userDetails[userCv.userId]?.lastName}
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                px-2 py-1 rounded font-semibold
+                ${
+                  userCv.statusCode === "APPROVED"
+                    ? "bg-green-100 text-green-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "INACTIVE"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "REJECTED"
+                    ? "bg-red-100 text-red-700"
+                    : ""
+                }
+                ${
+                  userCv.statusCode === "PENDING"
+                    ? "bg-slate-200 text-black"
+                    : ""
+                }
+              `}
+                                        >
+                                          {userCv.statusCode}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell>
+                                        <span
+                                          className={`
+                ${parseInt(userCv.file) < 25 ? "text-red-500" : ""}
+                ${parseInt(userCv.file) < 50 ? "text-orange-500" : ""}
+                ${
+                  parseInt(userCv.file) < 75
+                    ? "text-yellow-500"
+                    : "text-green-500"
+                }
+                font-semibold
+              `}
+                                        >
+                                          {userCv.file}
+                                        </span>
+                                      </TableCell>
+                                      <TableCell className="max-w-[300px] break-words whitespace-normal">
+                                        {userCv.description}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Dialog className="w-[1500px]">
+                                          <DialogTrigger>
+                                            <AiOutlineEye className="w-5 h-5 mr-2 text-primary bg-white hover:text-primary/50 border border-none rounded font-semibold" />
+                                          </DialogTrigger>
+                                          <DialogContent className="max-w-[1000px]">
+                                            <div>
+                                              <h1 className="border-b-2 font-semibold text-xl">
+                                                User Detail
+                                              </h1>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Address:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.address
+                                                  }
+                                                </span>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <h1 className="font-semibold">
+                                                  Phone Number:{" "}
+                                                </h1>
+                                                <span>
+                                                  {
+                                                    userDetails[userCv.userId]
+                                                      ?.phoneNumber
+                                                  }
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <h1 className="border-b-2 font-semibold text-xl">
+                                              User CV
+                                            </h1>
+                                            <iframe
+                                              width="100%"
+                                              height="700px"
+                                              src={
+                                                userDetails[userCv.userId]
+                                                  ?.UserDetailData?.file
+                                              }
+                                            ></iframe>
+                                          </DialogContent>
+                                        </Dialog>
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : null
+                                )
+                              ) : (
+                                <TableRow>
+                                  <TableCell
+                                    colSpan={7}
+                                    className="text-center font-medium"
+                                  >
+                                    No CV here !!!
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </DialogContent>
                 </Dialog>
               </TableCell>
