@@ -133,15 +133,15 @@ const DashboardCompany = () => {
               </CardContent>
               <CardFooter></CardFooter>
               <CardFooter>
-                <div class="space-y-4">
-                  <div class="flex items-center">
-                    <FcFaq class="mr-2" />
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <FcFaq className="mr-2" />
                     <Link to="" className="text-blue-700 hover:text-black">
                       <p>FAQ/Hướng dẫn sử dụng</p>
                     </Link>
                   </div>
-                  <div class="flex items-center">
-                    <FcHome class="mr-2" />
+                  <div className="flex items-center">
+                    <FcHome className="mr-2" />
                     <Link
                       to="/company/product"
                       className="text-blue-700 hover:text-black"
