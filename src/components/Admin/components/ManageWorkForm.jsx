@@ -248,7 +248,10 @@ const ManageWorkForm = () => {
         </TableHeader>
         <TableBody>
           {currentItems.map((workType, index) => (
-            <TableRow key={workType.code}>
+            <TableRow
+              key={workType.code}
+              className="cursor-pointer hover:bg-slate-300"
+            >
               <TableCell className="text-center">
                 {index + 1 + (currentPage - 1) * itemsPerPage}
               </TableCell>
