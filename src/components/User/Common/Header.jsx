@@ -38,6 +38,7 @@ function Header() {
     localStorage.removeItem("user");
     localStorage.removeItem("user_id");
     localStorage.removeItem("email");
+    fetchUser();
   };
 
   const fetchUser = async (userId) => {
@@ -54,9 +55,11 @@ function Header() {
       console.error("Failed to fetch user:", error);
     }
   };
+
   useEffect(() => {
     fetchUser(userId);
   }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -199,8 +202,11 @@ function Header() {
           {userId === null || userId === undefined ? (
             <>
               <li>
-                <Button className="font-semibold text-primary" variant="ghost">
-                  <Link to="/signup">Register</Link>
+                <Button
+                  className="font-semibold text-primary hover:text-white hover:bg-primary"
+                  variant="ghost"
+                >
+                  <Link to="/signup">Sign Up</Link>
                 </Button>
               </li>
               <li>

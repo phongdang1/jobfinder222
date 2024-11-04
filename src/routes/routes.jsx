@@ -37,9 +37,12 @@ import ManagePackages from "@/components/Admin/components/ManagePackages";
 import CreateJobPost from "@/components/Company/components/CreateJobPost";
 import ManageCompanyAdmin from "@/components/Admin/components/ManageCompany";
 import ManagePostAdmin from "@/components/Admin/components/ManagePost";
-import CompanyInfo from "@/components/Company/components/profile";
+import CompanyInfo from "@/components/Company/components/CompanyProfile/profile";
 import DashboardCompany from "@/components/Company/components/DashboardCompany";
 import CandidateDetail from "@/components/Company/components/CandidateDetail";
+import SignUpCompany from "@/components/Common/Authentication/SignUpCompany";
+import CompanyProfileLayout from "@/components/layout/CompanyProfileLayout";
+import AccountInfo from "@/components/Company/components/CompanyProfile/AccountInfo";
 
 const routes = [
   // Routes using DefaultLayout
@@ -66,7 +69,6 @@ const routes = [
     children: [
       { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
-      { path: "profile", element: <CompanyInfo /> },
       { path: "manageCompany", element: <ManageCompany /> },
       { path: "candidate", element: <FindCandidate /> },
       { path: "transaction", element: <TransactionHistory /> },
@@ -77,6 +79,16 @@ const routes = [
       },
     ],
   },
+
+  {
+    path: "/companyProfile",
+    element: <CompanyProfileLayout />,
+    children: [
+      { path: "profile", element: <CompanyInfo /> },
+      { path: "accountInfo", element: <AccountInfo /> },
+    ],
+  },
+
   {
     path: "/profileUpdate",
     element: <UserProfileUpdateLayout />,
@@ -110,6 +122,10 @@ const routes = [
       { path: "company", element: <ManageCompanyAdmin /> },
       { path: "post", element: <ManagePostAdmin /> },
     ],
+  },
+  {
+    path: "signupCompany",
+    element: <SignUpCompany />,
   },
 ];
 

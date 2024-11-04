@@ -66,6 +66,7 @@ function PersonalInformation() {
   const [isCompleteOTP, setIsCompleteOTP] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dialogRef = useRef(null);
+
   const fetchUserData = async () => {
     setLoading(true);
     try {
@@ -211,6 +212,7 @@ function PersonalInformation() {
             ...inputValue,
             file: base64, // Properly use the resolved base64 result here
           });
+
           console.log("file: ", file, "base64: ", base64);
         })
         .catch((error) => {
@@ -248,6 +250,12 @@ function PersonalInformation() {
       toast.error("Invalid OTP");
       return;
     }
+  };
+
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const handleCloseCreateModal = () => {
+    setCreateModalOpen(false);
+    // setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
   };
 
   return (
@@ -458,7 +466,7 @@ function PersonalInformation() {
                           Please verify your email to access all Job Finder
                           features!
                         </h1>
-                        <Dialog open={isDialogOpen}>
+                        <Dialog>
                           <DialogTrigger asChild>
                             <Button
                               onClick={() => handleSendOtp(inputValue.email)}

@@ -53,9 +53,11 @@ const Head = ({ job }) => {
   const [cvData, setCvData] = useState();
   const [isApplied, setIsApplied] = useState(false);
   const jobId = job.data.id;
+
   useEffect(() => {
     fetchUserData();
   }, [userId, jobId]);
+
   const handleBackClick = () => {
     if (prevLocation) {
       navigate(prevLocation, { state: { page: fromPage } });
@@ -76,6 +78,7 @@ const Head = ({ job }) => {
 
       if (response.data.errCode === 0 && cvResponse.data.errCode === 0) {
         setUser(response.data.data);
+        console.log("user:", cvResponse.data.data);
         setCvData(cvResponse.data.count);
         if (Array.isArray(cvResponse.data.data)) {
           let userApplied = false;
@@ -118,6 +121,18 @@ const Head = ({ job }) => {
       }
     } catch (error) {
       console.error("Error applying job:", error);
+    }
+  };
+
+  const handleApplyStatus = () => {
+    const deadline = new Date(job.data.timeEnd).getTime();
+
+    if (user.isVerify === 0) {
+      toast.error("You have to verify your email to apply jobs!");
+    } else if (deadline <= Date.now()) {
+      toast.error("Apply CV time has been expired!");
+    } else {
+      setIsOpen(true);
     }
   };
 
@@ -207,9 +222,12 @@ const Head = ({ job }) => {
                 {!isApplied || !userId ? (
                   <Dialog open={isOpen}>
                     <DialogTrigger
-                    onClick={() => setIsOpen(true)}
-                     className="w-full lg:w-auto bg-secondary text-primary mr-2 px-6 py-2 rounded-lg border lg:px-12 hover:bg-primary hover:text-secondary border-primary items-center gap-1 font-medium transition">
-                      <div >Apply</div>
+                      onClick={() => {
+                        handleApplyStatus();
+                      }}
+                      className="w-full lg:w-auto bg-secondary text-primary mr-2 px-6 py-2 rounded-lg border lg:px-12 hover:bg-primary hover:text-secondary border-primary items-center gap-1 font-medium transition"
+                    >
+                      <div>Apply</div>
                     </DialogTrigger>
                     <DialogContent className="text-sm">
                       <DialogHeader>
@@ -272,17 +290,13 @@ const Head = ({ job }) => {
                     className="w-full flex gap-2 py-4 mr-3  lg:w-auto px-6 text-center bg-white text-primary hover:bg-primary hover:text-white border-primary text-base font-medium"
                     variant="outline"
                     onClick={() => {
-                      console.log(isApplied);
+                      handleApplyStatus();
                     }}
                   >
                     <MdOutlineDoubleArrow />
                     <span>View Applied Status</span>
                   </Button>
                 )}
-
-                <Button className="w-1/5 lg:w-auto px-6 text-center bg-primary text-white hover:bg-primary/70 text-base font-medium">
-                  <FavoriteRounded />
-                </Button>
               </div>
             </div>
           </div>
@@ -347,7 +361,7 @@ const Head = ({ job }) => {
               <p className="font-semibold">Related Jobs</p>
             </div>
             <div className="space-y-4">
-              <Card expand="expand" />
+              <Card />
             </div>
           </div>
         </div>
