@@ -240,7 +240,10 @@ const ManageTypeJob = () => {
         </TableHeader>
         <TableBody>
           {currentJobTypes.map((jobType, index) => (
-            <TableRow key={jobType.code}>
+            <TableRow
+              key={jobType.code}
+              className="cursor-pointer hover:bg-slate-300"
+            >
               <TableCell className="text-center">
                 {index + 1 + (currentPage - 1) * jobTypesPerPage}
               </TableCell>
