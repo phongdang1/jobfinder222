@@ -10,12 +10,23 @@ import Bg from "../../../src/assets/Home/Home/defaultavatar.png";
 import { getUsersById, handleSetDataUserDetail } from "@/fetchData/User";
 import { ArrowCircleUpTwoTone } from "@mui/icons-material";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 function UserProfilePage() {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const userId = localStorage.getItem("user_id");
   const [selectedItem, setSelectedItem] = useState("personalInfo");
+  const [uploadComplete, setUploadComplete] = useState(false);
+  const [saveAvatar, setSaveAvatar] = useState(false);
 
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -48,8 +59,13 @@ function UserProfilePage() {
         image: image,
         data: {},
       };
+
       await handleSetDataUserDetail(userDataImage);
       setUploading(false);
+      setUploadComplete(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error("Error uploading image to backend: ", error);
       setUploading(false);
@@ -71,7 +87,14 @@ function UserProfilePage() {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, [userId, uploadComplete]);
+
+  useEffect(() => {
+    if (saveAvatar && image) {
+      uploadImage(image);
+      setSaveAvatar(false);
+    }
+  }, [saveAvatar, image]);
 
   return (
     <div className="flex flex-col w-full lg:w-1/3 items-center text-center space-y-4 ">
@@ -94,14 +117,56 @@ function UserProfilePage() {
               >
                 <p>{data?.isVerify === 1 ? "Verified" : "Not Verified"}</p>
               </Badge>
-              <button
-                onClick={() => document.getElementById("file-upload").click()}
-              >
-                <UploadFileOutlinedIcon
-                  className="bg-white rounded-full  text-primary border border-gray-200 hover:bg-primary hover:text-secondary border-primary p-1 absolute right-1 top-24 cursor-pointer"
-                  sx={{ fontSize: 35 }}
-                />
-              </button>
+              <Dialog>
+                <DialogTrigger>
+                  <button>
+                    <UploadFileOutlinedIcon
+                      className="bg-white rounded-full  text-primary border border-gray-200 hover:bg-primary hover:text-secondary border-primary p-1 absolute right-1 top-24 cursor-pointer"
+                      sx={{ fontSize: 35 }}
+                    />
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Upload Avatar</DialogTitle>
+                    <DialogDescription>
+                      <div className="flex justify-between h-44 mt-4 gap-8">
+                        <div className="w-full h-full">
+                          <div>
+                            <Button
+                              className="w-full h-40 bg-transparent border border-dashed text-gray-300 hover:bg-white hover:text-primary"
+                              onClick={() =>
+                                document.getElementById("file-upload").click()
+                              }
+                            >
+                              Click here to change your Avatar
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="mr-8">
+                          <p>This is your avatar</p>
+                          <div
+                            className="h-32 w-32 bg-contain bg-center mx-auto rounded-full relative"
+                            style={{
+                              backgroundImage: `url(${image ? image : Bg})`,
+                              backgroundSize: "cover",
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      className="border border-primary text-primary hover:bg-primary hover:text-white"
+                      onClick={() => setSaveAvatar(true)}
+                    >
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <input

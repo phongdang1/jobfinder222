@@ -53,8 +53,26 @@ const Countdown = ({ endTime }) => {
           </div>
         </div>
       ) : (
-        <div className="text-black text-lg font-bold">
-          Time to apply has expired!
+        <div className="text-primary text-lg md:text-2xl flex items-end space-x-4">
+          <div className="flex flex-col items-center">
+            <span className="text-4xl font-bold">00</span>
+            <span className="text-sm">Days</span>
+          </div>
+          <span>|</span>
+          <div className="flex flex-col items-center">
+            <span className="text-4xl font-bold">00</span>
+            <span className="text-sm">Hours</span>
+          </div>
+          <span>|</span>
+          <div className="flex flex-col items-center">
+            <span className="text-4xl font-bold">00</span>
+            <span className="text-sm">Minutes</span>
+          </div>
+          <span>|</span>
+          <div className="flex flex-col items-center">
+            <span className="text-4xl font-bold">00</span>
+            <span className="text-sm">Seconds</span>
+          </div>
         </div>
       )}
     </div>

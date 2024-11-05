@@ -27,7 +27,7 @@ import axios from "axios";
 import firebase from "../../../utils/firebase";
 import Validation from "@/components/User/Common/Validation";
 
-const roles = ["User", "Company"];
+const roles = ["USER", "COMPANY"];
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +38,6 @@ const SignUp = () => {
     retypePassword: "",
     roleCode: "",
   });
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const navigate = useNavigate();
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const toggleShowRetypePassword = () =>
@@ -47,11 +46,13 @@ const SignUp = () => {
   const authState = useSelector((state) => state.auth); // Lấy trạng thái auth từ Redux store
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
+    const errors = Validation({ ...formData, [name]: value });
+    setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
   };
 
   const handleImageChange = (e) => {
@@ -74,11 +75,29 @@ const SignUp = () => {
       try {
         const result = await dispatch(signUp(formData)).unwrap();
         // Điều hướng sau khi thành công, nếu cần
-        console.log("Sign Up Successful", result);
-        localStorage.setItem("email", formData.email);
-        localStorage.setItem("user_id", result.user?.id);
-        fetchUser(result.user?.id);
-        navigate("/profileUpdate/experience");
+        dispatch(
+          login({
+            email: formData.email,
+            password: formData.password,
+          })
+        ).unwrap();
+        if (formData.roleCode === "USER") {
+          console.log("Sign Up Successful", result);
+          localStorage.setItem("email", formData.email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("token", result.token);
+          fetchUser(result.user?.id);
+          navigate("/profileUpdate/experience");
+        } else if (formData.roleCode === "COMPANY") {
+          console.log("Sign Up Successful", result);
+          localStorage.setItem("email", formData.email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("token", result.token);
+          fetchUser(result.user?.id);
+          navigate("/signupCompany");
+        } else {
+          console.log("LOI ROI");
+        }
       } catch (error) {
         console.log("image", formData.image);
         console.error("Sign Up Error:", error);
@@ -196,7 +215,7 @@ const SignUp = () => {
   //   }
   // }, []);
   return (
-    <div className="flex-1 px-12 py-14 mx-auto bg-secondary flex flex-col items-center justify-center border border-gray-300">
+    <div className="flex-1 px-12 py-14 mb-28 mx-auto flex flex-col items-center justify-center">
       {/* Recaptcha container */}
       <div id="recaptcha-container"></div>
       <form className="w-[524px]" onSubmit={handleSubmit}>

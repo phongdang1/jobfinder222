@@ -32,15 +32,18 @@ const DashboardCompany = () => {
     expired: 0,
   });
   const userId = localStorage.getItem("user_id");
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
 
   const fetchCompany = async () => {
     try {
+      const res = await getCompanyById(companyId);
       setLoading(true);
-      const response = await getCompanyById(userId);
-      if (response.data.errCode === 0) {
-        setCompanyData(response.data.data);
+      if (res) {
+        setCompanyData(res.data.data);
+        console.log("company ne", res.data.data);
       } else {
         setError("Error fetching company data. Please try again later.");
+        console.log("loi roi", companyId);
       }
     } catch (error) {
       setError("Error fetching company data. Please try again later.");
@@ -73,15 +76,15 @@ const DashboardCompany = () => {
 
     posts.forEach((post) => {
       if (post.userId === parseInt(userId)) {
-        if (post.statusCode === "active") {
+        if (post.statusCode === "ACTIVE") {
           if (post.timeEnd > currentTime) {
             counts.active++;
           } else {
             counts.expired++;
           }
-        } else if (post.statusCode === "pending") {
+        } else if (post.statusCode === "PENDING") {
           counts.pending++;
-        } else if (post.statusCode === "inactive") {
+        } else if (post.statusCode === "INACTIVE") {
           if (post.timeEnd > currentTime) {
             counts.inactive++;
           } else {
@@ -140,8 +143,8 @@ const DashboardCompany = () => {
                       <p>FAQ/Hướng dẫn sử dụng</p>
                     </Link>
                   </div>
-                  <div className="flex items-center">
-                    <FcHome className="mr-2" />
+                  <div class="flex items-center">
+                    <FcHome class="mr-2" />
                     <Link
                       to="/company/product"
                       className="text-blue-700 hover:text-black"

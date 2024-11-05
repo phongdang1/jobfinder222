@@ -28,6 +28,7 @@ const Login = () => {
   const [confirmationResult, setConfirmationResult] = useState(null); // To store OTP verification result
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
@@ -118,17 +119,44 @@ const Login = () => {
     };
     try {
       const result = await dispatch(login(credentials)).unwrap();
-      console.log("Login successful, result:", result);
-      localStorage.setItem("email", email);
-      localStorage.setItem("user_id", result.user?.id);
 
-      // Lưu số điện thoại vào localStorage
-      navigate("/");
-      fetchUser(result.user?.id);
+      console.log("Login successful, result:", result);
+      if (result.user.roleCode === "COMPANY") {
+        localStorage.setItem("email", email);
+        localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("companyId", result.user?.companyId);
+        localStorage.setItem("token", result.token)
+        navigate("/company/dashboard"); 
+      } else if (result.user.roleCode === "ADMIN") {
+        localStorage.setItem("email", email);
+        localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("token", result.token)
+        navigate("/admin/dashboard");
+      } else {
+        localStorage.setItem("email", email);
+        localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("token", result.token)
+        fetchUser(result.user?.id);
+
+        navigate("/");
+      }
     } catch (error) {
-      console.error("Failed to login: ", error.message || error);
-      const errors = Validation({ email, password });
+      console.log("Failed to login: ", error.message || error);
+
+      let errors = Validation({ email });
+
+      if (!password && !email) {
+        errors = Validation({ email });
+        errors.password = "Password is required";
+      } else if (!password || !email) {
+        errors = Validation({ email });
+        errors.password = "";
+      } else {
+        errors.email = "Email or Password is incorrect, please check again";
+      }
+
       setErrorMessage(errors);
+
       if (Object.keys(errors).length === 0) {
         const credentials = {
           email: email,
@@ -144,7 +172,9 @@ const Login = () => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`);
+      const response = await axios.get(`/getUserById?id=${userId}`,{ headers: {
+        Authorization: `Bearer ${token}`, // Include token in headers
+      }});
 
       console.log("Response from /getUserById:", response);
 
@@ -169,7 +199,9 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleValidation = (e) => {
-    setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
+    const { name, value } = e.target;
+    const errors = Validation({ [name]: value });
+    setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
   };
 
   return (
@@ -218,7 +250,10 @@ const Login = () => {
                 type="text"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  handleValidation(e);
+                }}
                 className={`flex items-center border ${
                   errorMessage.phoneNumber
                     ? "border-red-500"
@@ -265,10 +300,9 @@ const Login = () => {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  handleValidation(e);
                 }}
                 className={`${
-                  errorMessage.firstName ? "border-red-500" : null
+                  errorMessage.password ? "border-red-500" : null
                 } flex items-center border focus:border-primary py-7 px-10`}
               />
             </div>{" "}

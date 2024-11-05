@@ -66,11 +66,17 @@ function PersonalInformation() {
   const [isCompleteOTP, setIsCompleteOTP] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dialogRef = useRef(null);
+  const token = localStorage.getItem('token');	
+
   const fetchUserData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/getUserById?id=${userId}`
+        `http://localhost:5000/getUserById?id=${userId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
       );
       if (response.data.errCode === 0) {
         setInputValue({
@@ -211,6 +217,7 @@ function PersonalInformation() {
             ...inputValue,
             file: base64, // Properly use the resolved base64 result here
           });
+
           console.log("file: ", file, "base64: ", base64);
         })
         .catch((error) => {
@@ -248,6 +255,12 @@ function PersonalInformation() {
       toast.error("Invalid OTP");
       return;
     }
+  };
+
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const handleCloseCreateModal = () => {
+    setCreateModalOpen(false);
+    // setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
   };
 
   return (
@@ -458,7 +471,7 @@ function PersonalInformation() {
                           Please verify your email to access all Job Finder
                           features!
                         </h1>
-                        <Dialog open={isDialogOpen}>
+                        <Dialog>
                           <DialogTrigger asChild>
                             <Button
                               onClick={() => handleSendOtp(inputValue.email)}
