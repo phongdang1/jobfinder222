@@ -15,7 +15,6 @@ import {
   CategoryRounded,
   EmojiEventsRounded,
   ExploreRounded,
-  FavoriteRounded,
   GroupsRounded,
   OpenInNewRounded,
   PaidRounded,
@@ -282,10 +281,6 @@ const Head = ({ job }) => {
                     <span>View Applied Status</span>
                   </Button>
                 )}
-
-                <Button className="w-1/5 lg:w-auto px-6 text-center bg-primary text-white hover:bg-primary/70 text-base font-medium">
-                  <FavoriteRounded />
-                </Button>
               </div>
             </div>
           </div>

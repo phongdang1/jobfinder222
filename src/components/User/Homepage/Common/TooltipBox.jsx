@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getDetailPostById } from "@/fetchData/Post";
 import { Separator } from "@/components/ui/separator";
-import { FavoriteRounded } from "@mui/icons-material";
 
 function TooltipBox({ id }) {
   const [data, setData] = useState([]);
@@ -100,9 +99,6 @@ function TooltipBox({ id }) {
           className="w-4/5 border-primary text-center text-primary hover:bg-primary hover:text-white text-base font-medium"
         >
           Apply
-        </Button>
-        <Button className="w-1/5 text-center bg-primary text-white hover:bg-primary/70 text-base font-medium">
-          <FavoriteRounded />
         </Button>
       </div>
     </div>
