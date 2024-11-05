@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { description } from "@/components/Admin/components/LineChart";
 import { createNewCompany } from "@/fetchData/Company";
 import UserProfileUpdateHeader from "@/components/User/UserProfileUpdate/Common/UserProfileUpdateHeader";
+import toast from "react-hot-toast";
 
 function SignUpCompany() {
   const [formData, setFormData] = useState({
@@ -52,7 +53,9 @@ function SignUpCompany() {
         if (response) {
           console.log(response);
           localStorage.setItem("company", JSON.stringify(response.data));
+          localStorage.setItem("companyId", JSON.stringify(response.data.id));
           navigate("/company/dashboard");
+          toast.success("Company profile updated !!!")
         } else {
           console.log("Profile update failed");
         }
