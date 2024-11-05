@@ -12,7 +12,7 @@ const AdminHeader = () => {
   return (
     <header className="bg-gray-100 text-white p-4 flex justify-between items-center">
       <div className="flex items-center">
-        <Link to="/" className="text-lg font-semibold">
+        <Link to="/admin/dashboard" className="text-lg font-semibold">
           <img
             className="w-full h-16 hidden lg:block"
             src={logoText}

@@ -16,6 +16,7 @@ const JobDetail = () => {
         const response = await axios.get(`/getDetailPostById?id=${id}`);
         if (response.data) {
           setJob(response.data);
+          console.log("job" + response.data);
         } else {
           setError("Job details not found.");
         }

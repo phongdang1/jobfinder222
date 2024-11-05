@@ -68,7 +68,7 @@ function PersonalInformation() {
 
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors);
-      console.log("deo dc");
+      console.log("deo dc", formData);
     } else {
       try {
         const response = await handleSetDataUserDetail(dataSent);

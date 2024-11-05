@@ -27,6 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import toast from "react-hot-toast";
 import Validation from "../Common/Validation";
+import { Separator } from "@/components/ui/separator";
 
 function AdvancedSetting() {
   const [suggestedSkills, setSuggestedSkills] = useState([]);
@@ -97,7 +98,7 @@ function AdvancedSetting() {
     };
     fetchJobType();
   }, [type]);
-  
+
   const fetchSkill = async () => {
     if (cateJobCode) {
       try {
@@ -254,26 +255,28 @@ function AdvancedSetting() {
 
   return (
     <div className="w-full space-y-4 flex-grow">
-
-      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium p-4">
-        Welcome, {userSkill?.lastName}
-      </div>
       <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2">
+        <p className="ml-4 mt-2 italic">
+          Setting your Skills to attract Employers and your Desired Job{" "}
+        </p>
+        <div className="px-4 my-3">
+          <Separator />
+        </div>
         <div>
           <form
             onSubmit={handleSkill}
             className="flex justify-between items-center"
           >
             <p className="ml-4 mb-2">Skills</p>
-            <Dialog open={open}>
-              <DialogTrigger
-                asChild
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <EditNoteOutlined className="hover:text-primary mr-4 cursor-pointer" />
-              </DialogTrigger>
+
+            <EditNoteOutlined
+              onClick={() => {
+                setOpen(true);
+              }}
+              className="hover:text-primary mr-4 cursor-pointer"
+            />
+
+            <Dialog open={open} onOpenChange={() => setOpen(false)}>
               <DialogContent className="max-w-screen-sm h-4/5 max-h-screen">
                 <DialogHeader>
                   <DialogTitle>Update Skills</DialogTitle>
@@ -416,15 +419,16 @@ function AdvancedSetting() {
           <p className="ml-4 mb-2">Dream Job</p>
 
           <form onSubmit={handleDreamJobSubmit}>
-            <Dialog open={isDialogOpen}>
-              <DialogTrigger
-                asChild
-                onClick={() => {
-                  setIsDialogOpen(true);
-                }}
-              >
-                <EditNoteOutlined className="hover:text-primary mr-4 cursor-pointer" />
-              </DialogTrigger>
+            <EditNoteOutlined
+              onClick={() => {
+                setIsDialogOpen(true);
+              }}
+              className="hover:text-primary mr-4 cursor-pointer"
+            />
+            <Dialog
+              open={isDialogOpen}
+              onOpenChange={() => setIsDialogOpen(false)}
+            >
               <DialogContent className="max-w-4xl max-h-svh h-4/5">
                 <DialogHeader>
                   <DialogTitle>Dream Job</DialogTitle>

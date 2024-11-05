@@ -66,11 +66,17 @@ function PersonalInformation() {
   const [isCompleteOTP, setIsCompleteOTP] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dialogRef = useRef(null);
+  const token = localStorage.getItem('token');	
+
   const fetchUserData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/getUserById?id=${userId}`
+        `http://localhost:5000/getUserById?id=${userId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
       );
       if (response.data.errCode === 0) {
         setInputValue({
@@ -90,7 +96,7 @@ function PersonalInformation() {
         // verify
         const verifiedData = response.data.data;
         setVerify(verifiedData.isVerify);
-        console.log('data ne',verifiedData);
+        console.log("data ne", verifiedData);
 
         if (response.data.data.dob) {
           setDate(new Date(response.data.data.dob));
@@ -211,6 +217,7 @@ function PersonalInformation() {
             ...inputValue,
             file: base64, // Properly use the resolved base64 result here
           });
+
           console.log("file: ", file, "base64: ", base64);
         })
         .catch((error) => {
@@ -250,23 +257,30 @@ function PersonalInformation() {
     }
   };
 
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const handleCloseCreateModal = () => {
+    setCreateModalOpen(false);
+    // setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+  };
+
   return (
     <div className="bg-white w-full rounded-lg shadow-md space-y-4 pb-4">
-      <div className="flex justify-end gap-4 px-6 mt-4">
-        {!isEditing && (
-          <Button
-            className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1"
-            variant="outline"
-            onClick={() => setIsEditing(true)}
-          >
-            Edit
-          </Button>
-        )}
+      <div className="flex justify-between items-center text-center ">
+        <p className="font-poppins text-xl md:text-2xl font-medium p-4 ml-2 mt-2 italic">
+          User Profile
+        </p>
+        <div className="flex justify-end gap-4 px-6">
+          {!isEditing && (
+            <Button
+              className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1"
+              variant="outline"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
       </div>
-
-      <p className="font-poppins text-xl md:text-2xl font-medium ml-6 my-6">
-        Hello, {inputValue.firstName || "User"}
-      </p>
       <div className="px-6">
         <Separator />
       </div>
@@ -457,7 +471,7 @@ function PersonalInformation() {
                           Please verify your email to access all Job Finder
                           features!
                         </h1>
-                        <Dialog open={isDialogOpen}>
+                        <Dialog>
                           <DialogTrigger asChild>
                             <Button
                               onClick={() => handleSendOtp(inputValue.email)}

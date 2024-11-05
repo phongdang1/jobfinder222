@@ -24,7 +24,7 @@ function Hero({ handleSearch }) {
   return (
     <div>
       {/* Search Section */}
-      <div className="flex flex-col justify-center w-full text-center md:text-left bg-gradient-to-b from-primary/40 to-primary-5 px-60 py-16">
+      <div className="flex flex-col justify-center w-full text-center md:text-left px-60 py-16">
         <div className="flex justify-between text-black text-3xl sm:text-4xl md:text-5xl pb-4 sm:pb-6 md:pb-8">
           {/* text và thanh search*/}
           <div className="flex flex-col space-y-6">

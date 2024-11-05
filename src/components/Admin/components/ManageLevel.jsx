@@ -22,10 +22,13 @@ import {
   getAllJobLevel,
   handleCreateNewAllCode,
   handleUpdateAllCode,
+  handleDeleteAllCode,
 } from "@/fetchData/AllCode";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination"; // Import the pagination component
+import DeleteIcon from "@mui/icons-material/Delete";
+import { SiLevelsdotfyi } from "react-icons/si";
 
 const ManageLevel = () => {
   const [jobLevels, setJobLevels] = useState([]);
@@ -168,6 +171,24 @@ const ManageLevel = () => {
     }
   };
 
+  const handleDelete = async (code) => {
+    try {
+      const response = await handleDeleteAllCode({ code });
+      if (response.data && response.data.errCode === 0) {
+        setJobLevels((prev) =>
+          prev.filter((jobLevel) => jobLevel.code !== code)
+        );
+      } else {
+        console.error(
+          "Failed to delete job level:",
+          response.data.errMessage || "No message"
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting job level:", error);
+    }
+  };
+
   const filteredJobLevels = jobLevels.filter((jobLevel) =>
     jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -224,17 +245,27 @@ const ManageLevel = () => {
         </TableHeader>
         <TableBody>
           {currentJobLevels.map((jobLevel, index) => (
-            <TableRow key={jobLevel.code}>
+            <TableRow
+              key={jobLevel.code}
+              className="cursor-pointer hover:bg-slate-300"
+            >
               <TableCell className="text-center">
                 {index + 1 + indexOfFirstJobLevel}
               </TableCell>
               <TableCell className="text-center">{jobLevel.value}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center flex space-x-3 items-center justify-center">
                 <Button
                   onClick={() => handleOpenUpdateModal(jobLevel)} // Open update modal with jobLevel data
                   className="text-white bg-third hover:bg-primary rounded-md w-10 h-9"
                 >
                   <EditNoteOutlinedIcon />
+                </Button>
+
+                <Button
+                  onClick={() => handleDelete(jobLevel.code)}
+                  className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
+                >
+                  <DeleteIcon />
                 </Button>
               </TableCell>
             </TableRow>

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 const ChangePassword = () => {
   const userId = localStorage.getItem("user_id");
+  // const token = localStorage.getItem("token");
   const [form, setForm] = useState({
     oldPassword: "",
     newPassword: "",
@@ -122,8 +123,8 @@ const ChangePassword = () => {
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md space-y-4 pb-4">
-      <p className="font-poppins text-xl md:text-2xl font-medium ml-6 my-6">
-        Hello, {"User"}
+      <p className="font-poppins text-xl md:text-2xl font-medium ml-6 my-6 italic">
+        Reset Your Password
       </p>
       <div className="px-6">
         <Separator />
