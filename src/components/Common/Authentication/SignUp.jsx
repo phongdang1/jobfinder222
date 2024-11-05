@@ -77,6 +77,7 @@ const SignUp = () => {
         console.log("Sign Up Successful", result);
         localStorage.setItem("email", formData.email);
         localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("token", result.user?.token);
         fetchUser(result.user?.id);
         navigate("/profileUpdate/experience");
       } catch (error) {

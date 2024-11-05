@@ -205,68 +205,71 @@ const Head = ({ job }) => {
               {/* nút nộp CV chỗ này */}
               <div className="flex items-center justify-center gap-x-2">
                 {!isApplied || !userId ? (
-                  <Dialog open={isOpen}>
-                    <DialogTrigger
+                  <>
+                  <Button
+                    className="w-fit text-white bg-primary hover:bg-primary-dark"
                     onClick={() => setIsOpen(true)}
-                     className="w-full lg:w-auto bg-secondary text-primary mr-2 px-6 py-2 rounded-lg border lg:px-12 hover:bg-primary hover:text-secondary border-primary items-center gap-1 font-medium transition">
-                      <div >Apply</div>
-                    </DialogTrigger>
-                    <DialogContent className="text-sm">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Apply for{" "}
-                          <span className="text-primary">
-                            {job.data.postDetailData?.name}
-                          </span>
-                        </DialogTitle>
-                        <div>
-                          <div className="flex flex-col gap-y-4">
-                            {/* CV */}
-                            <div>
-                              <div className="flex items-center gap-x-2 my-3 font-medium">
-                                <RiFileUserFill className="w-5 h-5" /> Your CV :
-                              </div>
-                              <iframe
-                                width={"100%"}
-                                height={"500px"}
-                                src={user?.UserDetailData?.file}
-                              ></iframe>
-                            </div>
+                  >Apply</Button>
+                    <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
+                      <DialogContent className="text-sm">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Apply for{" "}
+                            <span className="text-primary">
+                              {job.data.postDetailData?.name}
+                            </span>
+                          </DialogTitle>
 
-                            {/* giới thiệu */}
-                            <>
-                              <div className="flex items-center gap-x-2 my-1 font-medium">
-                                <FaPenFancy className="w-5 h-5" /> Introduction
-                                :
+                          <div>
+                            <div className="flex flex-col gap-y-4">
+                              {/* CV */}
+                              <div>
+                                <div className="flex items-center gap-x-2 my-3 font-medium">
+                                  <RiFileUserFill className="w-5 h-5" /> Your CV
+                                  :
+                                </div>
+                                <iframe
+                                  width={"100%"}
+                                  height={"500px"}
+                                  src={user?.UserDetailData?.file}
+                                ></iframe>
                               </div>
-                              <textarea
-                                value={description}
-                                onChange={handleInputChange}
-                                placeholder="Write a brief introduction of yourself ( strength, weakness ) and your desire as well as your reason of choosing this job"
-                                className="w-full max-h-96 border border-gray-200 p-3 focus:border-primary"
-                              />
-                            </>
+
+                              {/* giới thiệu */}
+                              <>
+                                <div className="flex items-center gap-x-2 my-1 font-medium">
+                                  <FaPenFancy className="w-5 h-5" />{" "}
+                                  Introduction :
+                                </div>
+                                <textarea
+                                  value={description}
+                                  onChange={handleInputChange}
+                                  placeholder="Write a brief introduction of yourself ( strength, weakness ) and your desire as well as your reason of choosing this job"
+                                  className="w-full max-h-96 border border-gray-200 p-3 focus:border-primary"
+                                />
+                              </>
+                            </div>
                           </div>
-                        </div>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button
-                          onClick={() => {
-                            setIsOpen(false);
-                          }}
-                          className="bg-white border border-primary text-primary hover:text-white"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={applyJobSubmit}
-                          className="bg-primary border border-primary text-white hover:text-white"
-                        >
-                          Apply
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <Button
+                            onClick={() => {
+                              setIsOpen(false);
+                            }}
+                            className="bg-white border border-primary text-primary hover:text-white"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={applyJobSubmit}
+                            className="bg-primary border border-primary text-white hover:text-white"
+                          >
+                            Apply
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </>
                 ) : (
                   <Button
                     className="w-full flex gap-2 py-4 mr-3  lg:w-auto px-6 text-center bg-white text-primary hover:bg-primary hover:text-white border-primary text-base font-medium"
