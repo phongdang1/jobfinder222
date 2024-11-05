@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { logout, setUser } from "../../../redux/features/authSlice";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetClose,
@@ -30,20 +30,24 @@ import { IoMdArrowDropdown } from "react-icons/io";
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState();
-  const token = useSelector((state) => state.auth.token);
+  const token = localStorage.getItem("token");
   const userId = localStorage.getItem("user_id");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("user");
     localStorage.removeItem("user_id");
     localStorage.removeItem("email");
-    fetchUser();
+    localStorage.removeItem("token");
+    navigate('/')
   };
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`);
+      const response = await axios.get(`/getUserById?id=${userId}`,{ headers: {
+        Authorization: `Bearer ${token}`, // Include token in headers
+      }});
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
@@ -55,11 +59,9 @@ function Header() {
       console.error("Failed to fetch user:", error);
     }
   };
-
   useEffect(() => {
     fetchUser(userId);
   }, []);
-
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -76,7 +78,7 @@ function Header() {
     <div
       className={`flex justify-between sticky top-0 px-6 md:px-16 lg:pr-36 lg:pl-20 py-4 md:py-6 items-center font-poppins z-50 
     transition-all duration-300 ease-in-out 
-    ${isScrolled ? "bg-secondary border-b-2 shadow-md " : ""}`}
+    ${isScrolled ? "bg-secondary border-b-2 shadow-md " : "bg-transparent"}`}
     >
       {/* Logo */}
       <div className="flex items-center ml-16">
@@ -116,7 +118,7 @@ function Header() {
               <SheetHeader>
                 <SheetClose asChild>
                   <Link
-                    className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                    className="text-center hover:text-primary text-lg font-medium"
                     to="/"
                   >
                     Home
@@ -126,7 +128,7 @@ function Header() {
               <SheetHeader>
                 <SheetClose asChild>
                   <Link
-                    className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                    className="text-center hover:text-primary text-lg font-medium"
                     to="/jobs"
                   >
                     Jobs
@@ -136,7 +138,7 @@ function Header() {
               <SheetHeader>
                 <SheetClose asChild>
                   <Link
-                    className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                    className="text-center hover:text-primary text-lg font-medium"
                     to="/companypage"
                   >
                     Company
@@ -145,12 +147,12 @@ function Header() {
               </SheetHeader>
 
               {/* nút logout */}
-              {userId === null || userId === undefined ? (
+              {userId === null || userId === undefined || token === null || token === undefined ? (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
                       <Link
-                        className="text-center text-primary hover:bg-secondary hover:text-primary text-lg font-medium"
+                        className="text-center text-primary hover:text-primary text-lg font-medium"
                         to="/signup"
                       >
                         Register
@@ -163,7 +165,7 @@ function Header() {
                         to="/login"
                         className="flex items-center justify-center"
                       >
-                        <Button className="text-center border border-primary bg-white hover:bg-secondary hover:text-primary text-lg font-medium">
+                        <Button className="text-center border border-primary bg-white hover:text-primary text-lg font-medium">
                           Login{" "}
                         </Button>
                       </Link>
@@ -185,28 +187,25 @@ function Header() {
         </div>
         <ul className="hidden md:hidden sm:hidden lg:flex gap-8 items-center text-third text-md font-medium">
           <li className="hover:text-primary">
-            <Button className=" text-third  hover:text-primary" variant="ghost">
+            <Button className=" text-third hover:bg-transparent  hover:text-primary" variant="ghost">
               <Link to="/">Home</Link>
             </Button>
           </li>
           <li className="hover:text-primary">
-            <Button className=" text-third  hover:text-primary" variant="ghost">
+            <Button className=" text-third hover:bg-transparent hover:text-primary" variant="ghost">
               <Link to="/jobs">Jobs</Link>
             </Button>
           </li>
           <li className="hover:text-primary">
-            <Button className=" text-third hover:text-primary" variant="ghost">
+            <Button className=" text-third hover:bg-transparent hover:text-primary" variant="ghost">
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {userId === null || userId === undefined ? (
+          {userId === null || userId === undefined || token === null || token === undefined ? (
             <>
               <li>
-                <Button
-                  className="font-semibold text-primary hover:text-white hover:bg-primary"
-                  variant="ghost"
-                >
-                  <Link to="/signup">Sign Up</Link>
+                <Button className="font-semibold hover:bg-transparent text-primary" variant="ghost">
+                  <Link to="/signup">Register</Link>
                 </Button>
               </li>
               <li>

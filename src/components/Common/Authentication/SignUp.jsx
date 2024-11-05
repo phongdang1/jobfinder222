@@ -75,16 +75,19 @@ const SignUp = () => {
       try {
         const result = await dispatch(signUp(formData)).unwrap();
         // Điều hướng sau khi thành công, nếu cần
+
         if (formData.roleCode === "User") {
           console.log("Sign Up Successful", result);
           localStorage.setItem("email", formData.email);
           localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("token", result.user?.token);
           fetchUser(result.user?.id);
           navigate("/profileUpdate/experience");
         } else if (formData.roleCode === "Company") {
           console.log("Sign Up Successful", result);
           localStorage.setItem("email", formData.email);
           localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("token", result.user?.token);
           fetchUser(result.user?.id);
           navigate("/signupCompany");
         } else {
