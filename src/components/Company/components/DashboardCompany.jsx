@@ -15,14 +15,22 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SdCardAlertIcon from "@mui/icons-material/SdCardAlert";
-
 import { getCompanyById } from "@/fetchData/Company";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getAllPost } from "@/fetchData/Post";
+import { FcFaq, FcHome } from "react-icons/fc";
 
 const DashboardCompany = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [companyData, setCompanyData] = useState(null);
+  const [postCounts, setPostCounts] = useState({
+    active: 0,
+    pending: 0,
+    inactive: 0,
+    expired: 0,
+  });
   const userId = localStorage.getItem("user_id");
 
   const fetchCompany = async () => {
@@ -32,17 +40,63 @@ const DashboardCompany = () => {
       if (response.data.errCode === 0) {
         setCompanyData(response.data.data);
       } else {
-        setError("Error fetching data. Please try again later.");
+        setError("Error fetching company data. Please try again later.");
       }
     } catch (error) {
-      setError("Error fetching data. Please try again later.");
+      setError("Error fetching company data. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchPosts = async () => {
+    try {
+      const response = await getAllPost(); // Fetch all posts
+      if (response.data.errCode === 0) {
+        countPosts(response.data.data);
+      } else {
+        setError("Error fetching posts. Please try again later.");
+      }
+    } catch (error) {
+      setError("Error fetching posts. Please try again later.");
+    }
+  };
+
+  const countPosts = (posts) => {
+    const counts = {
+      active: 0,
+      pending: 0,
+      inactive: 0,
+      expired: 0,
+    };
+    const currentTime = new Date().toISOString(); // Get current time
+
+    posts.forEach((post) => {
+      if (post.userId === parseInt(userId)) {
+        if (post.statusCode === "active") {
+          if (post.timeEnd > currentTime) {
+            counts.active++;
+          } else {
+            counts.expired++;
+          }
+        } else if (post.statusCode === "pending") {
+          counts.pending++;
+        } else if (post.statusCode === "inactive") {
+          if (post.timeEnd > currentTime) {
+            counts.inactive++;
+          } else {
+            counts.expired++;
+          }
+        }
+      }
+    });
+
+    setPostCounts(counts);
+  };
+
   useEffect(() => {
     fetchCompany();
+    fetchPosts(); // Fetch posts on component mount
   }, []);
 
   const jobData = [];
@@ -52,7 +106,7 @@ const DashboardCompany = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="mt-8 px-4">
+    <div className="mt-8 px-4 mb-5">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="space-y-4">
           {/* Responsive styling */}
@@ -77,8 +131,25 @@ const DashboardCompany = () => {
               <CardContent>
                 <p>Đây là một số thông tin để bạn có thể bắt đầu sử dụng:</p>
               </CardContent>
+              <CardFooter></CardFooter>
               <CardFooter>
-                <p>Khám phá sản phẩm</p>
+                <div class="space-y-4">
+                  <div class="flex items-center">
+                    <FcFaq class="mr-2" />
+                    <Link to="" className="text-blue-700 hover:text-black">
+                      <p>FAQ/Hướng dẫn sử dụng</p>
+                    </Link>
+                  </div>
+                  <div class="flex items-center">
+                    <FcHome class="mr-2" />
+                    <Link
+                      to="/company/product"
+                      className="text-blue-700 hover:text-black"
+                    >
+                      <p>Khám phá sản phẩm</p>
+                    </Link>
+                  </div>
+                </div>
               </CardFooter>
             </div>
           </Card>
@@ -90,20 +161,20 @@ const DashboardCompany = () => {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
-                  <CardContent>
-                    <p className="text-red-600 font-semibold text-xl">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-blue-700 font-semibold text-2xl">
                       {companyData?.allowHotPost}
                     </p>
-                    <p>Điểm đăng tuyển</p>
+                    <p>Gói đăng tuyển</p>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
-                  <CardContent>
-                    <p className="text-red-600 font-semibold text-xl">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-green-500 font-semibold text-2xl">
                       {companyData?.allowCv}
                     </p>
-                    <p>Điểm xem hồ sơ</p>
+                    <p>Gói xem hồ sơ</p>
                   </CardContent>
                 </Card>
               </div>
@@ -167,19 +238,38 @@ const DashboardCompany = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                {["Đang hiển thị", "Đang ẩn", "Việc làm ảo", "Hết hạn"].map(
-                  (status, idx) => (
-                    <Card
-                      key={status}
-                      className="bg-gray-100 hover:bg-primary-50 hover:border-primary"
-                    >
-                      <CardContent className="mt-2 text-center">
-                        <p className="text-2xl font-semibold text-red-600">0</p>
-                        <p>{status}</p>
-                      </CardContent>
-                    </Card>
-                  )
-                )}
+                <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-2xl font-semibold text-green-600">
+                      {postCounts.active}
+                    </p>
+                    <p>Đang hiển thị</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-2xl font-semibold text-gray-600">
+                      {postCounts.pending}
+                    </p>
+                    <p>Chờ duyệt</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-2xl font-semibold text-red-600">
+                      {postCounts.inactive}
+                    </p>
+                    <p>Đang ẩn</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-2xl font-semibold text-orange-600">
+                      {postCounts.expired}
+                    </p>
+                    <p>hết hạn</p>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>
@@ -195,9 +285,11 @@ const DashboardCompany = () => {
                 Bắt đầu tìm kiếm tài năng ngay với các sản phẩm của chúng tôi
               </CardDescription>
             </CardHeader>
-            <Button className="bg-third hover:text-white text-white rounded-md ml-6 mb-4">
-              Mua ngay
-            </Button>
+            <Link to="/company/product">
+              <Button className="bg-third hover:text-white text-white rounded-md ml-6 mb-4">
+                Mua ngay
+              </Button>
+            </Link>
           </Card>
         </div>
       </div>

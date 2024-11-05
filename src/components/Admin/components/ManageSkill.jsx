@@ -279,7 +279,10 @@ const ManageSkill = () => {
         </TableHeader>
         <TableBody>
           {sortedSkills.map((skill, index) => (
-            <TableRow key={skill.id}>
+            <TableRow
+              key={skill.id}
+              className="cursor-pointer hover:bg-slate-300"
+            >
               <TableCell className="text-center">
                 {index + 1 + (currentPage - 1) * skillsPerPage}
               </TableCell>

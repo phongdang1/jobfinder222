@@ -245,7 +245,10 @@ const ManageLevel = () => {
         </TableHeader>
         <TableBody>
           {currentJobLevels.map((jobLevel, index) => (
-            <TableRow key={jobLevel.code}>
+            <TableRow
+              key={jobLevel.code}
+              className="cursor-pointer hover:bg-slate-300"
+            >
               <TableCell className="text-center">
                 {index + 1 + indexOfFirstJobLevel}
               </TableCell>

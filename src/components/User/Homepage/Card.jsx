@@ -11,7 +11,7 @@ function JobCard() {
   useEffect(() => {
     async function fetchData() {
       const result = await getAllPosts();
-      console.log('abc', result);
+      console.log("abc", result);
       // Kiểm tra nếu kết quả là mảng trước khi gán vào state
       if (Array.isArray(result)) {
         setData(result);
@@ -60,10 +60,11 @@ function JobCard() {
                 </div>
               </div>
             ))
-        : Array.isArray(data) && data.map((card, index) => (
+        : Array.isArray(data) &&
+          data.map((card, index) => (
             <div
               key={index}
-              className="flex bg-white border-2 border-gray-200 rounded-lg h-28 w-full gap-4 cursor-pointer hover:text-primary hover:border-primary"
+              className="flex bg-white border-2 border-gray-200 rounded-lg h-28 w-full gap-4 cursor-pointer hover:text-primary hover:border-primary "
             >
               <div className="flex gap-8 shadow-lg w-full">
                 <div
@@ -76,7 +77,7 @@ function JobCard() {
                 ></div>
                 <div className="max-w-screen-xl mt-4">
                   <div className="block">
-                    <div className="font-poppins text-base font-medium">
+                    <div className="font-poppins text-base font-medium ">
                       {card.occupation}
                     </div>
                     <div className="font-poppins text-sm text-third font-normal mt-1">

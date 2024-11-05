@@ -53,7 +53,7 @@ function JobCard({ expand, data }) {
                       <TooltipTrigger className="text-start">
                         <p
                           onClick={() => handleNavigate(card.id)}
-                          className="text-base font-medium group-hover:text-primary w-fit"
+                          className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
                         >
                           {card.userPostData.userCompanyData.name}
                         </p>

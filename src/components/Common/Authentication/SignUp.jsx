@@ -38,7 +38,6 @@ const SignUp = () => {
     retypePassword: "",
     roleCode: "",
   });
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const navigate = useNavigate();
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const toggleShowRetypePassword = () =>
@@ -47,11 +46,13 @@ const SignUp = () => {
   const authState = useSelector((state) => state.auth); // Lấy trạng thái auth từ Redux store
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setErrorMessage((prev) => ({ ...prev, [e.target.name]: "" }));
+    const errors = Validation({ ...formData, [name]: value });
+    setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
   };
 
   const handleImageChange = (e) => {
@@ -74,12 +75,24 @@ const SignUp = () => {
       try {
         const result = await dispatch(signUp(formData)).unwrap();
         // Điều hướng sau khi thành công, nếu cần
-        console.log("Sign Up Successful", result);
-        localStorage.setItem("email", formData.email);
-        localStorage.setItem("user_id", result.user?.id);
-        localStorage.setItem("token", result.user?.token);
-        fetchUser(result.user?.id);
-        navigate("/profileUpdate/experience");
+
+        if (formData.roleCode === "User") {
+          console.log("Sign Up Successful", result);
+          localStorage.setItem("email", formData.email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("token", result.user?.token);
+          fetchUser(result.user?.id);
+          navigate("/profileUpdate/experience");
+        } else if (formData.roleCode === "Company") {
+          console.log("Sign Up Successful", result);
+          localStorage.setItem("email", formData.email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("token", result.user?.token);
+          fetchUser(result.user?.id);
+          navigate("/signupCompany");
+        } else {
+          console.log("LOI ROI");
+        }
       } catch (error) {
         console.log("image", formData.image);
         console.error("Sign Up Error:", error);

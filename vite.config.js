@@ -12,8 +12,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/auth/google': {
-        target: 'http://localhost:5000',
+      "/auth/google": {
+        target: "http://localhost:5000",
         changeOrigin: true,
         secure: false,
       },
