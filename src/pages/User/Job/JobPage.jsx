@@ -10,6 +10,7 @@ const URL = "/getAllPost";
 function JobPage() {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
+  
   const [filter, setFilter] = useState({
     jobName: "",
     location: "",
@@ -21,7 +22,7 @@ function JobPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 2;
+  const jobsPerPage = 9;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,8 +30,9 @@ function JobPage() {
         setLoading(true);
         const response = await axios.get(URL);
         if (Array.isArray(response.data.data)) {
-          setJobs(response.data.data);
-          setFilteredJobs(response.data.data);
+          const activeJobs = response.data.data.filter(job => job.statusCode.toUpperCase() === "active".toUpperCase());
+          setJobs(activeJobs);
+          setFilteredJobs(activeJobs);
         } else {
           console.error("Unexpected data format:", response.data);
           setError("Error fetching data. Please try again later.");
@@ -46,9 +48,10 @@ function JobPage() {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   useEffect(() => {
     const filtered = jobs.filter((job) => {

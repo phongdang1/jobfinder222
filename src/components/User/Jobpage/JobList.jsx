@@ -12,7 +12,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import TooltipBox from "../Homepage/Common/TooltipBox";
-import { Favorite } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
@@ -131,12 +130,6 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                           variant="outline"
                         >
                           Apply
-                        </Button>
-                        <Button
-                          className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
-                          variant="outline"
-                        >
-                          <Favorite />
                         </Button>
                       </div> */}
                     </div>

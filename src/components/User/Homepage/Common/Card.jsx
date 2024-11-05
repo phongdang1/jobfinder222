@@ -9,11 +9,6 @@ import {
 } from "@/components/ui/tooltip";
 import TooltipBox from "./TooltipBox";
 import { getAllPostWithLimit } from "@/fetchData/Post";
-import {
-  Favorite,
-  FavoriteBorderOutlined,
-  FavoriteBorderRounded,
-} from "@mui/icons-material";
 
 function JobCard({ expand }) {
   const [data, setData] = useState([]);
@@ -93,12 +88,6 @@ function JobCard({ expand }) {
                         variant="outline"
                       >
                         Apply
-                      </Button>
-                      <Button
-                        className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
-                        variant="outline"
-                      >
-                        <Favorite />
                       </Button>
                     </div>
                   )}

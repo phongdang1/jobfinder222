@@ -3,6 +3,7 @@ import { Link, useMatch, useParams } from "react-router-dom";
 import { FaCaretDown } from "react-icons/fa";
 import logo from "../../../assets/images/JobFinder_logoText.png";
 import { Button } from "@/components/ui/button";
+import Logout from "@/components/Common/Authentication/Logout";
 import {
   Sheet,
   SheetClose,
@@ -185,12 +186,7 @@ const CompanyHeader = () => {
               </>
               {/* ) : ( */}
               <SheetHeader>
-                <button
-                  // onClick={handleLogout}
-                  className="text-center text-red-600 hover:text-red-700 text-lg font-medium"
-                >
-                  Logout
-                </button>
+                <Logout/>
               </SheetHeader>
               {/* )} */}
             </SheetContent>
