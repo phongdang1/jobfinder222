@@ -31,16 +31,13 @@ const ProtectedRoute = ({ element, allowedRoles, redirectPath }) => {
   // Conditional routing based on userRole
   if (allowedRoles === userRole) {
     return element;
-  } 
-  else if (userRole === "USER") {
+  } else if (userRole === "USER") {
     return <Navigate to="/" replace />;
-  } 
-  else if (userRole === "COMPANY") {
+  } else if (userRole === "COMPANY") {
     return <Navigate to="/company/dashboard" replace />;
-  } 
-  else if (userRole === "ADMIN") {
+  } else if (userRole === "ADMIN") {
     return <Navigate to="/admin/dashboard" replace />;
-  } 
+  }
 };
 
 export default ProtectedRoute;

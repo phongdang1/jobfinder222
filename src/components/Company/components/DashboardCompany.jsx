@@ -36,14 +36,14 @@ const DashboardCompany = () => {
 
   const fetchCompany = async () => {
     try {
-      const res = await getCompanyById(companyId)
+      const res = await getCompanyById(companyId);
       setLoading(true);
       if (res) {
         setCompanyData(res.data.data);
-        console.log('company ne', res.data.data)
+        console.log("company ne", res.data.data);
       } else {
         setError("Error fetching company data. Please try again later.");
-        console.log('loi roi',companyId)
+        console.log("loi roi", companyId);
       }
     } catch (error) {
       setError("Error fetching company data. Please try again later.");
@@ -143,7 +143,7 @@ const DashboardCompany = () => {
                       <p>FAQ/Hướng dẫn sử dụng</p>
                     </Link>
                   </div>
-                  <div className="flex items-center">
+                  <div class="flex items-center">
                     <FcHome class="mr-2" />
                     <Link
                       to="/company/product"
