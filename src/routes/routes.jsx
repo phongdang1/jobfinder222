@@ -46,11 +46,15 @@ import AccountInfo from "@/components/Company/components/CompanyProfile/AccountI
 import ProductPage from "@/components/Company/components/ProductPage";
 import ProductCart from "@/components/Company/components/ProductCart";
 
+import PaymentLayout from './../components/layout/PaymentLayout';
+import PaymentSuccess from "@/components/Company/components/Payment/CvPayment/PaymentSuccess";
+import ProtectedRoute from "./ProtectedRoutes";
+
 const routes = [
   // Routes using DefaultLayout
   {
     path: "/",
-    element: <DefaultLayout />,
+    element: <ProtectedRoute element={<DefaultLayout />} allowedRoles={"USER"} redirectPath="/"  />,
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
@@ -67,7 +71,7 @@ const routes = [
   // Routes using CompanyLayout
   {
     path: "/company",
-    element: <CompanyLayout />,
+    element: <ProtectedRoute element={<CompanyLayout />} allowedRoles={"COMPANY"} redirectPath="/admin/dashboard"  />,
     children: [
       { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
@@ -115,7 +119,7 @@ const routes = [
   // Routes using AdminLayout
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: <ProtectedRoute element={<AdminLayout />} allowedRoles={"ADMIN"} redirectPath="/company/dashboard"  />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "jobType", element: <ManageTypeJob /> },
@@ -130,6 +134,13 @@ const routes = [
   {
     path: "signupCompany",
     element: <SignUpCompany />,
+  },
+  {
+    path: "/",
+    element: <PaymentLayout />,
+    children: [
+      { path: "paymentViewCV/success", element: <PaymentSuccess /> },
+    ],
   },
 ];
 

@@ -32,6 +32,8 @@ function Header() {
   const [user, setUser] = useState();
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("user_id");
+  const company = localStorage.getItem("company");
+  const adminId = localStorage.getItem("adminId");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -105,7 +107,7 @@ function Header() {
             </SheetTrigger>
             <SheetContent className="pt-16 space-y-4">
               {/* login, register */}
-              {(userId != null || userId != undefined) && (
+              {(userId != null || userId != undefined || token != null || token != undefined || !company || !adminId) && (
                 <SheetHeader>
                   <Link to="/userProfile">
                     <p className="text-center text-lg font-medium">
@@ -201,7 +203,7 @@ function Header() {
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {userId === null || userId === undefined || token === null || token === undefined ? (
+          {userId === null || userId === undefined || token === null || token === undefined || company || adminId ? (
             <>
               <li>
                 <Button className="font-semibold hover:bg-transparent text-primary" variant="ghost">

@@ -66,12 +66,17 @@ function PersonalInformation() {
   const [isCompleteOTP, setIsCompleteOTP] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dialogRef = useRef(null);
+  const token = localStorage.getItem('token');	
 
   const fetchUserData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/getUserById?id=${userId}`
+        `http://localhost:5000/getUserById?id=${userId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
       );
       if (response.data.errCode === 0) {
         setInputValue({

@@ -1,22 +1,42 @@
 import axios from "./axios";
-
+const token = localStorage.getItem("token");
 const getAllCompanies = (searchKey) => {
-  return axios.get(`/getAllCompaniesInactive?searchKey=${searchKey}`);
+  return axios.get(`/getAllCompaniesInactive?searchKey=${searchKey}`,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
 };
 const getAllCompaniesUser = (searchKey) => {
-  return axios.get(`/getAllCompanies?searchKey=${searchKey}`);
+  return axios.get(`/getAllCompanies?searchKey=${searchKey}`,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
 };
 const getCompanyById = (companyId) => {
-  return axios.get(`/getCompanyById?id=${companyId}`);
+  return axios.get(`/getCompanyById?id=${companyId}`,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
 };
 const banCompany = (companyId) => {
   return axios.post(`/banCompany`, {
     companyId: companyId,
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
   });
 };
 const unbanCompany = (companyId) => {
   return axios.post(`/unBanCompany`, {
     companyId: companyId,
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
   });
 };
 const updateCompany = (
@@ -40,23 +60,39 @@ const updateCompany = (
     coverimage: coverimage,
     thumbnail: thumbnail,
     file: file,
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
   });
 };
 
 const inactiveCompany = (companyId) => {
   return axios.post(`/rejectCompany`, {
     companyId: companyId,
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
   });
 };
 
 const activeCompany = (companyId) => {
   return axios.post(`/approveCompany`, {
     companyId: companyId,
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
   });
 };
 
 const createNewCompany = (data) => {
-  return axios.post(`/createNewCompany`, data);
+  return axios.post(`/createNewCompany`, data,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
 };
 
 export {

@@ -268,15 +268,15 @@ function AdvancedSetting() {
             className="flex justify-between items-center"
           >
             <p className="ml-4 mb-2">Skills</p>
-            <Dialog open={open}>
-              <DialogTrigger
-                asChild
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <EditNoteOutlined className="hover:text-primary mr-4 cursor-pointer" />
-              </DialogTrigger>
+
+            <EditNoteOutlined
+              onClick={() => {
+                setOpen(true);
+              }}
+              className="hover:text-primary mr-4 cursor-pointer"
+            />
+
+            <Dialog open={open} onOpenChange={() => setOpen(false)}>
               <DialogContent className="max-w-screen-sm h-4/5 max-h-screen">
                 <DialogHeader>
                   <DialogTitle>Update Skills</DialogTitle>
@@ -419,15 +419,16 @@ function AdvancedSetting() {
           <p className="ml-4 mb-2">Dream Job</p>
 
           <form onSubmit={handleDreamJobSubmit}>
-            <Dialog open={isDialogOpen}>
-              <DialogTrigger
-                asChild
-                onClick={() => {
-                  setIsDialogOpen(true);
-                }}
-              >
-                <EditNoteOutlined className="hover:text-primary mr-4 cursor-pointer" />
-              </DialogTrigger>
+            <EditNoteOutlined
+              onClick={() => {
+                setIsDialogOpen(true);
+              }}
+              className="hover:text-primary mr-4 cursor-pointer"
+            />
+            <Dialog
+              open={isDialogOpen}
+              onOpenChange={() => setIsDialogOpen(false)}
+            >
               <DialogContent className="max-w-4xl max-h-svh h-4/5">
                 <DialogHeader>
                   <DialogTitle>Dream Job</DialogTitle>

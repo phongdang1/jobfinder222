@@ -9,6 +9,7 @@ import postcard from "../../../assets/images/img1.jpg";
 import viewCandidate from "../../../assets/illustration/viewCandidate.png";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Button } from "@/components/ui/button";
+import { createPaymentViewCv } from "../../../fetchData/Transaction";
 const URL = "/getAllPackage";
 
 function ProductPage() {
@@ -17,6 +18,8 @@ function ProductPage() {
   const [viewPlans, setViewPlans] = useState([]);
   const [postPrice, setPostPrice] = useState(0);
   const [viewPrice, setViewPrice] = useState(0);
+  const [selectedPostPlanId, setSelectedPostPlanId] = useState(null); // For selected Post plan ID
+  const [selectedViewPlanId, setSelectedViewPlanId] = useState(null); // For selected View plan ID
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -48,8 +51,14 @@ function ProductPage() {
           setPostPlans(postPackages);
           setViewPlans(viewPackages);
 
-          if (postPackages.length > 0) setPostPrice(postPackages[0].price);
-          if (viewPackages.length > 0) setViewPrice(viewPackages[0].price);
+          if (postPackages.length > 0) {
+            setPostPrice(postPackages[0].price);
+            setSelectedPostPlanId(postPackages[0].id); // Set default selected Post plan ID
+          }
+          if (viewPackages.length > 0) {
+            setViewPrice(viewPackages[0].price);
+            setSelectedViewPlanId(viewPackages[0].id); // Set default selected View plan ID
+          }
         } else {
           console.error("Unexpected data format:", response.data);
           setError("Error fetching data. Please try again later.");
@@ -73,15 +82,35 @@ function ProductPage() {
         : viewPlans.find((plan) => plan.name === selectedPlan);
 
     if (selectedProduct) {
-      type === "Post"
-        ? setPostPrice(selectedProduct.price)
-        : setViewPrice(selectedProduct.price);
+      if (type === "Post") {
+        setPostPrice(selectedProduct.price);
+        setSelectedPostPlanId(selectedProduct.id); // Update selected Post plan ID
+      } else {
+        setViewPrice(selectedProduct.price);
+        setSelectedViewPlanId(selectedProduct.id); // Update selected View plan ID
+      }
     }
   };
 
-  // const handleCreatePaymentViewCv = async(id) => {
-  //   const res = await 
-  // }
+  const handleCreatePaymentViewCv = async () => {
+    const res = await createPaymentViewCv(selectedViewPlanId);
+    if (res.data.errCode == 0) {
+      let data = {
+        packageId: selectedViewPlanId,
+        amount: 1,
+        userId: JSON.parse(localStorage.getItem("user_id")),
+      };
+      localStorage.setItem("orderData", JSON.stringify(data));
+      // const userId = JSON.parse(localStorage.getItem("user_id"));
+      // const packageId = selectedViewPlanId; 
+      const redirectUrl = `${res.data.link}`;
+      console.log("Redirecting to:", redirectUrl);
+      window.location.href = redirectUrl;
+    } else {
+      console.log("loi thanh toan", res);
+    }
+    console.log("Payment result:", selectedViewPlanId);
+  };
 
   return (
     <div className="mb-5">
@@ -105,7 +134,7 @@ function ProductPage() {
           </div>
           {/* Right - Details */}
           <div className="w-1/2 p-4">
-          <h2 className="text-3xl font-semibold mb-5 text-center ">
+            <h2 className="text-3xl font-semibold mb-5 text-center ">
               <span className=" text-primary">Post </span>Packages
             </h2>
             <p className="mb-2">
@@ -145,9 +174,18 @@ function ProductPage() {
             <h2 className="text-3xl font-semibold mb-5 text-center ">
               <span className=" text-primary">View </span>Packages
             </h2>
-            <div className="mb-4 flex gap-2 items-center"><IoIosCheckmarkCircle className="text-green-500 w-5 h-5"/> Access candidate profiles to streamline the hiring process.</div>
-            <div className="mb-4 flex gap-2 items-center"><IoIosCheckmarkCircle className="text-green-500 w-5 h-5"/> Unlock detailed CVs for targeted recruitment.</div>
-            <div className="mb-4 flex gap-2 items-center"><IoIosCheckmarkCircle className="text-green-500 w-5 h-5"/> View the matching percentage of all candidates.</div>
+            <div className="mb-4 flex gap-2 items-center">
+              <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
+              Access candidate profiles to streamline the hiring process.
+            </div>
+            <div className="mb-4 flex gap-2 items-center">
+              <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
+              Unlock detailed CVs for targeted recruitment.
+            </div>
+            <div className="mb-4 flex gap-2 items-center">
+              <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
+              View the matching percentage of all candidates.
+            </div>
             <select
               className="w-full mb-4 p-2 border border-gray-400 rounded focus:border-primary focus:ring-1 ring-primary"
               onChange={(e) => handlePlanChange(e, "View")}
@@ -158,10 +196,13 @@ function ProductPage() {
                 </option>
               ))}
             </select>
-            <div className="mb-4 p-2flex justify-center items-center bg-gray-100">
+            <div className="mb-4 p-2 flex justify-center items-center bg-gray-100">
               <p className="text-xl font-semibold">{`$${viewPrice}`}</p>
             </div>
-            <Button className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center">
+            <Button
+              onClick={handleCreatePaymentViewCv}
+              className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center"
+            >
               <FaShoppingCart className="mr-2" /> Buy Now
             </Button>
           </div>

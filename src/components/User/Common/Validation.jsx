@@ -4,7 +4,7 @@ function Validation(inputValue) {
   const phoneRegex = /^(0[2|3|5|7|8|9])+([0-9]{8})$/;
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-  const nameRegex = /^[a-zA-Z\s]+$/;
+  const nameRegex = /^[\p{L}\s]+$/u;
   const amountEmployerRegex = /^\d+$/;
   const descriptionRegex = /^.{10,500}$/;
 
@@ -17,23 +17,24 @@ function Validation(inputValue) {
   }
 
   if (inputValue.firstName !== undefined) {
-    if (inputValue.firstName === "") {
+    const trimmedFirstName = inputValue.firstName.trim();
+    if (trimmedFirstName === "") {
       error.firstName = "First name is required!";
-    } else if (!nameRegex.test(inputValue.firstName)) {
+    } else if (!nameRegex.test(trimmedFirstName)) {
       error.firstName =
         "First name cannot contain numbers or special characters!";
     }
   }
 
   if (inputValue.lastName !== undefined) {
-    if (inputValue.lastName === "") {
+    const trimmedLastName = inputValue.lastName.trim();
+    if (trimmedLastName === "") {
       error.lastName = "Last name is required!";
-    } else if (!nameRegex.test(inputValue.lastName)) {
+    } else if (!nameRegex.test(trimmedLastName)) {
       error.lastName =
         "Last name cannot contain numbers or special characters!";
     }
   }
-
   if (inputValue.dob !== undefined && inputValue.dob === "") {
     error.dob = "Date of Birth is required!";
   }
