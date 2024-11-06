@@ -225,8 +225,8 @@ const ManageSkill = () => {
   return (
     <div className="border border-blue-gray-100 shadow-sm rounded-lg">
       <div className="flex justify-between items-center p-4">
-        <div className="flex items-center gap-2">
-          <div className="relative w-64">
+        <div className="flex items-center gap-2 w-1/2">
+          <div className="relative flex-grow">
             <Input
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md"
               type="text"
