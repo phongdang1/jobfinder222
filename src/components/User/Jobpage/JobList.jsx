@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import TooltipBox from "../Homepage/Common/TooltipBox";
 import { Link } from "react-router-dom";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,7 +71,21 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
       <div className="grid grid-cols-1 gap-6">
         {currentJobs.map((job) => (
           <div key={job.id} className="w-full">
-            <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
+            <Card
+              className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
+                job.isHot === 1
+                  ? "bg-primary/20 hover:bg-violet-200"
+                  : "bg-white"
+              }`}
+            >
+              {job.isHot === 1 && (
+                <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
+                  <WhatshotIcon className="text-[#ffdd85] mr-2" />
+                  SUPER HOT
+                  <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 translate-x-1 translate-y-1"></span>
+                </span>
+              )}
+
               <CardBody>
                 <Link
                   to={`/job-detail/${job.id}`}
