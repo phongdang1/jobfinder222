@@ -120,6 +120,19 @@ const Head = ({ job }) => {
     }
   };
 
+
+  const handleApplyStatus = () => {
+    const deadline = new Date(job.data.timeEnd).getTime();
+
+    if (user?.isVerify === 0) {
+      toast.error("You have to verify your email to apply jobs!");
+    } else if (deadline <= Date.now()) {
+      toast.error("Apply CV time has been expired!");
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   return (
     <div className="flex flex-col mx-4 lg:mx-36">
       {/* button back to job list */}

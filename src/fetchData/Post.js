@@ -7,6 +7,7 @@ const getAllPostsInactive = (searchKey) => {
     },
   });
 };
+
 const getAllPostWithLimit = (limit, offset) => {
   return axios.get(`getAllPostWithLimit?limit=${limit}&offset=${offset}`,{
     headers: {
@@ -22,6 +23,7 @@ const getAllPost = () => {
     },
   });
 };
+
 const createNewPost = (data) => {
   return axios.post(`/createNewPost`, data,{
     headers: {
@@ -29,6 +31,7 @@ const createNewPost = (data) => {
     },
   });
 }
+
 
 const getDetailPostById = (id) => {
   return axios.get(`getDetailPostById?id=${id}`,{
@@ -41,13 +44,15 @@ const getDetailPostById = (id) => {
 const banPost = (id, note) => {
   return axios.post(`/banPost`, {
     id: id,
+
     note: note
   },{
     headers: {
       Authorization: `Bearer ${token}`, 
     },
+
   });
-}
+};
 const unbanPost = (id, note, userId) => {
   return axios.post(`/unBanPost`, {
     id: id,
@@ -57,19 +62,22 @@ const unbanPost = (id, note, userId) => {
     headers: {
       Authorization: `Bearer ${token}`, 
     },
+
   });
-}
+};
 
 const inactivePost = (id, note) => {
   return axios.post(`/rejectPost`, {
     id: id,
+
     note: note
   },{
     headers: {
       Authorization: `Bearer ${token}`, 
     },
+
   });
-}
+};
 const activePost = (id) => {
   return axios.post(`/approvePost`, {
     id: id
@@ -78,6 +86,16 @@ const activePost = (id) => {
       Authorization: `Bearer ${token}`, 
     },
   });
-}
+};
 
-export {getDetailPostById, banPost, unbanPost, activePost, inactivePost, getAllPostsInactive, getAllPostWithLimit, getAllPost, createNewPost };
+export {
+  getDetailPostById,
+  banPost,
+  unbanPost,
+  activePost,
+  inactivePost,
+  getAllPostsInactive,
+  getAllPostWithLimit,
+  getAllPost,
+  createNewPost,
+};

@@ -45,6 +45,7 @@ import CompanyProfileLayout from "@/components/layout/CompanyProfileLayout";
 import AccountInfo from "@/components/Company/components/CompanyProfile/AccountInfo";
 import ProductPage from "@/components/Company/components/ProductPage";
 import ProductCart from "@/components/Company/components/ProductCart";
+import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 
 import PaymentLayout from "./../components/layout/PaymentLayout";
 import PaymentSuccess from "@/components/Company/components/Payment/CvPayment/PaymentSuccess";
@@ -84,11 +85,13 @@ const routes = [
       { path: "/signup", element: <SignUpPage /> },
       { path: "/job-detail/:id", element: <JobDetail /> },
       { path: "/jobs", element: <JobPage /> },
-
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
+      { path: "/jobsComparison/:id", element: <JobsComparison /> },
+
       { path: "/vip", element: <VipFeature /> },
       { path: "/otp", element: <OTPPage /> },
+
     ],
   },
   // Routes using CompanyLayout

@@ -36,6 +36,8 @@ function BestJob() {
   const [sortValue, setSortValue] = useState([]);
   const [selectedType, setSelectedType] = useState("PROVINCE");
   const [isLoading, setIsLoading] = useState(true);
+  const [select, setSelect] = useState();
+
   const handleScroll = () => {
     const scrollPosition = window.scrollY + window.innerHeight;
     const loadPosition = document.documentElement.scrollHeight - 2300;
@@ -94,10 +96,13 @@ function BestJob() {
     fetchAllPosts();
   }, []);
 
-  const handleSortByValue = async (code) => {
+  const handleSortByValue = async (code, index) => {
     try {
       const response = await getAllPostsInactive(code);
       setData(response.data.data);
+
+      setSelect(index);
+
       console.log(response.data.data);
     } catch (error) {
       console.log(error);
@@ -141,8 +146,10 @@ function BestJob() {
               {sortValue.map((value, index) => (
                 <CarouselItem key={index} className="basis-1/3 items-center">
                   <Card
-                    onClick={() => handleSortByValue(value.code)}
-                    className="h-10 text-center text-black rounded-3xl cursor-pointer hover:bg-primary hover:text-white flex justify-center"
+                    onClick={() => handleSortByValue(value.code, index)}
+                    className={`h-10 text-center text-black rounded-3xl cursor-pointer hover:bg-primary hover:text-white flex justify-center ${
+                      select === index ? "bg-primary text-white" : ""
+                    } `}
                   >
                     <button type="button" className="text-xs font-medium">
                       {value.value}
@@ -171,9 +178,12 @@ function BestJob() {
         ) : data && data.length > 0 ? (
           <JobCard expand="" data={data} />
         ) : (
-          <div className="text-center mx-auto text-gray-500">
-            No jobs available
-          </div>
+          <>
+            <div></div>
+            <div className="w-full flex justify-center items-center text-gray-500">
+              <p>No jobs available</p>
+            </div>
+          </>
         )}
       </div>
     </div>

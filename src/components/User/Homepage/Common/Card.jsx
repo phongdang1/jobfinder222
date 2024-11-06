@@ -9,6 +9,11 @@ import {
 } from "@/components/ui/tooltip";
 import TooltipBox from "./TooltipBox";
 import { getAllPostWithLimit } from "@/fetchData/Post";
+import {
+  Favorite,
+  FavoriteBorderOutlined,
+  FavoriteBorderRounded,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 function JobCard({ expand, data }) {
@@ -30,7 +35,7 @@ function JobCard({ expand, data }) {
               <div className="flex gap-8 items-center justify-start w-full ">
                 <div
                   onClick={() => handleNavigate(card.id)}
-                  className="relative bg-transparent  shrink-0"
+                  className="relative bg-transparent shrink-0"
                 >
                   <Image
                     alt="Album cover"
@@ -75,18 +80,7 @@ function JobCard({ expand, data }) {
                     >
                       {card.postDetailData.provincePostData.value}
                     </Badge>
-                  {expand === "" ? (
-                    ""
-                  ) : (
-                    <div className="flex gap-2 items-center ml-auto absolute -right-1">
-                      <Button
-                        className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
-                        variant="outline"
-                      >
-                        Apply
-                      </Button>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </CardBody>

@@ -53,19 +53,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
               <SearchIcon className="text-primary" />
             </div>
           </div>
-          <div className="relative flex flex-1 items-center">
-            <Input
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md rounded-l-none rounded-r-none"
-              type="text"
-              placeholder="Location"
-              value={locationTerm}
-              onChange={handleLocationInputChange}
-              onKeyDown={handleKeyDown}
-            />
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <FmdGoodOutlinedIcon className="text-primary" />
-            </div>
-          </div>
+
           <Button
             className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1 rounded-l-none"
             variant="outline"
@@ -84,7 +72,10 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
           <div key={job.id} className="w-full">
             <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
               <CardBody>
-                <Link to={`/job-detail/${job.id}`} className="flex gap-8 items-center justify-start w-full ">
+                <Link
+                  to={`/job-detail/${job.id}`}
+                  className="flex gap-8 items-center justify-start w-full "
+                >
                   <div className="relative bg-transparent shrink-0">
                     <Image
                       alt="Job cover"

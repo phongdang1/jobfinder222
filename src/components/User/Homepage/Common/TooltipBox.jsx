@@ -6,8 +6,13 @@ import { useEffect, useState } from "react";
 import { getDetailPostById } from "@/fetchData/Post";
 import { Separator } from "@/components/ui/separator";
 
+import { FavoriteRounded } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+
+
 function TooltipBox({ id }) {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllPosts = async () => {
@@ -28,6 +33,17 @@ function TooltipBox({ id }) {
 
     fetchAllPosts();
   }, [id]);
+
+  const handleNavigate = (id) => {
+    console.log(id);
+    navigate(`job-detail/${id}`);
+  };
+
+  const handleNavigateCompare = (id) => {
+    console.log(id);
+    navigate(`jobsComparison/${id}`);
+  };
+
   return (
     <div className="flex flex-col gap-2 w-full max-w-xl p-2">
       {data.map((card, index) => (
@@ -96,10 +112,20 @@ function TooltipBox({ id }) {
       <div className="w-full flex gap-2 mt-4">
         <Button
           variant="outline"
-          className="w-4/5 border-primary text-center text-primary hover:bg-primary hover:text-white text-base font-medium"
+          className="w-full border-primary text-center text-primary hover:bg-primary hover:text-white text-base font-medium"
+          onClick={() => handleNavigate(id)}
         >
           Apply
         </Button>
+
+        <Button
+          variant="outline"
+          className="w-full border-primary text-center text-primary hover:bg-primary hover:text-white text-base font-medium"
+          onClick={() => handleNavigateCompare(id)}
+        >
+          Compare Job
+        </Button>
+
       </div>
     </div>
   );
