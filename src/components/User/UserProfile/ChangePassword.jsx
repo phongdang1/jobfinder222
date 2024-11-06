@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 const ChangePassword = () => {
   const userId = localStorage.getItem("user_id");
+  // const token = localStorage.getItem("token");
   const [form, setForm] = useState({
     oldPassword: "",
     newPassword: "",

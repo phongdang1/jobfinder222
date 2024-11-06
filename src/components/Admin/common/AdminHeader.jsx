@@ -7,6 +7,7 @@ import { HiOutlineSearch } from "react-icons/hi";
 import logo from "../../../assets/images/JobFinder_logo.png";
 import { Link } from "react-router-dom";
 import logoText from "../../../assets/images/JobFinder_logoText.png";
+import Logout from "@/components/Common/Authentication/Logout";
 const AdminHeader = () => {
   return (
     <header className="bg-gray-100 text-white p-4 flex justify-between items-center">
@@ -45,7 +46,7 @@ const AdminHeader = () => {
         <span>Welcome, Admin</span>
         <button className=" px-4 py-3 rounded flex items-center gap-2 hover:text-primary ">
           <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
-          <span>Logout</span>
+          <Logout/>
         </button>
         <button className=" px-2 py-3  rounded flex items-center  hover:text-primary ">
           <NotificationsIcon className="h-5 w-5 text-blue-gray-500" />

@@ -47,8 +47,12 @@ import ProductPage from "@/components/Company/components/ProductPage";
 import ProductCart from "@/components/Company/components/ProductCart";
 import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 
+import PaymentLayout from "./../components/layout/PaymentLayout";
+import PaymentSuccess from "@/components/Company/components/Payment/CvPayment/PaymentSuccess";
+import ProtectedRoute from "./ProtectedRoutes";
+
 const routes = [
-  // Routes using DefaultLayout
+  // Route for HomePage accessible to everyone
   {
     path: "/",
     element: <DefaultLayout />,
@@ -56,19 +60,50 @@ const routes = [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
-      { path: "/otp", element: <OTPPage /> },
+      { path: "/job-detail/:id", element: <JobDetail /> },
+      { path: "/jobs", element: <JobPage /> },
+
+      { path: "/companypage", element: <CompanyPage /> },
+      { path: "/companydetail/:id", element: <CompanyDetail /> },
       { path: "/vip", element: <VipFeature /> },
+    ],
+  },
+  // Routes using DefaultLayout
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute
+        element={<DefaultLayout />}
+        allowedRoles={"USER"}
+        redirectPath="/"
+      />
+    ),
+    children: [
+      // { path: "/", element: <HomePage /> },
+      { path: "/", element: <HomePage /> },
+      { path: "/login", element: <LoginPage /> },
+      { path: "/signup", element: <SignUpPage /> },
       { path: "/job-detail/:id", element: <JobDetail /> },
       { path: "/jobs", element: <JobPage /> },
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
       { path: "/jobsComparison/:id", element: <JobsComparison /> },
+
+      { path: "/vip", element: <VipFeature /> },
+      { path: "/otp", element: <OTPPage /> },
+
     ],
   },
   // Routes using CompanyLayout
   {
     path: "/company",
-    element: <CompanyLayout />,
+    element: (
+      <ProtectedRoute
+        element={<CompanyLayout />}
+        allowedRoles={"COMPANY"}
+        redirectPath="/admin/dashboard"
+      />
+    ),
     children: [
       { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
@@ -116,7 +151,13 @@ const routes = [
   // Routes using AdminLayout
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute
+        element={<AdminLayout />}
+        allowedRoles={"ADMIN"}
+        redirectPath="/company/dashboard"
+      />
+    ),
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "jobType", element: <ManageTypeJob /> },
@@ -131,6 +172,11 @@ const routes = [
   {
     path: "signupCompany",
     element: <SignUpCompany />,
+  },
+  {
+    path: "/",
+    element: <PaymentLayout />,
+    children: [{ path: "paymentViewCV/success", element: <PaymentSuccess /> }],
   },
 ];
 

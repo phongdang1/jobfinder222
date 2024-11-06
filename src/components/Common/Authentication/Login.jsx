@@ -28,6 +28,7 @@ const Login = () => {
   const [confirmationResult, setConfirmationResult] = useState(null); // To store OTP verification result
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
@@ -122,17 +123,19 @@ const Login = () => {
       console.log("Login successful, result:", result);
       if (result.user.roleCode === "COMPANY") {
         localStorage.setItem("email", email);
+        localStorage.setItem("user_id", result.user?.id);
         localStorage.setItem("companyId", result.user?.companyId);
-
-        navigate("/company/dashboard");
+        localStorage.setItem("token", result.token)
+        navigate("/company/dashboard"); 
       } else if (result.user.roleCode === "ADMIN") {
         localStorage.setItem("email", email);
-        localStorage.setItem("adminId", result.user?.id);
-
+        localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("token", result.token)
         navigate("/admin/dashboard");
       } else {
         localStorage.setItem("email", email);
         localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("token", result.token)
         fetchUser(result.user?.id);
 
         navigate("/");
@@ -169,7 +172,9 @@ const Login = () => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`);
+      const response = await axios.get(`/getUserById?id=${userId}`,{ headers: {
+        Authorization: `Bearer ${token}`, // Include token in headers
+      }});
 
       console.log("Response from /getUserById:", response);
 

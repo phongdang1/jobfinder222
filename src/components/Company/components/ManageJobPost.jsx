@@ -69,9 +69,10 @@ const ManageJobPost = () => {
       [name]: value,
     }));
   };
+  const companyData = JSON.parse(localStorage.getItem("company"));
   const fetchCompanyData = async () => {
     try {
-      const res = await axios.get(`/getCompanyById?id=${1}`);
+      const res = await axios.get(`/getCompanyById?id=${companyData.data.id}`);
       if (res.data.errCode === 0) {
         setCompany(res.data.data);
         setPost(res.data.data.postData);
@@ -777,7 +778,7 @@ const ManageJobPost = () => {
                                           <DialogTrigger
                                             onClick={() =>
                                               setRejectDialog(true)
-                                            }
+                                            } 
                                             className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white px-4 py-2 font-medium transition rounded-md"
                                           >
                                             Reject

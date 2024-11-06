@@ -14,7 +14,7 @@ function CompanyPage() {
   const [totalCount, setCounts] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
-  const companiesPerPage = 6;
+  const companiesPerPage = 9;
   const indexOfLastCompany = currentPage * companiesPerPage;
   const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
   const currentCompanies = filteredCompanies.slice(indexOfFirstCompany, indexOfLastCompany);

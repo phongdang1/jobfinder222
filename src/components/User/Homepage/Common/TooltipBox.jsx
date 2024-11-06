@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getDetailPostById } from "@/fetchData/Post";
 import { Separator } from "@/components/ui/separator";
+
 import { FavoriteRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+
 
 function TooltipBox({ id }) {
   const [data, setData] = useState([]);
@@ -115,6 +117,7 @@ function TooltipBox({ id }) {
         >
           Apply
         </Button>
+
         <Button
           variant="outline"
           className="w-full border-primary text-center text-primary hover:bg-primary hover:text-white text-base font-medium"
@@ -122,6 +125,7 @@ function TooltipBox({ id }) {
         >
           Compare Job
         </Button>
+
       </div>
     </div>
   );
