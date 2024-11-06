@@ -45,6 +45,7 @@ import CompanyProfileLayout from "@/components/layout/CompanyProfileLayout";
 import AccountInfo from "@/components/Company/components/CompanyProfile/AccountInfo";
 import ProductPage from "@/components/Company/components/ProductPage";
 import ProductCart from "@/components/Company/components/ProductCart";
+import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 
 const routes = [
   // Routes using DefaultLayout
@@ -59,9 +60,9 @@ const routes = [
       { path: "/vip", element: <VipFeature /> },
       { path: "/job-detail/:id", element: <JobDetail /> },
       { path: "/jobs", element: <JobPage /> },
-
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
+      { path: "/jobsComparison/:id", element: <JobsComparison /> },
     ],
   },
   // Routes using CompanyLayout
