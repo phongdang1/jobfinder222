@@ -25,4 +25,56 @@ const executePaymentViewCv = (data) => {
   );
 }
 
-export { createPaymentViewCv,executePaymentViewCv };
+const createPaymentHotPost = (packageId) => {
+  return axios.post(
+    "createPaymentHotPost",
+    {
+      id: packageId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const executePaymentHotPost = (data) => {
+  return axios.post(
+    `executePaymentHotPost?paymentId=${data.paymentId}&token=${data.token}&PayerID=${data.PayerID}&userId=${data.userId}&packageId=${data.packageId}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+}
+
+const createPaymentVip = (packageId) => {
+  return axios.post(
+    "createPaymentVip",
+    {
+      id: packageId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const executePaymentVip = (data) => {
+  return axios.post(
+    `executePaymentVip?paymentId=${data.paymentId}&token=${data.token}&PayerID=${data.PayerID}&userId=${data.userId}&packageId=${data.packageId}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+}
+
+export { createPaymentViewCv,executePaymentViewCv, createPaymentHotPost,executePaymentHotPost,createPaymentVip,executePaymentVip };

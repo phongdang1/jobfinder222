@@ -34,12 +34,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getCompanyById } from "@/fetchData/Company";
 function CreateJobPost() {
   const section1Ref = useRef(null);
   const section2Ref = useRef(null);
   const section3Ref = useRef(null);
   const section4Ref = useRef(null);
   const currentYear = new Date().getFullYear();
+  const companyId = localStorage.getItem("companyId");
   const [form, setForm] = useState({
     name: "",
     category: "",
@@ -64,6 +66,10 @@ function CreateJobPost() {
   const [workType, setWorkType] = useState([]);
   const [gender, setGender] = useState([]);
   const [experience, setExperience] = useState([]);
+  const [hotPost, setHotPost] = useState([]);
+  const [ref1Filled, setRef1Filled] = useState(false);
+  const [ref3Filled, setRef3Filled] = useState(false);
+  const [ref4Filled, setRef4Filled] = useState(false);
   const [value, setValue] = useState("");
   const typeKey = [
     "PROVINCE",
@@ -183,7 +189,8 @@ function CreateJobPost() {
     const fetchJobType = async () => {
       try {
         const response = typeKey.map((type) => getAllCodeByType(type));
-
+        const companyResponse = await getCompanyById(companyId);
+        setHotPost(companyResponse.data.data.allowHotPost);
         const results = await Promise.all(response);
         // put res in array of all results in Promise
 
@@ -201,13 +208,37 @@ function CreateJobPost() {
       }
     };
     fetchJobType();
-  }, []);
+    checkRef1Filled();
+    checkRef3Filled();
+    checkRef4Filled();
+  }, [form]);
 
   const [goal, setGoal] = useState(1);
 
   function onClick(number) {
     setGoal(Math.max(1, Math.min(400, goal + number)));
   }
+  const checkRef1Filled = () => {
+    if (form.name && form.description && form.timeEnd && form.benefit) {
+      setRef1Filled(true)
+    }else {
+      setRef1Filled(false)
+    }
+  };
+  const checkRef3Filled = () => {
+    if (form.requirement && form.skillRequirement) {
+      setRef3Filled(true)
+    }else {
+      setRef3Filled(false)
+    }
+  };
+  const checkRef4Filled = () => {
+    if (form.address && form.jobLevel && form.workType && form.salary && form.experience && form.gender && form.category) {
+      setRef4Filled(true)
+    }else {
+      setRef4Filled(false)
+    }
+  };
 
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-3 lg:mx-52">
@@ -221,7 +252,7 @@ function CreateJobPost() {
             >
               Job Information
             </button>
-            <CheckCircle className="text-default-300" />
+            <CheckCircle className={`${!ref1Filled ? "text-default-300" : "text-green-500"}`} />
           </li>
 
           <li className="flex items-center justify-between gap-4 hover:bg-primary/70 py-1 rounded-lg hover:text-white cursor-pointer group px-4">
@@ -231,7 +262,7 @@ function CreateJobPost() {
             >
               Job Requirements
             </button>
-            <CheckCircle className="text-default-300" />
+            <CheckCircle className={`${!ref3Filled ? "text-default-300" : "text-green-500"}`} />
           </li>
           <li className="flex items-center justify-between gap-4 hover:bg-primary/70 py-1 rounded-lg hover:text-white cursor-pointer group px-4">
             <button
@@ -240,7 +271,7 @@ function CreateJobPost() {
             >
               Additional Information
             </button>
-            <CheckCircle className="text-default-300" />
+            <CheckCircle className={`${!ref4Filled ? "text-default-300" : "text-green-500"}`} />
           </li>
         </ul>
       </div>
@@ -379,6 +410,7 @@ function CreateJobPost() {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>You will lost 1 Featured Post</p>
+                      <div><span className="text-primary font-semibold">{hotPost}</span> posts remaining</div>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

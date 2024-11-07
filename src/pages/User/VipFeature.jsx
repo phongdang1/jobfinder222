@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { createPaymentViewCv, createPaymentVip } from "@/fetchData/Transaction";
 const VipFeature = () => {
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -21,7 +22,24 @@ const VipFeature = () => {
     // Cuộn lên đầu trang khi component được render
     window.scrollTo(0, 0);
   }, []);
-
+  const handleUpdateVip = async () => {
+    const res = await createPaymentVip(7);
+    if (res.data.errCode == 0) {
+      let data = {
+        packageId: 7,
+        amount: 1,
+        userId: JSON.parse(localStorage.getItem("user_id")),
+      };
+      localStorage.setItem("orderData", JSON.stringify(data));
+      // const userId = JSON.parse(localStorage.getItem("user_id"));
+      // const packageId = selectedViewPlanId;
+      const redirectUrl = `${res.data.link}`;
+      console.log("Redirecting to:", redirectUrl);
+      window.location.href = redirectUrl;
+    } else {
+      console.log("loi thanh toan", res);
+    }
+  };
   return (
     <div className="container mx-auto my-20">
       {/* Banner Section */}
@@ -37,9 +55,12 @@ const VipFeature = () => {
             to regular users.
           </p>
           <div className="text-3xl font-bold  bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 bg-clip-text text-transparent p-2 rounded-lg">
-            299.000VNĐ
+            1000$
           </div>
-          <Button className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary">
+          <Button
+            onClick={handleUpdateVip}
+            className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
+          >
             Upgrade Now
           </Button>
         </div>
@@ -54,7 +75,9 @@ const VipFeature = () => {
         <h1 className="my-10 text-4xl font-semibold  text-center">
           Our <span className="text-primary ">Features</span>
         </h1>
-        <p className="text-xl font-medium text-center my-10">Enjoy a seamless job search experience with these features</p>
+        <p className="text-xl font-medium text-center my-10">
+          Enjoy a seamless job search experience with these features
+        </p>
         <div
           className="grid grid-cols-1 md:grid-cols-4 gap-6"
           data-aos="fade-up"
