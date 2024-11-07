@@ -1,43 +1,28 @@
 import { useState, useEffect } from "react";
-import { getUsersById } from "@/fetchData/User";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ element, allowedRoles, redirectPath }) => {
-  const [userRole, setUserRole] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
+const ProtectedRoute = ({ element, allowedRoles }) => {
+  const [userRole, setUserRole] = useState(localStorage.getItem("roleCode"));
+  
   useEffect(() => {
-    const fetchUserRole = async () => {
-      const userId = localStorage.getItem("user_id");
-      const res = await getUsersById(userId);
-
-      if (res.data.errCode === 0) {
-        setUserRole(res.data.data.roleCode);
-      } else {
-        console.error("Error fetching user role:", res);
-      }
-      setIsLoading(false);
-    };
-
-    fetchUserRole();
+    // Listen for changes in userRole from localStorage
+    const role = localStorage.getItem("roleCode");
+    setUserRole(role); // Update state if role changes
   }, []);
 
-  useEffect(() => {
-    console.log("Role updated:", userRole);
-  }, [userRole]);
+  console.log("user role", userRole);
+  console.log("allowed roles", allowedRoles);
 
-  if (isLoading) return <div>Loading...</div>;
-
-  // Conditional routing based on userRole
-  if (allowedRoles === userRole) {
+  if (userRole && allowedRoles === userRole) {
     return element;
-  } else if (userRole === "USER") {
+  } else if (userRole === "USER" || !userRole) {
     return <Navigate to="/" replace />;
   } else if (userRole === "COMPANY") {
     return <Navigate to="/company/dashboard" replace />;
   } else if (userRole === "ADMIN") {
     return <Navigate to="/admin/dashboard" replace />;
   }
+  return <Outlet/>
 };
 
 export default ProtectedRoute;

@@ -45,65 +45,52 @@ import CompanyProfileLayout from "@/components/layout/CompanyProfileLayout";
 import AccountInfo from "@/components/Company/components/CompanyProfile/AccountInfo";
 import ProductPage from "@/components/Company/components/ProductPage";
 import ProductCart from "@/components/Company/components/ProductCart";
-import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 
-import PaymentLayout from "./../components/layout/PaymentLayout";
+import PaymentLayout from './../components/layout/PaymentLayout';
 import PaymentSuccess from "@/components/Company/components/Payment/CvPayment/PaymentSuccess";
 import ProtectedRoute from "./ProtectedRoutes";
+import { Navigate } from "react-router-dom";
+import RedirectBasedOnRole from "./RedirectBasedOnRole";
+
 
 const routes = [
-  // Route for HomePage accessible to everyone
   {
     path: "/",
     element: <DefaultLayout />,
     children: [
-      { path: "/", element: <HomePage /> },
+      { path: "/", element: <RedirectBasedOnRole /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
+      { path: "/otp", element: <OTPPage /> },
+      { path: "/vip", element: <VipFeature /> },
       { path: "/job-detail/:id", element: <JobDetail /> },
       { path: "/jobs", element: <JobPage /> },
 
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
-      { path: "/vip", element: <VipFeature /> },
     ],
   },
   // Routes using DefaultLayout
   {
     path: "/",
-    element: (
-      <ProtectedRoute
-        element={<DefaultLayout />}
-        allowedRoles={"USER"}
-        redirectPath="/"
-      />
-    ),
+    element: <ProtectedRoute element={<DefaultLayout />} allowedRoles={"USER"} redirectPath="/"  />,
     children: [
-      // { path: "/", element: <HomePage /> },
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/signup", element: <SignUpPage /> },
+      { path: "/otp", element: <OTPPage /> },
+      { path: "/vip", element: <VipFeature /> },
       { path: "/job-detail/:id", element: <JobDetail /> },
       { path: "/jobs", element: <JobPage /> },
+
       { path: "/companypage", element: <CompanyPage /> },
       { path: "/companydetail/:id", element: <CompanyDetail /> },
-      { path: "/jobsComparison/:id", element: <JobsComparison /> },
-
-      { path: "/vip", element: <VipFeature /> },
-      { path: "/otp", element: <OTPPage /> },
-
     ],
   },
   // Routes using CompanyLayout
   {
     path: "/company",
-    element: (
-      <ProtectedRoute
-        element={<CompanyLayout />}
-        allowedRoles={"COMPANY"}
-        redirectPath="/admin/dashboard"
-      />
-    ),
+    element: <ProtectedRoute element={<CompanyLayout />} allowedRoles={"COMPANY"} redirectPath="/admin/dashboard"  />,
     children: [
       { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
@@ -151,13 +138,7 @@ const routes = [
   // Routes using AdminLayout
   {
     path: "/admin",
-    element: (
-      <ProtectedRoute
-        element={<AdminLayout />}
-        allowedRoles={"ADMIN"}
-        redirectPath="/company/dashboard"
-      />
-    ),
+    element: <ProtectedRoute element={<AdminLayout />} allowedRoles={"ADMIN"} redirectPath="/company/dashboard"  />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "jobType", element: <ManageTypeJob /> },
@@ -176,7 +157,9 @@ const routes = [
   {
     path: "/",
     element: <PaymentLayout />,
-    children: [{ path: "paymentViewCV/success", element: <PaymentSuccess /> }],
+    children: [
+      { path: "paymentViewCV/success", element: <PaymentSuccess /> },
+    ],
   },
 ];
 

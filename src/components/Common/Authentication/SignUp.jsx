@@ -85,6 +85,7 @@ const SignUp = () => {
           console.log("Sign Up Successful", result);
           localStorage.setItem("email", formData.email);
           localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("roleCode", result.user?.roleCode);
           localStorage.setItem("token", result.token);
           fetchUser(result.user?.id);
           navigate("/profileUpdate/experience");
@@ -92,6 +93,7 @@ const SignUp = () => {
           console.log("Sign Up Successful", result);
           localStorage.setItem("email", formData.email);
           localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("roleCode", result.user?.roleCode);
           localStorage.setItem("token", result.token);
           fetchUser(result.user?.id);
           navigate("/signupCompany");

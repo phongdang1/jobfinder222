@@ -10,8 +10,10 @@ const Logout = () => {
   const handleLogout = () => {
     localStorage.removeItem("email");
     localStorage.removeItem("user_id");
-    localStorage.removeItem("company_id");
+    localStorage.removeItem("companyId");
     localStorage.removeItem("admin_id");
+    localStorage.removeItem("token");
+    localStorage.removeItem("roleCode");
     dispatch(logout());
     navigate("/");
   };

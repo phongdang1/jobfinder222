@@ -124,17 +124,20 @@ const Login = () => {
       if (result.user.roleCode === "COMPANY") {
         localStorage.setItem("email", email);
         localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("roleCode", result.user?.roleCode);
         localStorage.setItem("companyId", result.user?.companyId);
         localStorage.setItem("token", result.token)
         navigate("/company/dashboard"); 
       } else if (result.user.roleCode === "ADMIN") {
         localStorage.setItem("email", email);
         localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("roleCode", result.user?.roleCode);
         localStorage.setItem("token", result.token)
         navigate("/admin/dashboard");
       } else {
         localStorage.setItem("email", email);
         localStorage.setItem("user_id", result.user?.id);
+        localStorage.setItem("roleCode", result.user?.roleCode);
         localStorage.setItem("token", result.token)
         fetchUser(result.user?.id);
 
