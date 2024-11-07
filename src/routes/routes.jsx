@@ -58,16 +58,16 @@ const routes = [
     path: "/",
     element: <DefaultLayout />,
     children: [
-      { path: "/", element: <RedirectBasedOnRole /> },
-      { path: "/login", element: <LoginPage /> },
-      { path: "/signup", element: <SignUpPage /> },
-      { path: "/otp", element: <OTPPage /> },
-      { path: "/vip", element: <VipFeature /> },
-      { path: "/job-detail/:id", element: <JobDetail /> },
-      { path: "/jobs", element: <JobPage /> },
+      { path: "/", element: <RedirectBasedOnRole component={<HomePage/>} /> },
+      { path: "/login", element: <RedirectBasedOnRole component={<LoginPage/>} />  },
+      { path: "/signup", element: <RedirectBasedOnRole component={<SignUpPage/>} />  },
+      // { path: "/otp", element: <OTPPage /> },
+      { path: "/vip", element:<RedirectBasedOnRole component={<VipFeature/>} /> },
+      { path: "/job-detail/:id", element: <RedirectBasedOnRole component={<JobDetail/>} /> },
+      { path: "/jobs", element: <RedirectBasedOnRole component={<JobPage/>} /> },
 
-      { path: "/companypage", element: <CompanyPage /> },
-      { path: "/companydetail/:id", element: <CompanyDetail /> },
+      { path: "/companypage", element:<RedirectBasedOnRole component={<CompanyPage/>} /> },
+      { path: "/companydetail/:id", element: <RedirectBasedOnRole component={<CompanyDetail/>} /> },
     ],
   },
   // Routes using DefaultLayout
@@ -90,7 +90,7 @@ const routes = [
   // Routes using CompanyLayout
   {
     path: "/company",
-    element: <ProtectedRoute element={<CompanyLayout />} allowedRoles={"COMPANY"} redirectPath="/admin/dashboard"  />,
+    element: <ProtectedRoute element={<CompanyLayout />} allowedRoles={"COMPANY"} />,
     children: [
       { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
@@ -109,7 +109,7 @@ const routes = [
 
   {
     path: "/companyProfile",
-    element: <CompanyProfileLayout />,
+    element: <ProtectedRoute element={<CompanyProfileLayout />} allowedRoles={"COMPANY"} />,
     children: [
       { path: "profile", element: <CompanyInfo /> },
       { path: "accountInfo", element: <AccountInfo /> },
@@ -118,27 +118,27 @@ const routes = [
 
   {
     path: "/profileUpdate",
-    element: <UserProfileUpdateLayout />,
+    element: <ProtectedRoute element={<UserProfileUpdateLayout />} allowedRoles={"USER"} />,
     children: [
-      { path: "experience", element: <UserProfileUpdate /> },
-      { path: "information", element: <PersonalInformation /> },
-      { path: "skills", element: <Skills /> },
+      { path: "experience", element: <RedirectBasedOnRole component={<UserProfileUpdate/>} /> },
+      { path: "information",element: <RedirectBasedOnRole component={<PersonalInformation/>} /> },
+      { path: "skills", element: <RedirectBasedOnRole component={<Skills/>} /> },
     ],
   },
   {
     path: "/userProfile",
-    element: <UserProfileLayout />,
+    element: <ProtectedRoute element={<UserProfileLayout />} allowedRoles={"USER"} />,
     children: [
-      { path: "personalInfo", element: <PersonalInformation2 /> },
-      { path: "changePassword", element: <ChangePassword /> },
-      { path: "advancedSetting", element: <AdvancedSetting /> },
-      { path: "viewApplication", element: <YourApplication /> },
+      { path: "personalInfo", element: <RedirectBasedOnRole component={<PersonalInformation2/>} />},
+      { path: "changePassword", element: <RedirectBasedOnRole component={<ChangePassword/>} />},
+      { path: "advancedSetting", element: <RedirectBasedOnRole component={<AdvancedSetting/>} /> },
+      { path: "viewApplication", element: <RedirectBasedOnRole component={<YourApplication/>} />},
     ],
   },
   // Routes using AdminLayout
   {
     path: "/admin",
-    element: <ProtectedRoute element={<AdminLayout />} allowedRoles={"ADMIN"} redirectPath="/company/dashboard"  />,
+    element: <ProtectedRoute element={<AdminLayout />} allowedRoles={"ADMIN"} />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "jobType", element: <ManageTypeJob /> },
@@ -152,7 +152,7 @@ const routes = [
   },
   {
     path: "signupCompany",
-    element: <SignUpCompany />,
+    element: <ProtectedRoute element={<SignUpCompany />} allowedRoles={"COMPANY"} />,
   },
   {
     path: "/",
