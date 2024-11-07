@@ -42,6 +42,7 @@ function Header() {
     localStorage.removeItem("user_id");
     localStorage.removeItem("email");
     localStorage.removeItem("token");
+    localStorage.removeItem("roleCode");
     navigate('/')
   };
 

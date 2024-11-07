@@ -143,7 +143,7 @@ const DashboardCompany = () => {
                       <p>FAQ/Hướng dẫn sử dụng</p>
                     </Link>
                   </div>
-                  <div class="flex items-center">
+                  <div className="flex items-center">
                     <FcHome class="mr-2" />
                     <Link
                       to="/company/product"
