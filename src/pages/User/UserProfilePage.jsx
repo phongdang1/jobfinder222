@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { RiVipCrownFill } from "react-icons/ri";
 
 function UserProfilePage() {
   const [image, setImage] = useState(null);
@@ -27,7 +28,7 @@ function UserProfilePage() {
   const [selectedItem, setSelectedItem] = useState("personalInfo");
   const [uploadComplete, setUploadComplete] = useState(false);
   const [saveAvatar, setSaveAvatar] = useState(false);
-
+  const user = JSON.parse(localStorage.getItem("user"));
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -194,11 +195,17 @@ function UserProfilePage() {
                 Account is not Verified
               </div>
             )}
-
-            <div className="text-sm font-medium border border-gray-200 p-[2px] flex items-center gap-2 rounded-3xl cursor-pointer">
-              <ArrowCircleUpTwoTone className="text-primary" />
-              <p>Upgrade to Pro</p>
-            </div>
+            {user.data.isVip !== 1 ? (
+              <div className="text-sm font-medium border border-gray-200 p-[2px] flex items-center gap-2 rounded-3xl cursor-pointer">
+                <ArrowCircleUpTwoTone className="text-primary" />
+                <Link to="/vip">Upgrade to Pro</Link>
+              </div>
+            ) : (
+              <div className="text-sm font-semibold flex gap-2 p-1 items-center">
+                <RiVipCrownFill className="text-yellow-500 w-5 h-5" />
+                <p>VIP Member</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

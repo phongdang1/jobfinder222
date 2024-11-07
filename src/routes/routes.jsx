@@ -51,6 +51,8 @@ import PaymentSuccess from "@/components/Company/components/Payment/CvPayment/Pa
 import ProtectedRoute from "./ProtectedRoutes";
 import { Navigate } from "react-router-dom";
 import RedirectBasedOnRole from "./RedirectBasedOnRole";
+import PostPaymentSuccess from "@/components/Company/components/Payment/HotPostPayment/PostPaymentSuccess";
+import VipPaymentSuccess from "@/pages/User/VipPaymentSuccess";
 
 
 const routes = [
@@ -159,6 +161,8 @@ const routes = [
     element: <PaymentLayout />,
     children: [
       { path: "paymentViewCV/success", element: <PaymentSuccess /> },
+      { path: "paymentHotPost/success", element: <PostPaymentSuccess /> },
+      { path: "paymentVip/success", element: <VipPaymentSuccess /> },
     ],
   },
 ];

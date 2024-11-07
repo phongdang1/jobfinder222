@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../assets/images/JobFinder_logoText.png";
 import { Button } from "@/components/ui/button";
 import Logout from "@/components/Common/Authentication/Logout";
@@ -24,18 +24,25 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { logout } from "@/redux/features/authSlice";
 import { getCompanyById } from "@/fetchData/Company";
+import { FaCirclePlus } from "react-icons/fa6";
 
 const CompanyHeader = () => {
-  const companyData = JSON.parse(localStorage.getItem("company"));
-  const companyId = companyData?.data.id;
+  // const companyData = JSON.parse(localStorage.getItem("company"));
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
   const [user, setUser] = useState();
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("company");
-    fetchCompany();
+    localStorage.removeItem("companyId");
+    localStorage.removeItem("user");
+    localStorage.removeItem("email");
+    localStorage.removeItem("roleCode");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("token");
+    navigate("/");
+    // fetchCompany();
   };
 
   const fetchCompany = async (companyId) => {
@@ -62,6 +69,13 @@ const CompanyHeader = () => {
     <>
       <header className="flex shadow-lg py-4 px-4 sm:px-10 bg-white  min-h-[70px] tracking-wide sticky top-0 z-50">
         <div className="flex flex-wrap items-center justify-between gap-4 w-full mx-16">
+          {/* logo */}
+          <div className="flex justify-center">
+            <Link to="/company/dashboard">
+              <img src={logo} alt="logo" className="w-40" />
+            </Link>
+          </div>
+          {/* nav */}
           <div className="max-lg:hidden lg:!block max-lg:w-full max-lg:fixed max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50">
             <button
               id="toggleClose"
@@ -77,7 +91,7 @@ const CompanyHeader = () => {
               </svg>
             </button>
 
-            <ul className="lg:flex lg:gap-x-5 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50">
+            <ul className="lg:flex lg:gap-x-5 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50 items-center">
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/dashboard"
@@ -113,18 +127,16 @@ const CompanyHeader = () => {
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/createJobPost"
-                  className="hover:text-primary text-third block font-semibold text-[15px]"
+                  className="hover:text-primary text-third flex font-semibold text-[15px]"
                 >
-                  Create New Post
+                  <Button className="text-white flex gap-2">
+                    <FaCirclePlus/>
+                       Create New Post
+                  </Button>
+               
                 </Link>
               </li>
             </ul>
-          </div>
-          {/* logo */}
-          <div className="flex-1 flex justify-center">
-            <Link to="/company/dashboard">
-              <img src={logo} alt="logo" className="w-40" />
-            </Link>
           </div>
 
           {/* user chỗ ni */}
@@ -171,6 +183,14 @@ const CompanyHeader = () => {
                     >
                       Company Profile
                     </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a
+                      className="text-red-500 font-semibold cursor-pointer"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </a>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -238,34 +258,34 @@ const CompanyHeader = () => {
               </SheetHeader>
 
               {/* nút logout */}
-              {/* {user === null || user === undefined ? ( */}
-              <>
+              {user === null || user === undefined ? (
+                <>
+                  <SheetHeader>
+                    <SheetClose asChild>
+                      <Link
+                        className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                        to="/signup"
+                      >
+                        Register
+                      </Link>
+                    </SheetClose>
+                  </SheetHeader>
+                  <SheetHeader>
+                    <SheetClose asChild>
+                      <Link
+                        className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
+                        to="/login"
+                      >
+                        Login
+                      </Link>
+                    </SheetClose>
+                  </SheetHeader>
+                </>
+              ) : (
                 <SheetHeader>
-                  <SheetClose asChild>
-                    <Link
-                      className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
-                      to="/signup"
-                    >
-                      Register
-                    </Link>
-                  </SheetClose>
+                  <Logout />
                 </SheetHeader>
-                <SheetHeader>
-                  <SheetClose asChild>
-                    <Link
-                      className="text-center hover:bg-secondary hover:text-primary text-lg font-medium"
-                      to="/login"
-                    >
-                      Login
-                    </Link>
-                  </SheetClose>
-                </SheetHeader>
-              </>
-              {/* ) : ( */}
-              <SheetHeader>
-                <Logout/>
-              </SheetHeader>
-              {/* )} */}
+              )}
             </SheetContent>
           </Sheet>
         </div>

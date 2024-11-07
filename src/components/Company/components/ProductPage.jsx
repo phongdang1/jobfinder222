@@ -9,7 +9,7 @@ import postcard from "../../../assets/images/img1.jpg";
 import viewCandidate from "../../../assets/illustration/viewCandidate.png";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Button } from "@/components/ui/button";
-import { createPaymentViewCv } from "../../../fetchData/Transaction";
+import { createPaymentHotPost, createPaymentViewCv } from "../../../fetchData/Transaction";
 const URL = "/getAllPackage";
 
 function ProductPage() {
@@ -112,6 +112,26 @@ function ProductPage() {
     console.log("Payment result:", selectedViewPlanId);
   };
 
+  const handleCreatePaymentHotPost = async () => {
+    const res = await createPaymentHotPost(selectedPostPlanId);
+    if (res.data.errCode == 0) {
+      let data = {
+        packageId: selectedPostPlanId,
+        amount: 1,
+        userId: JSON.parse(localStorage.getItem("user_id")),
+      };
+      localStorage.setItem("orderData", JSON.stringify(data));
+      // const userId = JSON.parse(localStorage.getItem("user_id"));
+      // const packageId = selectedViewPlanId; 
+      const redirectUrl = `${res.data.link}`;
+      console.log("Redirecting to:", redirectUrl);
+      window.location.href = redirectUrl;
+    } else {
+      console.log("loi thanh toan", res);
+    }
+    console.log("Payment result:", selectedViewPlanId);
+  };
+
   return (
     <div className="mb-5">
       <div className="flex items-center justify-center bg-opacity-80 rounded-2xl mb-6">
@@ -156,9 +176,12 @@ function ProductPage() {
             <div className="mb-4 p-2 border border-gray-400 rounded-md flex justify-center items-center bg-gray-100">
               <p className="text-xl font-semibold">{`$${postPrice}`}</p>
             </div>
-            <button className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center">
-              <FaShoppingCart className="mr-2" /> Add to Cart
-            </button>
+            <Button
+              onClick={handleCreatePaymentHotPost}
+              className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center"
+            >
+              <FaShoppingCart className="mr-2" /> Buy Now
+            </Button>
           </div>
         </div>
       </div>
