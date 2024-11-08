@@ -4,6 +4,9 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // optimizeDeps: {
+  //   exclude: ["chunk-D6VE73IO.js?v=d25dce0c"],
+  // },
   plugins: [react()],
   resolve: {
     alias: {
