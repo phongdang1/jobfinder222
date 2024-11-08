@@ -136,7 +136,12 @@ function PersonalInformation() {
               genderCode: inputValue.gender,
               file: inputValue.file,
             },
+          },{
+            headers: {
+              Authorization: `Bearer ${token}`, 
+            },
           }
+          
         );
 
         if (response.data.errCode === 0) {
