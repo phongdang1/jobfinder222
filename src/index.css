@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes shake {
+  0% {
+    opacity: 5;
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(-10deg) scale(1);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+.shake {
+  animation: shake 0.75s ease-in-out infinite;
+}
+
 @layer base {
   :root {
     --chart-1: 12 76% 61%;

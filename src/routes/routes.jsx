@@ -46,34 +46,64 @@ import AccountInfo from "@/components/Company/components/CompanyProfile/AccountI
 import ProductPage from "@/components/Company/components/ProductPage";
 import ProductCart from "@/components/Company/components/ProductCart";
 
-import PaymentLayout from './../components/layout/PaymentLayout';
+import PaymentLayout from "./../components/layout/PaymentLayout";
 import PaymentSuccess from "@/components/Company/components/Payment/CvPayment/PaymentSuccess";
 import ProtectedRoute from "./ProtectedRoutes";
 import { Navigate } from "react-router-dom";
 import RedirectBasedOnRole from "./RedirectBasedOnRole";
-
+import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 
 const routes = [
   {
     path: "/",
     element: <DefaultLayout />,
     children: [
-      { path: "/", element: <RedirectBasedOnRole component={<HomePage/>} /> },
-      { path: "/login", element: <RedirectBasedOnRole component={<LoginPage/>} />  },
-      { path: "/signup", element: <RedirectBasedOnRole component={<SignUpPage/>} />  },
+      { path: "/", element: <RedirectBasedOnRole component={<HomePage />} /> },
+      {
+        path: "/login",
+        element: <RedirectBasedOnRole component={<LoginPage />} />,
+      },
+      {
+        path: "/signup",
+        element: <RedirectBasedOnRole component={<SignUpPage />} />,
+      },
       // { path: "/otp", element: <OTPPage /> },
-      { path: "/vip", element:<RedirectBasedOnRole component={<VipFeature/>} /> },
-      { path: "/job-detail/:id", element: <RedirectBasedOnRole component={<JobDetail/>} /> },
-      { path: "/jobs", element: <RedirectBasedOnRole component={<JobPage/>} /> },
-
-      { path: "/companypage", element:<RedirectBasedOnRole component={<CompanyPage/>} /> },
-      { path: "/companydetail/:id", element: <RedirectBasedOnRole component={<CompanyDetail/>} /> },
+      {
+        path: "/vip",
+        element: <RedirectBasedOnRole component={<VipFeature />} />,
+      },
+      {
+        path: "/job-detail/:id",
+        element: <RedirectBasedOnRole component={<JobDetail />} />,
+      },
+      {
+        path: "/jobs",
+        element: <RedirectBasedOnRole component={<JobPage />} />,
+      },
+      {
+        path: "/companypage",
+        element: <RedirectBasedOnRole component={<CompanyPage />} />,
+      },
+      {
+        path: "/companydetail/:id",
+        element: <RedirectBasedOnRole component={<CompanyDetail />} />,
+      },
+      {
+        path: "/jobsComparison/:id",
+        element: <RedirectBasedOnRole component={<JobsComparison />} />,
+      },
     ],
   },
   // Routes using DefaultLayout
   {
     path: "/",
-    element: <ProtectedRoute element={<DefaultLayout />} allowedRoles={"USER"} redirectPath="/"  />,
+    element: (
+      <ProtectedRoute
+        element={<DefaultLayout />}
+        allowedRoles={"USER"}
+        redirectPath="/"
+      />
+    ),
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
@@ -90,7 +120,9 @@ const routes = [
   // Routes using CompanyLayout
   {
     path: "/company",
-    element: <ProtectedRoute element={<CompanyLayout />} allowedRoles={"COMPANY"} />,
+    element: (
+      <ProtectedRoute element={<CompanyLayout />} allowedRoles={"COMPANY"} />
+    ),
     children: [
       { path: "dashboard", element: <DashboardCompany /> },
       { path: "jobPost", element: <ManageJobPost /> },
@@ -109,7 +141,12 @@ const routes = [
 
   {
     path: "/companyProfile",
-    element: <ProtectedRoute element={<CompanyProfileLayout />} allowedRoles={"COMPANY"} />,
+    element: (
+      <ProtectedRoute
+        element={<CompanyProfileLayout />}
+        allowedRoles={"COMPANY"}
+      />
+    ),
     children: [
       { path: "profile", element: <CompanyInfo /> },
       { path: "accountInfo", element: <AccountInfo /> },
@@ -118,27 +155,57 @@ const routes = [
 
   {
     path: "/profileUpdate",
-    element: <ProtectedRoute element={<UserProfileUpdateLayout />} allowedRoles={"USER"} />,
+    element: (
+      <ProtectedRoute
+        element={<UserProfileUpdateLayout />}
+        allowedRoles={"USER"}
+      />
+    ),
     children: [
-      { path: "experience", element: <RedirectBasedOnRole component={<UserProfileUpdate/>} /> },
-      { path: "information",element: <RedirectBasedOnRole component={<PersonalInformation/>} /> },
-      { path: "skills", element: <RedirectBasedOnRole component={<Skills/>} /> },
+      {
+        path: "experience",
+        element: <RedirectBasedOnRole component={<UserProfileUpdate />} />,
+      },
+      {
+        path: "information",
+        element: <RedirectBasedOnRole component={<PersonalInformation />} />,
+      },
+      {
+        path: "skills",
+        element: <RedirectBasedOnRole component={<Skills />} />,
+      },
     ],
   },
   {
     path: "/userProfile",
-    element: <ProtectedRoute element={<UserProfileLayout />} allowedRoles={"USER"} />,
+    element: (
+      <ProtectedRoute element={<UserProfileLayout />} allowedRoles={"USER"} />
+    ),
     children: [
-      { path: "personalInfo", element: <RedirectBasedOnRole component={<PersonalInformation2/>} />},
-      { path: "changePassword", element: <RedirectBasedOnRole component={<ChangePassword/>} />},
-      { path: "advancedSetting", element: <RedirectBasedOnRole component={<AdvancedSetting/>} /> },
-      { path: "viewApplication", element: <RedirectBasedOnRole component={<YourApplication/>} />},
+      {
+        path: "personalInfo",
+        element: <RedirectBasedOnRole component={<PersonalInformation2 />} />,
+      },
+      {
+        path: "changePassword",
+        element: <RedirectBasedOnRole component={<ChangePassword />} />,
+      },
+      {
+        path: "advancedSetting",
+        element: <RedirectBasedOnRole component={<AdvancedSetting />} />,
+      },
+      {
+        path: "viewApplication",
+        element: <RedirectBasedOnRole component={<YourApplication />} />,
+      },
     ],
   },
   // Routes using AdminLayout
   {
     path: "/admin",
-    element: <ProtectedRoute element={<AdminLayout />} allowedRoles={"ADMIN"} />,
+    element: (
+      <ProtectedRoute element={<AdminLayout />} allowedRoles={"ADMIN"} />
+    ),
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "jobType", element: <ManageTypeJob /> },
@@ -152,14 +219,14 @@ const routes = [
   },
   {
     path: "signupCompany",
-    element: <ProtectedRoute element={<SignUpCompany />} allowedRoles={"COMPANY"} />,
+    element: (
+      <ProtectedRoute element={<SignUpCompany />} allowedRoles={"COMPANY"} />
+    ),
   },
   {
     path: "/",
     element: <PaymentLayout />,
-    children: [
-      { path: "paymentViewCV/success", element: <PaymentSuccess /> },
-    ],
+    children: [{ path: "paymentViewCV/success", element: <PaymentSuccess /> }],
   },
 ];
 

@@ -26,7 +26,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IoMdArrowDropdown } from "react-icons/io";
+import {
+  IoMdArrowDropdown,
+  IoMdNotifications,
+  IoMdNotificationsOutline,
+} from "react-icons/io";
+import { io } from "socket.io-client";
+import {
+  Circle,
+  CircleNotifications,
+  CircleNotificationsOutlined,
+  Notifications,
+} from "@mui/icons-material";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { handleCheckNotification } from "@/fetchData/Notification";
+
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState();
@@ -43,14 +62,16 @@ function Header() {
     localStorage.removeItem("email");
     localStorage.removeItem("token");
     localStorage.removeItem("roleCode");
-    navigate('/')
+    navigate("/");
   };
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`,{ headers: {
-        Authorization: `Bearer ${token}`, // Include token in headers
-      }});
+      const response = await axios.get(`/getUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token in headers
+        },
+      });
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
@@ -77,6 +98,88 @@ function Header() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState([]); // Danh sách thông báo
+  const [showNotifications, setShowNotifications] = useState(false);
+  // socket io
+  const socket = io("http://localhost:5000", {
+    transports: ["websocket"],
+    query: {
+      userId: userId,
+    },
+  });
+
+  const fetchNotifications = async (userId) => {
+    try {
+      console.log("Fetching notifications for user:", userId);
+      const response = await axios.get(
+        `/getAllNotificationByUserId?userId=${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Thêm token vào headers
+          },
+        }
+      );
+      console.log("Response from /getAllNotificationByUserId:", response);
+      if (response.data) {
+        // Lưu thông báo vào state
+
+        setNotifications(response.data.data);
+        console.log("not", notifications); // Lưu thông báo vào state
+      }
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
+
+  // useEffect để xử lý socket io
+  useEffect(() => {
+    // Lắng nghe sự kiện từ server (ví dụ: công ty đã được duyệt)
+    socket.on("companyApproved", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("Company Approved Event:", msg);
+    });
+
+    socket.on("companyReject", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("Company Approved Event:", msg);
+    });
+
+    // Lắng nghe khi kết nối hoặc mất kết nối
+    socket.on("connect", () => {
+      console.log("Đã kết nối với server Socket.IO");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Mất kết nối với server Socket.IO");
+    });
+
+    // Dọn dẹp khi component bị hủy (ngắt kết nối)
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket]);
+
+  const handleClickBell = () => {
+    setNotificationCount(0);
+    fetchNotifications(userId); // Gọi API để lấy thông báo
+    setShowNotifications(true); // Reset khi người dùng nhấp vào chuông thông báo
+  };
+
+  const [watch, setWatch] = useState(false);
+  const handleIsWatched = async (notificationId) => {
+    // Optimistically update the notification in state
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((notif) =>
+        notif.id === notificationId ? { ...notif, isChecked: 1 } : notif
+      )
+    );
+
+    // Send the update request to the backend
+    await handleCheckNotification(notificationId);
+  };
+
   return (
     <div
       className={`flex justify-between sticky top-0 px-6 md:px-16 lg:pr-36 lg:pl-20 py-4 md:py-6 items-center font-poppins z-50 
@@ -108,7 +211,12 @@ function Header() {
             </SheetTrigger>
             <SheetContent className="pt-16 space-y-4">
               {/* login, register */}
-              {(userId != null || userId != undefined || token != null || token != undefined || !company || !adminId) && (
+              {(userId != null ||
+                userId != undefined ||
+                token != null ||
+                token != undefined ||
+                !company ||
+                !adminId) && (
                 <SheetHeader>
                   <Link to="/userProfile">
                     <p className="text-center text-lg font-medium">
@@ -150,7 +258,10 @@ function Header() {
               </SheetHeader>
 
               {/* nút logout */}
-              {userId === null || userId === undefined || token === null || token === undefined ? (
+              {userId === null ||
+              userId === undefined ||
+              token === null ||
+              token === undefined ? (
                 <>
                   <SheetHeader>
                     <SheetClose asChild>
@@ -188,26 +299,44 @@ function Header() {
             </SheetContent>
           </Sheet>
         </div>
+
         <ul className="hidden md:hidden sm:hidden lg:flex gap-8 items-center text-third text-md font-medium">
           <li className="hover:text-primary">
-            <Button className=" text-third hover:bg-transparent  hover:text-primary" variant="ghost">
+            <Button
+              className=" text-third hover:bg-transparent  hover:text-primary"
+              variant="ghost"
+            >
               <Link to="/">Home</Link>
             </Button>
           </li>
           <li className="hover:text-primary">
-            <Button className=" text-third hover:bg-transparent hover:text-primary" variant="ghost">
+            <Button
+              className=" text-third hover:bg-transparent hover:text-primary"
+              variant="ghost"
+            >
               <Link to="/jobs">Jobs</Link>
             </Button>
           </li>
           <li className="hover:text-primary">
-            <Button className=" text-third hover:bg-transparent hover:text-primary" variant="ghost">
+            <Button
+              className=" text-third hover:bg-transparent hover:text-primary"
+              variant="ghost"
+            >
               <Link to="/companypage">Company</Link>
             </Button>
           </li>
-          {userId === null || userId === undefined || token === null || token === undefined || company || adminId ? (
+          {userId === null ||
+          userId === undefined ||
+          token === null ||
+          token === undefined ||
+          company ||
+          adminId ? (
             <>
               <li>
-                <Button className="font-semibold hover:bg-transparent text-primary" variant="ghost">
+                <Button
+                  className="font-semibold hover:bg-transparent text-primary"
+                  variant="ghost"
+                >
                   <Link to="/signup">Register</Link>
                 </Button>
               </li>
@@ -221,7 +350,67 @@ function Header() {
               </li>
             </>
           ) : (
-            <li className="flex items-center space-x-4 relative">
+            <div className="flex items-center space-x-4 relative">
+              {/* // bell */}
+              {userId != null || userId != undefined ? (
+                <Popover>
+                  <PopoverTrigger>
+                    <div
+                      onClick={() => handleClickBell()}
+                      className="relative flex items-center gap-4 cursor-pointer"
+                    >
+                      <div
+                        className={`${notificationCount > 0 ? "shake" : ""}`}
+                      >
+                        <Notifications
+                          sx={{ fontSize: 40, color: "#9080f4" }}
+                          className="p-[6px]"
+                        />
+                      </div>
+
+                      {/* Số thông báo */}
+                      {notificationCount > 0 && (
+                        <span className="absolute top-1 right-0 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                          {notificationCount}
+                        </span>
+                      )}
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="p-2 text-lg font-medium sticky top-0 z-30">
+                      Notification
+                    </div>
+                    <ul className="space-y-2">
+                      <ScrollArea className="h-96">
+                        {notifications.map((notification, index) => (
+                          <li
+                            key={index}
+                            className={`flex justify-between items-center p-4 hover:rounded-lg hover:bg-primary/10 cursor-pointer gap-2 ${
+                              notification.isChecked === 1
+                                ? "text-gray-400"
+                                : ""
+                            }`}
+                            onClick={() => handleIsWatched(notification?.id)}
+                          >
+                            <div className="text-sm text-wrap">
+                              {notification?.content}
+                            </div>
+                            <div
+                              className={`text-primary animate-bounce ${
+                                notification.isChecked === 1 ? "hidden" : ""
+                              }`}
+                            >
+                              <Circle sx={{ fontSize: 15 }} />
+                            </div>
+                          </li>
+                        ))}
+                      </ScrollArea>
+                    </ul>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                " "
+              )}
               {/* Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="ring-0 border-0">
@@ -277,7 +466,7 @@ function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </li>
+            </div>
           )}
         </ul>
       </div>
