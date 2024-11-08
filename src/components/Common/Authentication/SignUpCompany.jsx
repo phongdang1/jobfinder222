@@ -53,9 +53,12 @@ function SignUpCompany() {
         if (response) {
           console.log(response);
           localStorage.setItem("company", JSON.stringify(response.data));
-          localStorage.setItem("companyId", JSON.stringify(response.data.id));
+          localStorage.setItem(
+            "companyId",
+            JSON.stringify(response.data.data.id)
+          );
           navigate("/company/dashboard");
-          toast.success("Company profile updated !!!")
+          toast.success("Company profile updated !!!");
         } else {
           console.log("Profile update failed");
         }
