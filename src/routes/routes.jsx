@@ -56,6 +56,7 @@ import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 
 import PostPaymentSuccess from "@/components/Company/components/Payment/HotPostPayment/PostPaymentSuccess";
 import VipPaymentSuccess from "@/pages/User/VipPaymentSuccess";
+import PostPaymentCancel from "@/components/Company/components/Payment/HotPostPayment/PostPaymentCancel";
 
 
 const routes = [
@@ -236,6 +237,9 @@ const routes = [
       { path: "paymentViewCV/success", element: <PaymentSuccess /> },
       { path: "paymentHotPost/success", element: <PostPaymentSuccess /> },
       { path: "paymentVip/success", element: <VipPaymentSuccess /> },
+      { path: "paymentViewCV/cancel", element: <PostPaymentCancel /> },
+      { path: "paymentHotPost/cancel", element: <PostPaymentCancel /> },
+      { path: "paymentVip/cancel", element: <PostPaymentCancel /> },
     ],
 
   },
