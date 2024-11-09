@@ -35,6 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BiLock } from "react-icons/bi";
 
 function AdvancedSetting() {
   const [suggestedSkills, setSuggestedSkills] = useState([]);
@@ -69,7 +70,7 @@ function AdvancedSetting() {
   });
 
   const userId = localStorage.getItem("user_id");
-
+  const user = JSON.parse(localStorage.getItem("user")).data;
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -692,67 +693,89 @@ function AdvancedSetting() {
         )}
       </div>
 
-      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2 px-4 gap-6 flex flex-col">
-        <p>Advanced Settings</p>
-        <div className="flex items-start flex-col space-y-4">
-          {/* job seeker */}
-          <div className="flex justify-center items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label>&quot;Job Seeker&quot; Mode</Label>
-                </TooltipTrigger>
-                <TooltipContent className="w-[450px]">
-                  <p className="font-normal">
-                    Enable{" "}
-                    <span className="text-primary font-semibold">
-                      Job Seeker Mode
-                    </span>{" "}
-                    to showcase your skills and get noticed by top employers!
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>{" "}
-            <Switch
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  handleEnableJobSeeker();
-                } else {
-                  handleDisableJobSeeker();
-                }
-              }}
-            />
+       <div className="relative">
+  {/* Tooltip overlay and lock icon for non-VIP users */}
+  {!user.isVip && (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="absolute inset-0 bg-white bg-opacity-60 flex justify-center items-center rounded-lg">
+            <BiLock className="text-primary opacity-70 text-3xl" />
           </div>
+        </TooltipTrigger>
+        <TooltipContent className="w-[300px]">
+          <p className="font-normal">
+            This feature is available for VIP members only. Upgrade to unlock advanced settings!
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )}
 
-          <div className="flex justify-center items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label>Job Suggestion</Label>
-                </TooltipTrigger>
-                <TooltipContent className="w-[450px]">
-                  <p className="font-normal">
-                    Enable{" "}
-                    <span className="text-primary font-semibold">
-                      Job Suggestion
-                    </span>{" "}
-                    to receive personalized job posts directly to your email and never miss an opportunity!
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>{" "}
-            <Switch
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  handleEnableJobSuggestion();
-                } else {
-                  handleDisableJobSuggestion();
-                }
-              }}
-            />
-          </div>
-        </div>
+  {/* Main content div */}
+  <div className={`bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2 px-4 gap-6 flex flex-col ${!user.isVip ? 'pointer-events-none' : ''}`}>
+    <p>Advanced Settings</p>
+    <div className="flex items-start flex-col space-y-4">
+      {/* Job Seeker Mode */}
+      <div className="flex justify-center items-center gap-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Label>&quot;Job Seeker&quot; Mode</Label>
+            </TooltipTrigger>
+            <TooltipContent className="w-[450px]">
+              <p className="font-normal">
+                Enable{" "}
+                <span className="text-primary font-semibold">
+                  Job Seeker Mode
+                </span>{" "}
+                to showcase your skills and get noticed by top employers!
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>{" "}
+        <Switch
+          onCheckedChange={(checked) => {
+            if (checked) {
+              handleEnableJobSeeker();
+            } else {
+              handleDisableJobSeeker();
+            }
+          }}
+        />
       </div>
+
+      {/* Job Suggestion */}
+      <div className="flex justify-center items-center gap-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Label>Job Suggestion</Label>
+            </TooltipTrigger>
+            <TooltipContent className="w-[450px]">
+              <p className="font-normal">
+                Enable{" "}
+                <span className="text-primary font-semibold">
+                  Job Suggestion
+                </span>{" "}
+                to receive personalized job posts directly to your email and never miss an opportunity!
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>{" "}
+        <Switch
+          onCheckedChange={(checked) => {
+            if (checked) {
+              handleEnableJobSuggestion();
+            } else {
+              handleDisableJobSuggestion();
+            }
+          }}
+        />
+      </div>
+    </div>
+  </div>
+</div>
     </div>
   );
 }
