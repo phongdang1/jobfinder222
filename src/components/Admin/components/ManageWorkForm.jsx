@@ -32,6 +32,7 @@ import AdminPagination from "./AdminPagination";
 const ManageWorkForm = () => {
   const [workTypes, setWorkTypes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredWorkTypes, setFilteredWorkTypes] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
 
@@ -63,13 +64,16 @@ const ManageWorkForm = () => {
         if (Array.isArray(response.data.data)) {
           setWorkTypes(response.data.data);
           setTotalCount(response.data.data.length); // Set total count of work types
+          setFilteredWorkTypes(response.data.data);
         } else {
           setError("Error fetching data. Please try again later.");
           setWorkTypes([]);
+          setFilteredWorkTypes([]);
         }
       } catch (error) {
         setError("Error fetching data. Please try again later.");
         setWorkTypes([]);
+        setFilteredWorkTypes([]);
       } finally {
         setLoading(false);
       }
@@ -78,6 +82,14 @@ const ManageWorkForm = () => {
   }, []);
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
+
+  const handleSearchClick = () => {
+    // Filter the job types when search button is clicked
+    const filtered = workTypes.filter((workType) =>
+      workType.value.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredWorkTypes(filtered); // Update the filtered job types
+  };
 
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
@@ -124,6 +136,7 @@ const ManageWorkForm = () => {
       if (response.data && response.data.errCode === 0) {
         setWorkTypes((prev) => [...prev, userData]);
         setTotalCount((prev) => prev + 1); // Update total count
+        setFilteredWorkTypes((prev) => [...prev, userData]);
       } else {
         console.error(
           "Failed to create job type:",
@@ -158,6 +171,13 @@ const ManageWorkForm = () => {
               : workType
           )
         );
+        setFilteredWorkTypes((prev) =>
+          prev.map((workType) =>
+            workType.code === userData.code
+              ? { ...workType, value: userData.value }
+              : workType
+          )
+        );
       } else {
         console.error(
           "Failed to update job type:",
@@ -178,6 +198,9 @@ const ManageWorkForm = () => {
         setWorkTypes((prev) =>
           prev.filter((workType) => workType.code !== code)
         );
+        setFilteredWorkTypes((prev) =>
+          prev.filter((workType) => workType.code !== code)
+        );
         setTotalCount((prev) => prev - 1);
       } else {
         console.error(
@@ -190,10 +213,10 @@ const ManageWorkForm = () => {
     }
   };
 
-  // Filter work types based on search term
-  const filteredWorkTypes = workTypes.filter((workType) =>
-    workType.value.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // // Filter work types based on search term
+  // const filteredWorkTypes = workTypes.filter((workType) =>
+  //   workType.value.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -224,10 +247,10 @@ const ManageWorkForm = () => {
             </div>
           </div>
           <Button
-            onClick={() => setSearchTerm("")}
+            onClick={handleSearchClick}
             className="p-3 text-white bg-third hover:bg-primary rounded-md"
           >
-            Reset Search
+            Search
           </Button>
         </div>
         <Button

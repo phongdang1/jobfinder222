@@ -33,6 +33,7 @@ import { SiLevelsdotfyi } from "react-icons/si";
 const ManageLevel = () => {
   const [jobLevels, setJobLevels] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredJobLevels, setFilteredJobLevels] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
 
@@ -63,13 +64,16 @@ const ManageLevel = () => {
         const response = await getAllJobLevel();
         if (Array.isArray(response.data.data)) {
           setJobLevels(response.data.data);
+          setFilteredJobLevels(response.data.data);
         } else {
           setError("Error fetching data. Please try again later.");
           setJobLevels([]);
+          setFilteredJobLevels([]);
         }
       } catch (error) {
         setError("Error fetching data. Please try again later.");
         setJobLevels([]);
+        setFilteredJobLevels([]);
       } finally {
         setLoading(false);
       }
@@ -78,6 +82,14 @@ const ManageLevel = () => {
   }, []);
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
+
+  const handleSearchClick = () => {
+    // Filter the job types when search button is clicked
+    const filtered = jobLevels.filter((jobLevel) =>
+      jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredJobLevels(filtered); // Update the filtered job types
+  };
 
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
@@ -123,6 +135,7 @@ const ManageLevel = () => {
 
       if (response.data && response.data.errCode === 0) {
         setJobLevels((prev) => [...prev, userData]);
+        setFilteredJobLevels((prev) => [...prev, userData]);
       } else {
         console.error(
           "Failed to create job level:",
@@ -158,6 +171,13 @@ const ManageLevel = () => {
               : jobLevel
           )
         );
+        setFilteredJobLevels((prev) =>
+          prev.map((jobLevel) =>
+            jobLevel.code === userData.code
+              ? { ...jobLevel, value: userData.value }
+              : jobLevel
+          )
+        );
       } else {
         console.error(
           "Failed to update job level:",
@@ -178,6 +198,9 @@ const ManageLevel = () => {
         setJobLevels((prev) =>
           prev.filter((jobLevel) => jobLevel.code !== code)
         );
+        setFilteredJobLevels((prev) =>
+          prev.filter((jobLevel) => jobLevel.code !== code)
+        );
       } else {
         console.error(
           "Failed to delete job level:",
@@ -189,9 +212,9 @@ const ManageLevel = () => {
     }
   };
 
-  const filteredJobLevels = jobLevels.filter((jobLevel) =>
-    jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredJobLevels = jobLevels.filter((jobLevel) =>
+  //   jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   // Pagination logic
   const indexOfLastJobLevel = currentPage * jobLevelsPerPage;
@@ -222,10 +245,10 @@ const ManageLevel = () => {
             </div>
           </div>
           <Button
-            onClick={() => setSearchTerm("")}
+            onClick={handleSearchClick}
             className="p-3 text-white bg-third hover:bg-primary rounded-md"
           >
-            Reset Search
+            Search
           </Button>
         </div>
         <Button

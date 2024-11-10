@@ -1,4 +1,3 @@
-
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../redux/features/authSlice";
@@ -19,12 +18,12 @@ const Logout = () => {
   };
 
   return (
-    <button
+    <div
       onClick={handleLogout}
       className="text-red-500 hover:text-red-700 cursor-pointer w-full"
     >
       Logout
-    </button>
+    </div>
   );
 };
 
