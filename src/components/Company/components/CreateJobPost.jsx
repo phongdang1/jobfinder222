@@ -143,10 +143,10 @@ function CreateJobPost() {
         categoryJobCode: form.category,
         addressCode: form.address,
         salaryJobCode: form.salary,
-        amount: form.amount,
+        amount: goal,
         timeEnd: form.timeEnd,
         jobLevelCode: form.jobLevel,
-        userId: 11, // TODO: Replace with user id
+        userId: localStorage.getItem("user_id"), // TODO: Replace with user id
         workTypeCode: form.workType,
         experienceJobCode: form.experience,
         genderPostCode: form.gender,
@@ -154,6 +154,10 @@ function CreateJobPost() {
         benefit: form.benefit,
         requirement: form.requirement,
         skillRequirement: form.skillRequirement,
+      },{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (res.data.errCode === 0) {
         toast.success(res.data.errMessage);
@@ -174,6 +178,7 @@ function CreateJobPost() {
           requirement: "",
           skillRequirement: "",
         });
+        setGoal(1);
         console.log(res.data);
       } else {
         toast.error(res.data.errMessage);
