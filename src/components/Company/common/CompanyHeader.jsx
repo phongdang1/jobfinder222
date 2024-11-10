@@ -49,7 +49,7 @@ const CompanyHeader = () => {
     try {
       const response = await getCompanyById(companyId);
       console.log(companyId);
-      console.log("Response ", response);
+      console.log("Response ", response.data);
 
       if (response.data) {
         setUser(response.data);
@@ -95,7 +95,11 @@ const CompanyHeader = () => {
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/dashboard"
-                  className="hover:text-primary text-third block font-semibold text-[15px]"
+                 className={`block font-semibold text-[15px] ${
+                    user?.data?.statusCode.toUpperCase() !== "ACTIVE" 
+                      ? "text-gray-400 cursor-not-allowed pointer-events-none" 
+                      : "hover:text-primary text-third"
+                  }`}
                 >
                   Dashboard
                 </Link>
@@ -103,7 +107,11 @@ const CompanyHeader = () => {
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/jobPost"
-                  className="hover:text-primary text-third block font-semibold text-[15px]"
+                  className={`block font-semibold text-[15px] ${
+                    user?.data?.statusCode.toUpperCase() !== "ACTIVE" 
+                      ? "text-gray-400 cursor-not-allowed pointer-events-none" 
+                      : "hover:text-primary text-third"
+                  }`}
                 >
                   Job Post
                 </Link>
@@ -111,7 +119,11 @@ const CompanyHeader = () => {
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/candidate"
-                  className="hover:text-primary text-third block font-semibold text-[15px]"
+                 className={`block font-semibold text-[15px] ${
+                    user?.data?.statusCode.toUpperCase() !== "ACTIVE" 
+                      ? "text-gray-400 cursor-not-allowed pointer-events-none" 
+                      : "hover:text-primary text-third"
+                  }`}
                 >
                   Candidate
                 </Link>
@@ -119,7 +131,11 @@ const CompanyHeader = () => {
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/product"
-                  className="hover:text-primary text-third block font-semibold text-[15px]"
+                 className={`block font-semibold text-[15px] ${
+                    user?.data?.statusCode.toUpperCase() !== "ACTIVE" 
+                      ? "text-gray-400 cursor-not-allowed pointer-events-none" 
+                      : "hover:text-primary text-third"
+                  }`}
                 >
                   Product
                 </Link>
@@ -127,13 +143,18 @@ const CompanyHeader = () => {
               <li className="max-lg:border-b max-lg:py-3 px-3">
                 <Link
                   to="/company/createJobPost"
-                  className="hover:text-primary text-third flex font-semibold text-[15px]"
+                  className={`block font-semibold text-[15px] ${
+                    user?.data?.statusCode.toUpperCase() !== "ACTIVE" 
+                      ? "text-gray-400 cursor-not-allowed pointer-events-none" 
+                      : "hover:text-primary text-third"
+                  }`}
                 >
-                  <Button className="text-white flex gap-2">
-                    <FaCirclePlus/>
-                       Create New Post
+                  <Button
+                  disabled={user?.data?.statusCode.toUpperCase() !== "ACTIVE"} 
+                  className="text-white flex gap-2">
+                    <FaCirclePlus />
+                    Create New Post
                   </Button>
-               
                 </Link>
               </li>
             </ul>
