@@ -32,6 +32,7 @@ import axios from "../../../fetchData/axios";
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // Trạng thái cho modal xóa
@@ -81,9 +82,11 @@ const ManageSkill = () => {
         setTotalCount(response.data.count); // Set total count for pagination
       } else {
         setError(response.data.errMessage || "Error fetching skills");
+        setSkills([]);
       }
     } catch (error) {
       setError("Error fetching data. Please try again later.");
+      setSkills([]);
     } finally {
       setLoading(false);
     }
@@ -91,9 +94,13 @@ const ManageSkill = () => {
 
   useEffect(() => {
     fetchSkills(searchTerm, selectedCategory);
-  }, [currentPage, searchTerm, selectedCategory]);
+  }, [currentPage, selectedCategory]);
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
+
+  const handleSearchClick = () => {
+    fetchSkills(searchTerm, selectedCategory);
+  };
 
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
@@ -185,6 +192,7 @@ const ManageSkill = () => {
       console.error("Error deleting skill:", error);
     }
   };
+
   const filteredSkills = skills.filter((skill) =>
     skill.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -203,10 +211,8 @@ const ManageSkill = () => {
   };
   const sortedSkills =
     selectedCategory === "all"
-      ? filteredSkills
-      : filteredSkills.filter(
-          (skill) => skill.categoryJobCode === selectedCategory
-        );
+      ? skills
+      : skills.filter((skill) => skill.categoryJobCode === selectedCategory);
 
   // Pagination logic
   const totalPages = Math.ceil(sortedSkills.length / skillsPerPage);
@@ -239,10 +245,10 @@ const ManageSkill = () => {
             </div>
           </div>
           <Button
-            onClick={() => setSearchTerm("")}
+            onClick={handleSearchClick}
             className="p-3 text-white bg-third hover:bg-primary rounded-md"
           >
-            Reset Search
+            Search
           </Button>
         </div>
         <div className="flex items-center gap-4">
