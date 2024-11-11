@@ -126,11 +126,11 @@ const VipFeature = () => {
           <Card className="flex flex-col items-center text-center p-4">
             <CardHeader className="flex justify-center items-center">
               <FaFileAlt className="text-4xl text-primary mb-4" />
-              <CardTitle>CV Enhancement</CardTitle>
+              <CardTitle>&quot;Job Seeker&quot; mode </CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                Make your CV stand out and increase your chances of getting
+                Enable this amazing feature to increase your chances of getting
                 hired.
               </p>
             </CardContent>

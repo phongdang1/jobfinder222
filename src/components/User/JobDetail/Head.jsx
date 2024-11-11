@@ -50,7 +50,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-
 const Head = ({ job }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,7 +61,8 @@ const Head = ({ job }) => {
   const [cvData, setCvData] = useState();
   const [isApplied, setIsApplied] = useState(false);
   const jobId = job.data.id;
-
+  const deadline = new Date(job.data.timeEnd).getTime();
+  const currentTime = new Date();
   useEffect(() => {
     fetchUserData();
   }, [userId, jobId]);
@@ -76,6 +76,11 @@ const Head = ({ job }) => {
 
   if (!job) {
     return <p>Loading...</p>;
+  }
+  if (currentTime > deadline) {
+    console.log("Thời gian đã hết hạn");
+  } else {
+    console.log("Thời gian vẫn còn");
   }
 
   const fetchUserData = async () => {
@@ -235,8 +240,9 @@ const Head = ({ job }) => {
               <div className="flex items-center justify-center gap-x-2">
                 {!isApplied || !userId ? (
                   <>
-
-                    {!userId || user?.isVerify === 0 ? (
+                    {!userId ||
+                    user?.isVerify === 0 ||
+                    currentTime > deadline ? (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -254,11 +260,16 @@ const Head = ({ job }) => {
                             <div>
                               {!userId ? (
                                 "Please login to apply for this job"
-                              ) : (
+                              ) : user?.isVerify === 0 ? (
                                 <>
-                                  Your email is not verified. Please verify in 
-                                  <span className="text-primary font-semibold"> User Profile</span>
+                                  Your email is not verified. Please verify in
+                                  <span className="text-primary font-semibold">
+                                    {" "}
+                                    User Profile
+                                  </span>
                                 </>
+                              ) : (
+                                "The application deadline has passed."
                               )}
                             </div>
                             <Button
@@ -267,12 +278,18 @@ const Head = ({ job }) => {
                                 navigate(
                                   !userId
                                     ? "/login"
-                                    : "/userProfile/personalInfo"
+                                    : user?.isVerify === 0
+                                    ? "/userProfile/personalInfo"
+                                    : "/"
                                 )
                               }
-                              className="mt-2 text-primary"
+                              className="mt-2 text-primary  border border-primary hover:bg-primary hover:text-white"
                             >
-                              {!userId ? "Login Now" : "Verify Now"}
+                              {!userId
+                                ? "Login Now"
+                                : user?.isVerify === 0
+                                ? "Verify Now"
+                                : "Back to Jobs"}
                             </Button>
                           </TooltipContent>
                         </Tooltip>
