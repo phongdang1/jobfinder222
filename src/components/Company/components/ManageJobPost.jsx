@@ -79,7 +79,6 @@ const ManageJobPost = () => {
         setCompany(res.data.data);
         console.log('company ne',res.data.data)
         setPost(res.data.data.postData);
-        console.log(res.data.data, companyData);
         const userCvData = {};
         const userDetailsData = {};
         const scheduleData = {};
@@ -89,7 +88,9 @@ const ManageJobPost = () => {
           const id = cvEntry.id;
           console.log(`Fetching CVs for post ID: ${id}`);
 
-          const resUserCV = await axios.get(`/getAllListCvByPost?postId=${id}`);
+          const resUserCV = await axios.get(`/getAllListCvByPost?postId=${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          });
           console.log(`CV Response for post ID ${id}:`, resUserCV);
           userCvData[id] = resUserCV.data.data || [];
 
@@ -101,7 +102,9 @@ const ManageJobPost = () => {
                 `/getUserById?id=${userId}`
               );
               const resSchedule = await axios.get(
-                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`
+                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`, {
+                  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                }
               );
               console.log(
                 `User Details Response for user ID ${userId}:`,
@@ -142,6 +145,8 @@ const ManageJobPost = () => {
         interviewNote: scheduleForm.interviewNote,
         cvPostId: scheduleForm.cvPostId,
         companyId: scheduleForm.companyId,
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (res.data.errCode === 0) {
         console.log("form ne", res);
