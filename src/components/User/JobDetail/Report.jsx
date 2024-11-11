@@ -51,17 +51,21 @@ function Report({ data }) {
       description: description,
     };
 
-    const report = await createNewReport(reportData);
-    if (report.data.errorCode === -1) {
-      console.log("rp data", report);
-      toast.error(report.data.errMessage);
-      setSelectedReasons([]);
-      setDescription("");
+    if (!reportData.userId) {
+      toast.error("Please login before reporting!");
     } else {
-      toast.success(report.data.errMessage);
-      setSelectedReasons([]);
-      setDescription("");
-      setIsDialogOpen(false);
+      const report = await createNewReport(reportData);
+      if (report.data.errorCode === -1) {
+        console.log("rp data", report);
+        toast.error(report.data.errMessage);
+        setSelectedReasons([]);
+        setDescription("");
+      } else {
+        toast.success(report.data.errMessage);
+        setSelectedReasons([]);
+        setDescription("");
+        setIsDialogOpen(false);
+      }
     }
   };
 

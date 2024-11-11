@@ -7,15 +7,24 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post("/login", credentials);
-      console.log("Login response:", response);
+      console.log("Login response:", response.data.errCode);
       if (response && response.data) {
-        const { data } = response;
-        const userId = data.data.id;
-        localStorage.setItem("user_id", userId);
-        return {
-          user: data.data,
-          token: data.token,
-        };
+        if (response.data.errCode !== 0) {
+          return {
+            errCode: response.data.errCode,
+            errMessage: response.data.errMessage,
+          };
+        } else {
+          const { data } = response;
+          console.log("aaaaaaaaaaa");
+          const userId = data.data.id;
+          localStorage.setItem("user_id", userId);
+          return {
+            user: data.data,
+            errCode: response.data.errCode,
+            token: data.token,
+          };
+        }
       } else {
         // If response or response.data is not defined, return a meaningful error
         return rejectWithValue("No response data received from server");
@@ -46,7 +55,7 @@ export const signUp = createAsyncThunk(
         const { data } = response.data;
         return {
           user: data, // Assuming the response contains user data
-          token : data.token
+          token: data.token,
         };
       } else {
         return rejectWithValue("No response data received from server");

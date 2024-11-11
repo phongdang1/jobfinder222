@@ -53,14 +53,13 @@ function AdvancedSetting() {
   const [salary, setSalary] = useState([]);
   const [workType, setWorkType] = useState([]);
   const typeKey = ["PROVINCE", "JOBTYPE", "JOBLEVEL", "SALARYTYPE", "WORKTYPE"];
-  const user = JSON.parse(localStorage.getItem("user")).data;
+
   const [addressCode, setAddressCode] = useState([]);
   const [categoryJobCode, setCategoryJobCode] = useState([]);
   const [jobLevelCode, setJobLevelCode] = useState([]);
   const [salaryJobCode, setSalaryJobCode] = useState([]);
   const [workTypeCode, setWorkTypeCode] = useState([]);
   const [code, setCode] = useState([]);
-  const [isFindJobMode, setIsFindJobMode] = useState(user.UserDetailData.isFindJob);
 
   const [dreamJob, setDreamJob] = useState({
     province: "",
@@ -71,7 +70,7 @@ function AdvancedSetting() {
   });
 
   const userId = localStorage.getItem("user_id");
-
+  const user = JSON.parse(localStorage.getItem("user")).data;
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -82,8 +81,7 @@ function AdvancedSetting() {
         console.log("Error fetching job categories");
       }
     };
-    setIsFindJobMode(user.UserDetailData.isFindJob === 1);
-    console.log('mode',user.UserDetailData.isFindJob === 1)
+
     fetchCategory();
   }, []);
 
@@ -274,7 +272,6 @@ function AdvancedSetting() {
     if (res.data.errCode === 0) {
       toast.success("Job Seeker mode has been enabled");
       console.log(res);
-      setIsFindJobMode(true);
     } else {
       console.log("loi turn on");
     }
@@ -288,9 +285,8 @@ function AdvancedSetting() {
     };
     const res = await handleSetDataUserDetail(userData);
     if (res.data.errCode === 0) {
-      toast.success("Disabled Job Seeker mode");
+      toast.error("Disabled Job Seeker mode");
       console.log(res);
-      setIsFindJobMode(false);
     } else {
       console.log("loi turn off");
     }
@@ -319,7 +315,7 @@ function AdvancedSetting() {
     };
     const res = await handleSetDataUserDetail(userData);
     if (res.data.errCode === 0) {
-      toast.success("Disabled Job Suggestion");
+      toast.error("Disabled Job Suggestion");
       console.log(res);
     } else {
       console.log("loi turn off");
@@ -485,305 +481,315 @@ function AdvancedSetting() {
         )}
       </div>
 
-      {/* dream job */}
+      <div className="grid grid-cols-2 gap-4 min-h-[200px]">
+        {/* dream job */}
+        <div className="bg-white rounded-lg font-poppins text-xl md:text-2xl font-medium py-4 flex flex-col h-full">
+          <div className="flex justify-between items-center">
+            <p className="ml-4 mb-2">Dream Job</p>
 
-      <div className="bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2">
-        <div className="flex justify-between items-center">
-          <p className="ml-4 mb-2">Dream Job</p>
+            <form onSubmit={handleDreamJobSubmit}>
+              <EditNoteOutlined
+                onClick={() => {
+                  setIsDialogOpen(true);
+                }}
+                className="hover:text-primary mr-4 cursor-pointer"
+              />
+              <Dialog
+                open={isDialogOpen}
+                onOpenChange={() => setIsDialogOpen(false)}
+              >
+                <DialogContent className="max-w-4xl max-h-svh h-4/5">
+                  <DialogHeader>
+                    <DialogTitle>Dream Job</DialogTitle>
+                    <DialogDescription className="italic">
+                      Set up your dream job
+                    </DialogDescription>
+                  </DialogHeader>
 
-          <form onSubmit={handleDreamJobSubmit}>
-            <EditNoteOutlined
-              onClick={() => {
-                setIsDialogOpen(true);
-              }}
-              className="hover:text-primary mr-4 cursor-pointer"
-            />
-            <Dialog
-              open={isDialogOpen}
-              onOpenChange={() => setIsDialogOpen(false)}
-            >
-              <DialogContent className="max-w-4xl max-h-svh h-4/5">
-                <DialogHeader>
-                  <DialogTitle>Dream Job</DialogTitle>
-                  <DialogDescription className="italic">
-                    Set up your dream job
-                  </DialogDescription>
-                </DialogHeader>
+                  <ScrollArea className="w-full h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6">
+                      <div className="space-y-2 col-span-2">
+                        <div className="font-medium">Work Location:</div>
 
-                <ScrollArea className="w-full h-full">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6">
-                    <div className="space-y-2 col-span-2">
-                      <div className="font-medium">Work Location:</div>
+                        <Select
+                          value={dreamJob.province}
+                          onValueChange={(value) =>
+                            setDreamJob({ ...dreamJob, province: value })
+                          }
+                          className="flex items-center"
+                        >
+                          <SelectTrigger className="w-full shrink basis-1/4 ">
+                            <SelectValue placeholder="Choose a location..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.isArray(province) &&
+                              province.map((data, index) => (
+                                <SelectItem key={index} value={data.code}>
+                                  {data.value}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {errorMessage.province && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errorMessage.province}
+                          </p>
+                        )}
+                      </div>
 
-                      <Select
-                        value={dreamJob.province}
-                        onValueChange={(value) =>
-                          setDreamJob({ ...dreamJob, province: value })
-                        }
-                        className="flex items-center"
-                      >
-                        <SelectTrigger className="w-full shrink basis-1/4 ">
-                          <SelectValue placeholder="Choose a location..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.isArray(province) &&
-                            province.map((data, index) => (
-                              <SelectItem key={index} value={data.code}>
-                                {data.value}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      {errorMessage.province && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errorMessage.province}
-                        </p>
-                      )}
+                      <div className="space-y-2">
+                        <div className="font-medium">Occupation Category:</div>
+                        <Select
+                          className="flex items-center"
+                          value={dreamJob.jobType}
+                          onValueChange={(value) =>
+                            setDreamJob({ ...dreamJob, jobType: value })
+                          }
+                        >
+                          <SelectTrigger className="w-full shrink basis-1/4 ">
+                            <SelectValue placeholder="Choose a category..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.isArray(jobType) &&
+                              jobType.map((data, index) => (
+                                <SelectItem key={index} value={data.code}>
+                                  {data.value}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {errorMessage.jobType && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errorMessage.jobType}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="font-medium">Desired Job Level:</div>
+                        <Select
+                          className="flex items-center"
+                          value={dreamJob.jobLevel}
+                          onValueChange={(value) =>
+                            setDreamJob({ ...dreamJob, jobLevel: value })
+                          }
+                        >
+                          <SelectTrigger className="w-full shrink basis-1/4 ">
+                            <SelectValue placeholder="Choose your desired level..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.isArray(jobLevel) &&
+                              jobLevel.map((data, index) => (
+                                <SelectItem key={index} value={data.code}>
+                                  {data.value}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {errorMessage.jobLevel && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errorMessage.jobLevel}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <div className="font-medium">Desired Salary:</div>
+                        <Select
+                          className="flex items-center"
+                          value={dreamJob.salary}
+                          onValueChange={(value) =>
+                            setDreamJob({ ...dreamJob, salary: value })
+                          }
+                        >
+                          <SelectTrigger className="w-full shrink basis-1/4 ">
+                            <SelectValue placeholder="Choose your desired salary..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.isArray(salary) &&
+                              salary.map((data, index) => (
+                                <SelectItem key={index} value={data.code}>
+                                  {data.value}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {errorMessage.salary && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errorMessage.salary}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <div className="font-medium">Employment Type:</div>
+                        <Select
+                          className="flex items-center"
+                          value={dreamJob.workType}
+                          onValueChange={(value) =>
+                            setDreamJob({ ...dreamJob, workType: value })
+                          }
+                        >
+                          <SelectTrigger className="w-full shrink basis-1/4 ">
+                            <SelectValue placeholder="Choose your employment type..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.isArray(workType) &&
+                              workType.map((data, index) => (
+                                <SelectItem key={index} value={data.code}>
+                                  {data.value}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {errorMessage.workType && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errorMessage.workType}
+                          </p>
+                        )}
+                      </div>
                     </div>
-
-                    <div className="space-y-2">
-                      <div className="font-medium">Occupation Category:</div>
-                      <Select
-                        className="flex items-center"
-                        value={dreamJob.jobType}
-                        onValueChange={(value) =>
-                          setDreamJob({ ...dreamJob, jobType: value })
-                        }
-                      >
-                        <SelectTrigger className="w-full shrink basis-1/4 ">
-                          <SelectValue placeholder="Choose a category..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.isArray(jobType) &&
-                            jobType.map((data, index) => (
-                              <SelectItem key={index} value={data.code}>
-                                {data.value}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      {errorMessage.jobType && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errorMessage.jobType}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="font-medium">Desired Job Level:</div>
-                      <Select
-                        className="flex items-center"
-                        value={dreamJob.jobLevel}
-                        onValueChange={(value) =>
-                          setDreamJob({ ...dreamJob, jobLevel: value })
-                        }
-                      >
-                        <SelectTrigger className="w-full shrink basis-1/4 ">
-                          <SelectValue placeholder="Choose your desired level..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.isArray(jobLevel) &&
-                            jobLevel.map((data, index) => (
-                              <SelectItem key={index} value={data.code}>
-                                {data.value}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      {errorMessage.jobLevel && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errorMessage.jobLevel}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <div className="font-medium">Desired Salary:</div>
-                      <Select
-                        className="flex items-center"
-                        value={dreamJob.salary}
-                        onValueChange={(value) =>
-                          setDreamJob({ ...dreamJob, salary: value })
-                        }
-                      >
-                        <SelectTrigger className="w-full shrink basis-1/4 ">
-                          <SelectValue placeholder="Choose your desired salary..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.isArray(salary) &&
-                            salary.map((data, index) => (
-                              <SelectItem key={index} value={data.code}>
-                                {data.value}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      {errorMessage.salary && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errorMessage.salary}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <div className="font-medium">Employment Type:</div>
-                      <Select
-                        className="flex items-center"
-                        value={dreamJob.workType}
-                        onValueChange={(value) =>
-                          setDreamJob({ ...dreamJob, workType: value })
-                        }
-                      >
-                        <SelectTrigger className="w-full shrink basis-1/4 ">
-                          <SelectValue placeholder="Choose your employment type..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.isArray(workType) &&
-                            workType.map((data, index) => (
-                              <SelectItem key={index} value={data.code}>
-                                {data.value}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      {errorMessage.workType && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errorMessage.workType}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </ScrollArea>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    className="hover:bg-primary hover:text-white"
-                    onClick={handleDreamJobSubmit}
-                  >
-                    Save changes
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </form>
+                  </ScrollArea>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      className="hover:bg-primary hover:text-white"
+                      onClick={handleDreamJobSubmit}
+                    >
+                      Save changes
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </form>
+          </div>
+          {/* info of dream job */}
+          {/* dreamJob */}
+          {userSkill?.UserDetailData ? (
+            <div className="ml-4 text-sm font-normal ">
+              <div className="flex gap-10 text-base">
+                <p className="text-gray-400 w-full max-w-28 font-medium">
+                  Address
+                </p>{" "}
+                <p className="font-medium">{addressCode?.value}</p>
+              </div>
+              <div className="flex gap-10 text-base">
+                <p className="text-gray-400 w-full max-w-28 font-medium">
+                  Job Category
+                </p>{" "}
+                <p className="font-medium">{categoryJobCode?.value}</p>
+              </div>
+              <div className="flex gap-10 text-base">
+                <p className="text-gray-400 w-full max-w-28 font-medium">
+                  Job Level
+                </p>{" "}
+                <p className="font-medium">{jobLevelCode?.value}</p>
+              </div>
+              <div className="flex gap-10 text-base">
+                <p className="text-gray-400 w-full max-w-28 font-medium">
+                  Salary
+                </p>{" "}
+                <p className="font-medium">{salaryJobCode?.value}</p>
+              </div>
+              <div className="flex gap-10 text-base">
+                <p className="text-gray-400 w-full max-w-28 font-medium">
+                  Work Type
+                </p>{" "}
+                <p className="font-medium">{workTypeCode?.value}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm ml-4 mb-2 italic text-gray-400 font-normal">
+              <p>Set up your dream job here.</p>
+            </div>
+          )}
         </div>
-        {/* info of dream job */}
-        {/* dreamJob */}
-        {userSkill?.UserDetailData ? (
-          <div className="ml-4 text-sm font-normal ">
-            <div className="flex gap-1">
-              <p className="text-gray-400 w-full max-w-28">Address</p>{" "}
-              {addressCode?.value}
-            </div>
-            <div className="flex gap-1">
-              <p className="text-gray-400 w-full max-w-28">Job Category</p>{" "}
-              <p>{categoryJobCode?.value}</p>
-            </div>
-            <div className="flex gap-1">
-              <p className="text-gray-400 w-full max-w-28">Job Level</p>{" "}
-              <p>{jobLevelCode?.value}</p>
-            </div>
-            <div className="flex gap-1">
-              <p className="text-gray-400 w-full max-w-28">Salary</p>{" "}
-              <p>{salaryJobCode?.value}</p>
-            </div>
-            <div className="flex gap-1">
-              <p className="text-gray-400 w-full max-w-28">Work Type</p>{" "}
-              <p>{workTypeCode?.value}</p>
-            </div>
-          </div>
-        ) : (
-          <div className="text-sm ml-4 mb-2 italic text-gray-400 font-normal">
-            <p>Set up your dream job here.</p>
-          </div>
-        )}
-      </div>
 
-      <div className="relative">
-        {/* Tooltip overlay and lock icon for non-VIP users */}
-        {!user.isVip && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="absolute inset-0 bg-white bg-opacity-60 flex justify-center items-center rounded-lg">
-                  <BiLock className="text-primary opacity-70 text-3xl" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="w-[300px]">
-                <p className="font-normal">
-                  This feature is available for VIP members only. Upgrade to
-                  unlock advanced settings!
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
+        <div className="relative ">
+          {/* Tooltip overlay and lock icon for non-VIP users */}
+          {!user.isVip && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="absolute inset-0 bg-white bg-opacity-60 flex justify-center items-center rounded-lg">
+                    <BiLock className="text-primary opacity-70 text-3xl" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="w-[300px]">
+                  <p className="font-normal">
+                    This feature is available for VIP members only. Upgrade to
+                    unlock advanced settings!
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
 
-        {/* Main content div */}
-        <div
-          className={`bg-white h-fit rounded-lg font-poppins text-xl md:text-2xl font-medium py-2 px-4 gap-6 flex flex-col ${
-            !user.isVip ? "pointer-events-none" : ""
-          }`}
-        >
-          <p>Advanced Settings</p>
-          <div className="flex items-start flex-col space-y-4">
-            {/* Job Seeker Mode */}
-            <div className="flex justify-center items-center gap-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Label>&quot;Job Seeker&quot; Mode</Label>
-                  </TooltipTrigger>
-                  <TooltipContent className="w-[450px]">
-                    <p className="font-normal">
-                      Enable{" "}
-                      <span className="text-primary font-semibold">
-                        Job Seeker Mode
-                      </span>{" "}
-                      to showcase your skills and get noticed by top employers!
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>{" "}
-              <Switch
-                defaultChecked={(user.UserDetailData.isFindJob == 1)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    handleEnableJobSeeker();
-                  } else {
-                    handleDisableJobSeeker();
-                  }
-                }}
-              />
-            </div>
+          {/* Main content div */}
+          <div
+            className={`bg-white rounded-lg font-poppins text-xl md:text-2xl font-medium p-4 gap-6 flex flex-col h-full${
+              !user.isVip ? "pointer-events-none" : ""
+            }`}
+          >
+            <p>Vip Functionality</p>
+            <div className="flex justify-between">
+              {/* Job Seeker Mode */}
+              <div className="flex justify-center items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Label>&quot;Job Seeker&quot; Mode</Label>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-[450px]">
+                      <p className="font-normal">
+                        Enable{" "}
+                        <span className="text-primary font-semibold">
+                          Job Seeker Mode
+                        </span>{" "}
+                        to showcase your skills and get noticed by top
+                        employers!
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>{" "}
+                <Switch
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      handleEnableJobSeeker();
+                    } else {
+                      handleDisableJobSeeker();
+                    }
+                  }}
+                />
+              </div>
 
-            {/* Job Suggestion */}
-            <div className="flex justify-center items-center gap-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Label>Job Suggestion</Label>
-                  </TooltipTrigger>
-                  <TooltipContent className="w-[450px]">
-                    <p className="font-normal">
-                      Enable{" "}
-                      <span className="text-primary font-semibold">
-                        Job Suggestion
-                      </span>{" "}
-                      to receive personalized job posts directly to your email
-                      and never miss an opportunity!
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>{" "}
-              <Switch
-                checked={(user.UserDetailData.isTakeMail = 1)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    handleEnableJobSuggestion();
-                  } else {
-                    handleDisableJobSuggestion();
-                  }
-                }}
-              />
+              {/* Job Suggestion */}
+              <div className="flex justify-center items-center gap-2 mr-32">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Label>Job Suggestion</Label>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-[450px]">
+                      <p className="font-normal">
+                        Enable{" "}
+                        <span className="text-primary font-semibold">
+                          Job Suggestion
+                        </span>{" "}
+                        to receive personalized job posts directly to your email
+                        and never miss an opportunity!
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>{" "}
+                <Switch
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      handleEnableJobSuggestion();
+                    } else {
+                      handleDisableJobSuggestion();
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

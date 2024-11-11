@@ -25,7 +25,7 @@ function UserProfilePage() {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const userId = localStorage.getItem("user_id");
-  const [selectedItem, setSelectedItem] = useState("personalInfo");
+  const [selectedItem, setSelectedItem] = useState("");
   const [uploadComplete, setUploadComplete] = useState(false);
   const [saveAvatar, setSaveAvatar] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -195,7 +195,7 @@ function UserProfilePage() {
                 Account is not Verified
               </div>
             )}
-            {user.data.isVip !== 1 ? (
+            {user.data?.isVip !== 1 ? (
               <div className="text-sm font-medium border border-gray-200 p-[2px] flex items-center gap-2 rounded-3xl cursor-pointer">
                 <ArrowCircleUpTwoTone className="text-primary" />
                 <Link to="/vip">Upgrade to Pro</Link>

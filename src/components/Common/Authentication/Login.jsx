@@ -111,6 +111,8 @@ const Login = () => {
 
   // }
 
+  const [err, setErr] = useState("");
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const credentials = {
@@ -120,52 +122,37 @@ const Login = () => {
     try {
       const result = await dispatch(login(credentials)).unwrap();
 
-      console.log("Login successful, result:", result);
-      if (result.user.roleCode === "COMPANY") {
-        localStorage.setItem("email", email);
-        localStorage.setItem("user_id", result.user?.id);
-        localStorage.setItem("roleCode", result.user?.roleCode);
-        localStorage.setItem("companyId", result.user?.companyId);
-        localStorage.setItem("token", result.token)
-        navigate("/company/dashboard"); 
-      } else if (result.user.roleCode === "ADMIN") {
-        localStorage.setItem("email", email);
-        localStorage.setItem("user_id", result.user?.id);
-        localStorage.setItem("roleCode", result.user?.roleCode);
-        localStorage.setItem("token", result.token)
-        navigate("/admin/dashboard");
-      } else {
-        localStorage.setItem("email", email);
-        localStorage.setItem("user_id", result.user?.id);
-        localStorage.setItem("roleCode", result.user?.roleCode);
-        localStorage.setItem("token", result.token)
-        fetchUser(result.user?.id);
+      console.log(result.errCode != 0);
 
-        navigate("/");
+      if (result.errCode != 0) {
+        console.log(result.errCode);
+        setErr(result.errMessage);
+        console.log("errmess", result.errMessage);
+      } else {
+        if (result.user.roleCode === "COMPANY") {
+          localStorage.setItem("email", email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("roleCode", result.user?.roleCode);
+          localStorage.setItem("companyId", result.user?.companyId);
+          localStorage.setItem("token", result.token);
+          navigate("/company/dashboard");
+        } else if (result.user.roleCode === "ADMIN") {
+          localStorage.setItem("email", email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("roleCode", result.user?.roleCode);
+          localStorage.setItem("token", result.token);
+          navigate("/admin/dashboard");
+        } else {
+          localStorage.setItem("email", email);
+          localStorage.setItem("user_id", result.user?.id);
+          localStorage.setItem("roleCode", result.user?.roleCode);
+          localStorage.setItem("token", result.token);
+          fetchUser(result.user?.id);
+          navigate("/");
+        }
       }
     } catch (error) {
       console.log("Failed to login: ", error.message || error);
-
-      let errors = Validation({ email });
-
-      if (!password && !email) {
-        errors = Validation({ email });
-        errors.password = "Password is required";
-      } else if (!password || !email) {
-        errors = Validation({ email });
-        errors.password = "";
-      } else {
-        errors.email = "Email or Password is incorrect, please check again";
-      }
-
-      setErrorMessage(errors);
-
-      if (Object.keys(errors).length === 0) {
-        const credentials = {
-          email: email,
-          password: password,
-        };
-      }
     }
   };
   // useEffect(() => {
@@ -175,9 +162,11 @@ const Login = () => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`,{ headers: {
-        Authorization: `Bearer ${token}`, // Include token in headers
-      }});
+      const response = await axios.get(`/getUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token in headers
+        },
+      });
 
       console.log("Response from /getUserById:", response);
 
@@ -264,9 +253,6 @@ const Login = () => {
                 } py-7 px-10`}
               />
             </div>
-            {errorMessage.email && (
-              <p className="text-red-500 mt-2">{errorMessage.email}</p>
-            )}
           </div>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
@@ -308,10 +294,8 @@ const Login = () => {
                   errorMessage.password ? "border-red-500" : null
                 } flex items-center border focus:border-primary py-7 px-10`}
               />
-            </div>{" "}
-            {errorMessage.password && (
-              <p className="text-red-500">{errorMessage.password}</p>
-            )}
+            </div>
+            <p className="text-red-500 mt-2">{err}</p>
             {/* otp */}
             {/* <div className="relative flex items-center">
               <IoMdCall className="text-gray-500 mr-2 absolute left-3" />
