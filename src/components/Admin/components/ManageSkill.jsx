@@ -28,12 +28,14 @@ import {
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
+import AdminValidation from "../common/AdminValidation";
 
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false); //modal
+  const [errorMessage, setErrorMessage] = useState({});
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
 
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // Trạng thái cho modal xóa
@@ -125,15 +127,27 @@ const ManageSkill = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     if (isCreateModalOpen) {
       setNewSkill((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidation({ ...newSkill, [name]: value }, true);
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
       setUpdateSkill((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidation({ ...updateSkill, [name]: value }, true);
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     }
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = AdminValidation(newSkill, true);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
+
     try {
       const response = await handleCreateNewSkill(newSkill);
       if (response.data && response.data.errCode === 0) {
@@ -152,6 +166,13 @@ const ManageSkill = () => {
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = AdminValidation(updateSkill, false);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
+
     try {
       const response = await handleUpdateSkill(updateSkill);
       if (response.data && response.data.errCode === 0) {
@@ -345,8 +366,13 @@ const ManageSkill = () => {
                 name="name"
                 value={newSkill.name}
                 onChange={handleInputChange}
-                required
+                className={`${
+                  errorMessage.name ? "border-red-500" : "focus:border-primary"
+                }`}
               />
+              {errorMessage.name && (
+                <p className="text-red-500  mb-3">{errorMessage.name}</p>
+              )}
             </div>
             <div className="mb-4">
               <Label htmlFor="category">Category</Label>
@@ -393,8 +419,13 @@ const ManageSkill = () => {
                 name="name"
                 value={updateSkill.name}
                 onChange={handleInputChange}
-                required
+                className={`${
+                  errorMessage.name ? "border-red-500" : "focus:border-primary"
+                } `}
               />
+              {errorMessage.name && (
+                <p className="text-red-500 mb-3">{errorMessage.name}</p>
+              )}
             </div>
             <div className="mb-4 flex flex-col space-y-2">
               <Label htmlFor="update-category">Category</Label>

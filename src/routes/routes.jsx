@@ -57,7 +57,7 @@ import JobsComparison from "@/components/User/Common/JobCompare/JobsComparison";
 import PostPaymentSuccess from "@/components/Company/components/Payment/HotPostPayment/PostPaymentSuccess";
 import VipPaymentSuccess from "@/pages/User/VipPaymentSuccess";
 import PostPaymentCancel from "@/components/Company/components/Payment/HotPostPayment/PostPaymentCancel";
-
+import ManageUser from "@/components/Admin/components/ManageUser";
 
 const routes = [
   {
@@ -221,6 +221,7 @@ const routes = [
       { path: "package", element: <ManagePackages /> },
       { path: "company", element: <ManageCompanyAdmin /> },
       { path: "post", element: <ManagePostAdmin /> },
+      { path: "user", element: <ManageUser /> },
     ],
   },
   {
@@ -241,7 +242,6 @@ const routes = [
       { path: "paymentHotPost/cancel", element: <PostPaymentCancel /> },
       { path: "paymentVip/cancel", element: <PostPaymentCancel /> },
     ],
-
   },
 ];
 
