@@ -33,8 +33,10 @@ import AdminValidation from "../common/AdminValidation";
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
   const [errorMessage, setErrorMessage] = useState({});
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // Trạng thái cho modal xóa
   const [skillToDelete, setSkillToDelete] = useState(null); // Kỹ năng sẽ xóa
