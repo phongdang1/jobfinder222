@@ -69,12 +69,15 @@ const ManageJobPost = () => {
       [name]: value,
     }));
   };
-  const companyData = JSON.parse(localStorage.getItem("company"));
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
   const fetchCompanyData = async () => {
     try {
-      const res = await axios.get(`/getCompanyById?id=${companyData.data.id}`);
+      const res = await axios.get(`/getCompanyById?id=${companyId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       if (res.data.errCode === 0) {
         setCompany(res.data.data);
+        console.log('company ne',res.data.data)
         setPost(res.data.data.postData);
         console.log(res.data.data, companyData);
         const userCvData = {};
@@ -1163,19 +1166,19 @@ const ManageJobPost = () => {
               <TableCell className="text-right">
                 <span
                   className={`
-                        px-2 py-1 rounded font-semibold
+                        px-2 py-1 rounded font-semibold uppercase
                         ${
-                          post.statusCode === "ACTIVE"
+                          post.statusCode.toUpperCase() === "ACTIVE"
                             ? "bg-green-100 text-green-700"
                             : ""
                         }
                         ${
-                          post.statusCode === "INACTIVE"
+                          post.statusCode.toUpperCase() === "INACTIVE"
                             ? "bg-yellow-100 text-yellow-700"
                             : ""
                         }
                         ${
-                          post.statusCode === "BANNED"
+                          post.statusCode.toUpperCase() === "BANNED"
                             ? "bg-red-100 text-red-700"
                             : ""
                         }

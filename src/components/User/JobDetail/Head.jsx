@@ -40,7 +40,16 @@ import { Input } from "@/components/ui/input";
 import { getCvByUserId, handleApplyJob } from "../../../fetchData/CvPost";
 import { MdOutlineDoubleArrow } from "react-icons/md";
 import toast from "react-hot-toast";
+
 import Report from "./Report";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 const Head = ({ job }) => {
   const navigate = useNavigate();
@@ -72,11 +81,20 @@ const Head = ({ job }) => {
   const fetchUserData = async () => {
     // const jobId = job.data.id;
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`);
-      const cvResponse = await axios.get(`getAllListCvByPost?postId=${jobId}`);
-
-      if (response.data.errCode === 0 && cvResponse.data.errCode === 0) {
+      const response = await axios.get(`/getUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const cvResponse = await axios.get(`getAllListCvByPost?postId=${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("verify chua", cvResponse);
+      if (response.status === 200 && cvResponse.status === 200) {
         setUser(response.data.data);
+        console.log("verify roi", response.data.data);
         setCvData(cvResponse.data.count);
         if (Array.isArray(cvResponse.data.data)) {
           let userApplied = false;
@@ -92,8 +110,6 @@ const Head = ({ job }) => {
         } else {
           console.error("Khong phai mang");
         }
-
-        console.log("user cv", cvResponse.data.data);
       } else {
         console.log("loi roi", cvResponse);
       }
@@ -219,12 +235,57 @@ const Head = ({ job }) => {
               <div className="flex items-center justify-center gap-x-2">
                 {!isApplied || !userId ? (
                   <>
-                    <Button
-                      className="w-fit text-white bg-primary hover:bg-primary-dark"
-                      onClick={() => setIsOpen(true)}
-                    >
-                      Apply
-                    </Button>
+
+                    {!userId || user?.isVerify === 0 ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Button
+                                variant="outline"
+                                className="w-fit text-white bg-primary hover:bg-primary-dark"
+                                disabled
+                              >
+                                Apply
+                              </Button>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="flex flex-col justify-center items-center gap-2 p-2 w-[260px]">
+                            <div>
+                              {!userId ? (
+                                "Please login to apply for this job"
+                              ) : (
+                                <>
+                                  Your email is not verified. Please verify in 
+                                  <span className="text-primary font-semibold"> User Profile</span>
+                                </>
+                              )}
+                            </div>
+                            <Button
+                              variant="outline"
+                              onClick={() =>
+                                navigate(
+                                  !userId
+                                    ? "/login"
+                                    : "/userProfile/personalInfo"
+                                )
+                              }
+                              className="mt-2 text-primary"
+                            >
+                              {!userId ? "Login Now" : "Verify Now"}
+                            </Button>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <Button
+                        className="w-fit text-white bg-primary hover:bg-primary-dark"
+                        onClick={() => setIsOpen(true)}
+                      >
+                        Apply
+                      </Button>
+                    )}
+
                     <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
                       <DialogContent className="text-sm">
                         <DialogHeader>

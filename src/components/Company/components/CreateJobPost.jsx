@@ -138,31 +138,29 @@ function CreateJobPost() {
 
   const handleSubmitForm = async () => {
     try {
-      const res = await axios.post(
-        "/createNewPost",
-        {
-          name: form.name,
-          categoryJobCode: form.category,
-          addressCode: form.address,
-          salaryJobCode: form.salary,
-          amount: goal,
-          timeEnd: form.timeEnd,
-          jobLevelCode: form.jobLevel,
-          userId: form.userId, // TODO: Replace with user id
-          workTypeCode: form.workType,
-          experienceJobCode: form.experience,
-          genderPostCode: form.gender,
-          description: form.description,
-          benefit: form.benefit,
-          requirement: form.requirement,
-          skillRequirement: form.skillRequirement,
+
+      const res = await axios.post("/createNewPost", {
+        name: form.name,
+        categoryJobCode: form.category,
+        addressCode: form.address,
+        salaryJobCode: form.salary,
+        amount: goal,
+        timeEnd: form.timeEnd,
+        jobLevelCode: form.jobLevel,
+        userId: localStorage.getItem("user_id"), // TODO: Replace with user id
+        workTypeCode: form.workType,
+        experienceJobCode: form.experience,
+        genderPostCode: form.gender,
+        description: form.description,
+        benefit: form.benefit,
+        requirement: form.requirement,
+        skillRequirement: form.skillRequirement,
+      },{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      });
+
       if (res.data.errCode === 0) {
         toast.success(res.data.errMessage);
         setForm({
@@ -182,6 +180,7 @@ function CreateJobPost() {
           requirement: "",
           skillRequirement: "",
         });
+        setGoal(1);
         console.log(res.data);
       } else {
         toast.error(res.data.errMessage);

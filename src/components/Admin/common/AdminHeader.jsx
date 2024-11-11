@@ -44,16 +44,16 @@ const AdminHeader = () => {
       </div> */}
       <div className="flex items-center space-x-4 text-third font-bold">
         <span>Welcome, Admin</span>
-        <button className=" px-4 py-3 rounded flex items-center gap-2 hover:text-primary ">
+        <div className=" px-4 py-3 rounded flex items-center gap-2 hover:text-primary ">
           <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
           <Logout />
-        </button>
-        <button className=" px-2 py-3  rounded flex items-center  hover:text-primary ">
+        </div>
+        <div className=" px-2 py-3  rounded flex items-center  hover:text-primary ">
           <NotificationsIcon className="h-5 w-5 text-blue-gray-500" />
-        </button>
-        <button className=" px-2 py-3  rounded flex items-center  hover:text-primary ">
+        </div>
+        <div className=" px-2 py-3  rounded flex items-center  hover:text-primary ">
           <SettingsIcon className="h-5 w-5 text-blue-gray-500" />
-        </button>
+        </div>
       </div>
     </header>
   );

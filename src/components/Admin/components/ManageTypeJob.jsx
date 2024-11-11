@@ -28,14 +28,16 @@ import {
 import { Label } from "@/components/ui/label";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AdminPagination from "./AdminPagination";
+import AdminValidation from "../common/AdminValidation";
 
 const ManageTypeJob = () => {
   const [jobTypes, setJobTypes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredJobTypes, setFilteredJobTypes] = useState([]); // State for filtered job types
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({});
 
-  // Form data for creating and updating job types
   const [newJobType, setNewJobType] = useState({
     code: "",
     type: "JOBTYPE",
@@ -50,14 +52,14 @@ const ManageTypeJob = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const jobTypesPerPage = 5; // Adjust number of job types per page
+  const jobTypesPerPage = 5;
   const indexOfLastJobType = currentPage * jobTypesPerPage;
   const indexOfFirstJobType = indexOfLastJobType - jobTypesPerPage;
-  const currentJobTypes = jobTypes.slice(
+  const currentJobTypes = filteredJobTypes.slice(
     indexOfFirstJobType,
     indexOfLastJobType
   );
-  const totalJobTypes = jobTypes.length; // Total job types for pagination
+  const totalJobTypes = filteredJobTypes.length;
 
   useEffect(() => {
     const fetchJobTypes = async () => {
@@ -66,13 +68,16 @@ const ManageTypeJob = () => {
         const response = await getAllJobType();
         if (Array.isArray(response.data.data)) {
           setJobTypes(response.data.data);
+          setFilteredJobTypes(response.data.data); // Set initial filtered job types
         } else {
           setError("Error fetching data. Please try again later.");
           setJobTypes([]);
+          setFilteredJobTypes([]);
         }
       } catch (error) {
         setError("Error fetching data. Please try again later.");
         setJobTypes([]);
+        setFilteredJobTypes([]);
       } finally {
         setLoading(false);
       }
@@ -82,6 +87,14 @@ const ManageTypeJob = () => {
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
 
+  const handleSearchClick = () => {
+    // Filter the job types when search button is clicked
+    const filtered = jobTypes.filter((jobType) =>
+      jobType.value.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredJobTypes(filtered); // Update the filtered job types
+  };
+
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
     setNewJobType({ code: "", type: "JOBTYPE", value: "" });
@@ -90,6 +103,7 @@ const ManageTypeJob = () => {
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
     setNewJobType({ code: "", type: "JOBTYPE", value: "" });
+    setErrorMessage({});
   };
 
   const handleOpenUpdateModal = (jobType) => {
@@ -100,6 +114,7 @@ const ManageTypeJob = () => {
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdateJobType({ code: "", type: "JOBTYPE", value: "" });
+    setErrorMessage({});
   };
 
   const handleInputChange = (e) => {
@@ -113,6 +128,11 @@ const ManageTypeJob = () => {
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = AdminValidation(newJobType, true);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
 
     const userData = {
       type: "JOBTYPE",
@@ -122,10 +142,9 @@ const ManageTypeJob = () => {
 
     try {
       const response = await handleCreateNewAllCode(userData);
-      console.log("Create Response:", response);
-
       if (response.data && response.data.errCode === 0) {
         setJobTypes((prev) => [...prev, userData]);
+        setFilteredJobTypes((prev) => [...prev, userData]); // Add to filtered list as well
       } else {
         console.error(
           "Failed to create job type:",
@@ -141,6 +160,11 @@ const ManageTypeJob = () => {
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = AdminValidation(updateJobType, false);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
 
     const userData = {
       type: updateJobType.type,
@@ -150,8 +174,6 @@ const ManageTypeJob = () => {
 
     try {
       const response = await handleUpdateAllCode(userData);
-      console.log("Update Response:", response);
-
       if (response.data && response.data.errCode === 0) {
         setJobTypes((prev) =>
           prev.map((jobType) =>
@@ -160,6 +182,13 @@ const ManageTypeJob = () => {
               : jobType
           )
         );
+        setFilteredJobTypes((prev) =>
+          prev.map((jobType) =>
+            jobType.code === userData.code
+              ? { ...jobType, value: userData.value }
+              : jobType
+          )
+        ); // Update filtered job types
       } else {
         console.error(
           "Failed to update job type:",
@@ -177,8 +206,10 @@ const ManageTypeJob = () => {
     try {
       const response = await handleDeleteAllCode({ code });
       if (response.data && response.data.errCode === 0) {
-        // Xóa thành công: cập nhật lại danh sách job types
         setJobTypes((prev) => prev.filter((jobType) => jobType.code !== code));
+        setFilteredJobTypes((prev) =>
+          prev.filter((jobType) => jobType.code !== code)
+        ); // Remove from filtered list as well
       } else {
         console.error(
           "Failed to delete job type:",
@@ -189,10 +220,6 @@ const ManageTypeJob = () => {
       console.error("Error deleting job type:", error);
     }
   };
-
-  const filteredJobTypes = jobTypes.filter((jobType) =>
-    jobType.value.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -216,10 +243,10 @@ const ManageTypeJob = () => {
             </div>
           </div>
           <Button
-            onClick={() => setSearchTerm("")}
+            onClick={handleSearchClick}
             className="p-3 text-white bg-third hover:bg-primary rounded-md"
           >
-            Reset Search
+            Search
           </Button>
         </div>
         <Button
@@ -289,28 +316,40 @@ const ManageTypeJob = () => {
           </DialogHeader>
           <form onSubmit={handleCreateSubmit}>
             <div className="flex flex-col">
-              <Label htmlFor="code">Job Code</Label>
+              <Label htmlFor="code" className="mb-2">
+                Job Code
+              </Label>
               <Input
                 type="text"
                 name="code"
                 value={newJobType.code}
                 onChange={handleInputChange}
-                required
-                className="mb-2"
+                className={`${
+                  errorMessage.code ? "border-red-500" : "focus:border-primary"
+                } `}
               />
-              <Label htmlFor="value">Job Type</Label>
+              {errorMessage.code && (
+                <p className="text-red-500  mb-3">{errorMessage.code}</p>
+              )}
+              <Label htmlFor="value" className="mb-2 mt-2">
+                Job Type
+              </Label>
               <Input
                 type="text"
                 name="value"
                 value={newJobType.value}
                 onChange={handleInputChange}
-                required
-                className="mb-2"
+                className={`${
+                  errorMessage.value ? "border-red-500" : "focus:border-primary"
+                } `}
               />
+              {errorMessage.value && (
+                <p className="text-red-500 mb-3">{errorMessage.value}</p>
+              )}
             </div>
             <Button
               type="submit"
-              className="bg-third hover:text-white text-white rounded-md"
+              className="bg-third hover:text-white text-white rounded-md mt-4"
             >
               Create
             </Button>
@@ -329,29 +368,36 @@ const ManageTypeJob = () => {
           </DialogHeader>
           <form onSubmit={handleUpdateSubmit}>
             <div className="flex flex-col">
-              <Label htmlFor="code">Job Code</Label>
+              <Label htmlFor="code" className="mb-2">
+                Job Code
+              </Label>
               <Input
                 type="text"
                 name="code"
                 value={updateJobType.code}
                 onChange={handleInputChange}
                 disabled // Disable editing the job code
-                required
                 className="mb-2"
               />
-              <Label htmlFor="value">Job Type</Label>
+              <Label htmlFor="value" className="mb-2 mt-2">
+                Job Type
+              </Label>
               <Input
                 type="text"
                 name="value"
                 value={updateJobType.value}
                 onChange={handleInputChange}
-                required
-                className="mb-2"
+                className={`${
+                  errorMessage.value ? "border-red-500" : "focus:border-primary"
+                } `}
               />
+              {errorMessage.value && (
+                <p className="text-red-500 mb-3">{errorMessage.value}</p>
+              )}
             </div>
             <Button
               type="submit"
-              className="bg-third hover:text-white text-white rounded-md"
+              className="bg-third hover:text-white text-white rounded-md mt-4"
             >
               Update
             </Button>
