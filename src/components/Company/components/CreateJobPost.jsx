@@ -50,7 +50,7 @@ function CreateJobPost() {
     amount: "",
     timeEnd: "",
     jobLevel: "",
-    userId: "",
+    userId: localStorage.getItem("user_id"),
     workType: "",
     experience: "",
     gender: "",
@@ -138,23 +138,31 @@ function CreateJobPost() {
 
   const handleSubmitForm = async () => {
     try {
-      const res = await axios.post("/createNewPost", {
-        name: form.name,
-        categoryJobCode: form.category,
-        addressCode: form.address,
-        salaryJobCode: form.salary,
-        amount: form.amount,
-        timeEnd: form.timeEnd,
-        jobLevelCode: form.jobLevel,
-        userId: 11, // TODO: Replace with user id
-        workTypeCode: form.workType,
-        experienceJobCode: form.experience,
-        genderPostCode: form.gender,
-        description: form.description,
-        benefit: form.benefit,
-        requirement: form.requirement,
-        skillRequirement: form.skillRequirement,
-      });
+      const res = await axios.post(
+        "/createNewPost",
+        {
+          name: form.name,
+          categoryJobCode: form.category,
+          addressCode: form.address,
+          salaryJobCode: form.salary,
+          amount: goal,
+          timeEnd: form.timeEnd,
+          jobLevelCode: form.jobLevel,
+          userId: form.userId, // TODO: Replace with user id
+          workTypeCode: form.workType,
+          experienceJobCode: form.experience,
+          genderPostCode: form.gender,
+          description: form.description,
+          benefit: form.benefit,
+          requirement: form.requirement,
+          skillRequirement: form.skillRequirement,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       if (res.data.errCode === 0) {
         toast.success(res.data.errMessage);
         setForm({
@@ -220,23 +228,31 @@ function CreateJobPost() {
   }
   const checkRef1Filled = () => {
     if (form.name && form.description && form.timeEnd && form.benefit) {
-      setRef1Filled(true)
-    }else {
-      setRef1Filled(false)
+      setRef1Filled(true);
+    } else {
+      setRef1Filled(false);
     }
   };
   const checkRef3Filled = () => {
     if (form.requirement && form.skillRequirement) {
-      setRef3Filled(true)
-    }else {
-      setRef3Filled(false)
+      setRef3Filled(true);
+    } else {
+      setRef3Filled(false);
     }
   };
   const checkRef4Filled = () => {
-    if (form.address && form.jobLevel && form.workType && form.salary && form.experience && form.gender && form.category) {
-      setRef4Filled(true)
-    }else {
-      setRef4Filled(false)
+    if (
+      form.address &&
+      form.jobLevel &&
+      form.workType &&
+      form.salary &&
+      form.experience &&
+      form.gender &&
+      form.category
+    ) {
+      setRef4Filled(true);
+    } else {
+      setRef4Filled(false);
     }
   };
 
@@ -252,7 +268,11 @@ function CreateJobPost() {
             >
               Job Information
             </button>
-            <CheckCircle className={`${!ref1Filled ? "text-default-300" : "text-green-500"}`} />
+            <CheckCircle
+              className={`${
+                !ref1Filled ? "text-default-300" : "text-green-500"
+              }`}
+            />
           </li>
 
           <li className="flex items-center justify-between gap-4 hover:bg-primary/70 py-1 rounded-lg hover:text-white cursor-pointer group px-4">
@@ -262,7 +282,11 @@ function CreateJobPost() {
             >
               Job Requirements
             </button>
-            <CheckCircle className={`${!ref3Filled ? "text-default-300" : "text-green-500"}`} />
+            <CheckCircle
+              className={`${
+                !ref3Filled ? "text-default-300" : "text-green-500"
+              }`}
+            />
           </li>
           <li className="flex items-center justify-between gap-4 hover:bg-primary/70 py-1 rounded-lg hover:text-white cursor-pointer group px-4">
             <button
@@ -271,7 +295,11 @@ function CreateJobPost() {
             >
               Additional Information
             </button>
-            <CheckCircle className={`${!ref4Filled ? "text-default-300" : "text-green-500"}`} />
+            <CheckCircle
+              className={`${
+                !ref4Filled ? "text-default-300" : "text-green-500"
+              }`}
+            />
           </li>
         </ul>
       </div>
@@ -384,6 +412,7 @@ function CreateJobPost() {
 
                   <Input
                     value={goal}
+                    name="amount"
                     onChange={handleInputChange}
                     className="text-sm text-center font-bold ml-4"
                   />
@@ -410,7 +439,12 @@ function CreateJobPost() {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>You will lost 1 Featured Post</p>
-                      <div><span className="text-primary font-semibold">{hotPost}</span> posts remaining</div>
+                      <div>
+                        <span className="text-primary font-semibold">
+                          {hotPost}
+                        </span>{" "}
+                        posts remaining
+                      </div>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

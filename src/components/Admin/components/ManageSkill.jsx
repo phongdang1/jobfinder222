@@ -32,7 +32,7 @@ import axios from "../../../fetchData/axios";
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false); //modal
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // Trạng thái cho modal xóa
   const [skillToDelete, setSkillToDelete] = useState(null); // Kỹ năng sẽ xóa

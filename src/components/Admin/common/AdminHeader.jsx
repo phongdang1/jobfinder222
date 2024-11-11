@@ -46,7 +46,7 @@ const AdminHeader = () => {
         <span>Welcome, Admin</span>
         <button className=" px-4 py-3 rounded flex items-center gap-2 hover:text-primary ">
           <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
-          <Logout/>
+          <Logout />
         </button>
         <button className=" px-2 py-3  rounded flex items-center  hover:text-primary ">
           <NotificationsIcon className="h-5 w-5 text-blue-gray-500" />

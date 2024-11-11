@@ -25,10 +25,22 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/redux/features/authSlice";
 import { getCompanyById } from "@/fetchData/Company";
 import { FaCirclePlus } from "react-icons/fa6";
+import { handleCheckNotification } from "@/fetchData/Notification";
+import { io } from "socket.io-client";
+import axios from "../../../fetchData/axios";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Circle, Notifications } from "@mui/icons-material";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const CompanyHeader = () => {
   // const companyData = JSON.parse(localStorage.getItem("company"));
   const companyId = JSON.parse(localStorage.getItem("companyId"));
+  const userId = localStorage.getItem("user_id");
+
   const [user, setUser] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -54,7 +66,6 @@ const CompanyHeader = () => {
       if (response.data) {
         setUser(response.data);
         localStorage.setItem("user", JSON.stringify(response.data)); // Lưu thông tin người dùng vào localStorage
-        console.log("User data set in Redux and localStorage:", response.data);
       }
     } catch (error) {
       console.error("Failed to fetch user:", error);
@@ -64,6 +75,101 @@ const CompanyHeader = () => {
   useEffect(() => {
     fetchCompany(companyId);
   }, []);
+
+  // socketIO
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState([]); // Danh sách thông báo
+  const [showNotifications, setShowNotifications] = useState(false);
+  // socket io
+  const socket = io("http://localhost:5000", {
+    transports: ["websocket"],
+    query: {
+      userId: userId,
+    },
+  });
+
+  const fetchNotifications = async (userId) => {
+    try {
+      console.log("Fetching notifications for user:", userId);
+      //console.log("tk", localStorage.getItem("token"));
+
+      const response = await axios.get(
+        `/getAllNotificationByUserId?userId=${userId}`
+      );
+      console.log("Response from /getAllNotificationByUserId:", response);
+
+      if (response.data) {
+        // Lưu thông báo vào state
+
+        setNotifications(response.data.data);
+        console.log("not", notifications); // Lưu thông báo vào state
+      }
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
+
+  // useEffect để xử lý socket io
+  useEffect(() => {
+    // Lắng nghe sự kiện từ server (ví dụ: công ty đã được duyệt)
+    socket.on("companyApproved", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("Approved:", msg);
+    });
+
+    socket.on("companyReject", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("companyReject:", msg);
+    });
+
+    socket.on("postApproved", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("postApproved:", msg);
+    });
+
+    socket.on("postRejected", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("postRejected:", msg);
+    });
+
+    socket.on("applyJob", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("postRejected:", msg);
+    });
+
+    // Lắng nghe khi kết nối hoặc mất kết nối
+    socket.on("connect", () => {
+      console.log("Đã kết nối với server Socket.IO");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Mất kết nối với server Socket.IO");
+    });
+
+    // Dọn dẹp khi component bị hủy (ngắt kết nối)
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket]);
+
+  const handleClickBell = () => {
+    setNotificationCount(0);
+    fetchNotifications(userId); // Gọi API để lấy thông báo
+    setShowNotifications(true); // Reset khi người dùng nhấp vào chuông thông báo
+  };
+
+  const [watch, setWatch] = useState(false);
+  const handleIsWatched = async (notificationId) => {
+    // Optimistically update the notification in state
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((notif) =>
+        notif.id === notificationId ? { ...notif, isChecked: 1 } : notif
+      )
+    );
+
+    // Send the update request to the backend
+    await handleCheckNotification(notificationId);
+  };
 
   return (
     <>
@@ -130,10 +236,9 @@ const CompanyHeader = () => {
                   className="hover:text-primary text-third flex font-semibold text-[15px]"
                 >
                   <Button className="text-white flex gap-2">
-                    <FaCirclePlus/>
-                       Create New Post
+                    <FaCirclePlus />
+                    Create New Post
                   </Button>
-               
                 </Link>
               </li>
             </ul>
@@ -156,7 +261,67 @@ const CompanyHeader = () => {
               </Button>
             </div>
           ) : (
-            <li className="flex items-center space-x-4 relative">
+            <div className="flex items-center space-x-4 relative">
+              {userId != null || userId != undefined ? (
+                <Popover>
+                  <PopoverTrigger>
+                    <div
+                      onClick={() => handleClickBell()}
+                      className="relative flex items-center gap-4 cursor-pointer"
+                    >
+                      <div
+                        className={`${notificationCount > 0 ? "shake" : ""}`}
+                      >
+                        <Notifications
+                          sx={{ fontSize: 40, color: "#9080f4" }}
+                          className="p-[6px]"
+                        />
+                      </div>
+
+                      {/* Số thông báo */}
+                      {notificationCount > 0 && (
+                        <span className="absolute top-1 right-0 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                          {notificationCount}
+                        </span>
+                      )}
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="p-2 text-lg font-medium sticky top-0 z-30">
+                      Notification
+                    </div>
+                    <ul className="space-y-2">
+                      <ScrollArea className="h-96">
+                        {notifications.map((notification, index) => (
+                          <li
+                            key={index}
+                            className={`flex justify-between items-center p-4 hover:rounded-lg hover:bg-primary/10 cursor-pointer gap-2 ${
+                              notification.isChecked === 1
+                                ? "text-gray-400"
+                                : ""
+                            }`}
+                            onClick={() => handleIsWatched(notification?.id)}
+                          >
+                            <div className="text-sm text-wrap">
+                              {notification?.content}
+                            </div>
+
+                            <div
+                              className={`text-primary animate-bounce ${
+                                notification.isChecked === 1 ? "hidden" : ""
+                              }`}
+                            >
+                              <Circle sx={{ fontSize: 15 }} />
+                            </div>
+                          </li>
+                        ))}
+                      </ScrollArea>
+                    </ul>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                " "
+              )}
               {/* Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="ring-0 border-0">
@@ -194,7 +359,7 @@ const CompanyHeader = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </li>
+            </div>
           )}
         </div>
 
