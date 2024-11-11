@@ -28,10 +28,12 @@ import {
 } from "../../../fetchData/AllCode";
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
+import AdminValidation from "../common/AdminValidation";
 
 const ManageWorkForm = () => {
   const [workTypes, setWorkTypes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState({});
   const [filteredWorkTypes, setFilteredWorkTypes] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
@@ -115,13 +117,26 @@ const ManageWorkForm = () => {
     const { name, value } = e.target;
     if (isCreateModalOpen) {
       setNewWorkType((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidation({ ...newWorkType, [name]: value }, true);
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
       setUpdateWorkType((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidation(
+        { ...updateWorkType, [name]: value },
+        true
+      );
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     }
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = AdminValidation(newWorkType, true);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
 
     const userData = {
       type: "WORKTYPE",
@@ -152,6 +167,12 @@ const ManageWorkForm = () => {
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = AdminValidation(updateWorkType, false);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
 
     const userData = {
       type: updateWorkType.type,
@@ -328,8 +349,15 @@ const ManageWorkForm = () => {
                   name="value"
                   value={newWorkType.value}
                   onChange={handleInputChange}
-                  required
+                  className={`${
+                    errorMessage.value
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  }`}
                 />
+                {errorMessage.value && (
+                  <p className="text-red-500  mb-3">{errorMessage.value}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="code">Code</Label>
@@ -338,8 +366,15 @@ const ManageWorkForm = () => {
                   name="code"
                   value={newWorkType.code}
                   onChange={handleInputChange}
-                  required
+                  className={`${
+                    errorMessage.code
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  } `}
                 />
+                {errorMessage.code && (
+                  <p className="text-red-500 mb-3">{errorMessage.code}</p>
+                )}
               </div>
             </div>
             <div className="flex justify-end mt-4">
@@ -372,8 +407,15 @@ const ManageWorkForm = () => {
                   name="value"
                   value={updateWorkType.value}
                   onChange={handleInputChange}
-                  required
+                  className={`${
+                    errorMessage.value
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  } `}
                 />
+                {errorMessage.value && (
+                  <p className="text-red-500 mb-3">{errorMessage.value}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="code">Code</Label>
@@ -382,8 +424,15 @@ const ManageWorkForm = () => {
                   name="code"
                   value={updateWorkType.code}
                   onChange={handleInputChange}
-                  required
+                  className={`${
+                    errorMessage.code
+                      ? "border-red-500"
+                      : "focus:border-primary"
+                  } `}
                 />
+                {errorMessage.code && (
+                  <p className="text-red-500 mb-3">{errorMessage.code}</p>
+                )}
               </div>
             </div>
             <div className="flex justify-end mt-4">

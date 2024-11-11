@@ -119,10 +119,24 @@ const ManageTypeJob = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     if (isCreateModalOpen) {
-      setNewJobType((prev) => ({ ...prev, [name]: value }));
+      setNewJobType((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const errors = AdminValidation({ ...newJobType, [name]: value }, true);
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
-      setUpdateJobType((prev) => ({ ...prev, [name]: value }));
+      setUpdateJobType((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const errors = AdminValidation(
+        { ...updateJobType, [name]: value },
+        false
+      );
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     }
   };
 

@@ -12,6 +12,7 @@ function AdminLayout() {
   const matchPackage = useMatch("/admin/package");
   const matchCompany = useMatch("/admin/company");
   const matchPost = useMatch("/admin/post");
+  const matchUser = useMatch("/admin/user");
 
   const getTitle = () => {
     if (matchDashBoard) return "DashBoard";
@@ -22,6 +23,7 @@ function AdminLayout() {
     if (matchPackage) return "Manage Package";
     if (matchCompany) return "Manage Company";
     if (matchPost) return "Manage Post";
+    if (matchUser) return "Manage User";
     return "DashBoard";
   };
 
@@ -35,7 +37,8 @@ function AdminLayout() {
     !matchWorkForm &&
     !matchPackage &&
     !matchCompany &&
-    !matchPost
+    !matchPost &&
+    !matchUser
   ) {
     return <Navigate to="/admin/dashboard" replace />;
   }
@@ -53,7 +56,8 @@ function AdminLayout() {
             matchWorkForm ||
             matchPackage ||
             matchCompany ||
-            matchPost) && (
+            matchPost ||
+            matchUser) && (
             <>
               {/* Banner Image */}
               <img
