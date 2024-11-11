@@ -12,6 +12,7 @@ const YourApplication = () => {
     fetchUserData();
   }, []);
 
+  const [countJob, setCountJob] = useState();
   const fetchUserData = async () => {
     try {
       const response = await axios.get(`/getUserById?id=${userId}`);
@@ -19,6 +20,7 @@ const YourApplication = () => {
       if (response.data.errCode === 0 && cvResponse.data.errCode === 0) {
         setUser(response.data.data);
         setCvData(cvResponse.data.data);
+        setCountJob(response.data.count);
         console.log("user cv", cvResponse.data.data);
       } else {
         console.log("loi roi", cvResponse);
@@ -31,9 +33,15 @@ const YourApplication = () => {
   return (
     <div className="w-full flex flex-col gap-y-4">
       <div className="bg-white h-fit p-4">
-        <p className="font-poppins text-xl md:text-2xl font-medium italic mb-4">
-          You can see all the jobs you have applied here
-        </p>
+        {cvData > 0 ? (
+          <p className="font-poppins text-xl md:text-2xl font-medium italic mb-4">
+            You can see all the jobs you have applied here
+          </p>
+        ) : (
+          <p className="font-poppins text-xl md:text-2xl font-medium italic mb-4">
+            You have not apply any jobs
+          </p>
+        )}
 
         <div className="space-y-6">
           {cvData.map((cv, index) => (
