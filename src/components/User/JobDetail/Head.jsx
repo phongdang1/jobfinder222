@@ -40,12 +40,16 @@ import { Input } from "@/components/ui/input";
 import { getCvByUserId, handleApplyJob } from "../../../fetchData/CvPost";
 import { MdOutlineDoubleArrow } from "react-icons/md";
 import toast from "react-hot-toast";
+
+import Report from "./Report";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
 
 const Head = ({ job }) => {
   const navigate = useNavigate();
@@ -58,6 +62,7 @@ const Head = ({ job }) => {
   const [cvData, setCvData] = useState();
   const [isApplied, setIsApplied] = useState(false);
   const jobId = job.data.id;
+
   useEffect(() => {
     fetchUserData();
   }, [userId, jobId]);
@@ -230,6 +235,7 @@ const Head = ({ job }) => {
               <div className="flex items-center justify-center gap-x-2">
                 {!isApplied || !userId ? (
                   <>
+
                     {!userId || user?.isVerify === 0 ? (
                       <TooltipProvider>
                         <Tooltip>
@@ -279,6 +285,7 @@ const Head = ({ job }) => {
                         Apply
                       </Button>
                     )}
+
                     <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
                       <DialogContent className="text-sm">
                         <DialogHeader>
@@ -483,6 +490,10 @@ const Head = ({ job }) => {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-4">
+            <Report data={job} />
           </div>
 
           {/* Sticky Banner */}
