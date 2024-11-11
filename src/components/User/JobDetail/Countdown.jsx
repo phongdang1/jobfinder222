@@ -29,8 +29,10 @@ const Countdown = ({ endTime }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-lg lg:text-2xl font-bold mb-2">Time remaining:</h1>
+      
       {!expired ? (
+        <>
+        <h1 className="text-lg lg:text-2xl font-bold mb-2">Time remaining:</h1>
         <div className="text-primary text-lg md:text-2xl flex items-end space-x-4">
           <div className="flex flex-col items-center">
             <span className="text-4xl font-bold">{timeRemaining.days}</span>
@@ -52,7 +54,11 @@ const Countdown = ({ endTime }) => {
             <span className="text-sm">Seconds</span>
           </div>
         </div>
+        </>
+        
       ) : (
+        <>
+         <h1 className="text-lg lg:text-2xl font-bold mb-2">Job has been expired !</h1>
         <div className="text-primary text-lg md:text-2xl flex items-end space-x-4">
           <div className="flex flex-col items-center">
             <span className="text-4xl font-bold">00</span>
@@ -74,6 +80,7 @@ const Countdown = ({ endTime }) => {
             <span className="text-sm">Seconds</span>
           </div>
         </div>
+        </>
       )}
     </div>
   );
