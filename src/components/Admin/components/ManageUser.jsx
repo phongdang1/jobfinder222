@@ -30,23 +30,24 @@ import AdminPagination from "./AdminPagination"; // Import the pagination compon
 import DeleteIcon from "@mui/icons-material/Delete";
 import { SiLevelsdotfyi } from "react-icons/si";
 import AdminValidation from "../common/AdminValidation";
+import { getAllUsers } from "@/fetchData/User";
 
-const ManageLevel = () => {
-  const [jobLevels, setJobLevels] = useState([]);
+const ManageUser = () => {
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [errorMessage, setErrorMessage] = useState({});
-  const [filteredJobLevels, setFilteredJobLevels] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
 
   // form data for new create joblevel
-  const [newJobLevel, setNewJobLevel] = useState({
+  const [newUser, setNewUser] = useState({
     code: "",
     type: "JOBLEVEL",
     value: "",
   });
   // form data for new update joblevel
-  const [updateJobLevel, setUpdateJobLevel] = useState({
+  const [updateUser, setUpdateUser] = useState({
     code: "",
     type: "JOBLEVEL",
     value: "",
@@ -57,74 +58,70 @@ const ManageLevel = () => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const jobLevelsPerPage = 5; // Number of job levels per page
+  const usersPerPage = 5; // Number of job levels per page
 
   useEffect(() => {
-    const fetchJobLevels = async () => {
+    const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await getAllJobLevel();
+        const response = await getAllUsers();
         if (Array.isArray(response.data.data)) {
-          setJobLevels(response.data.data);
-          setFilteredJobLevels(response.data.data);
+          setUsers(response.data.data);
+          setFilteredUsers(response.data.data);
         } else {
           setError("Error fetching data. Please try again later.");
-          setJobLevels([]);
-          setFilteredJobLevels([]);
+          setUsers([]);
+          setFilteredUsers([]);
         }
       } catch (error) {
         setError("Error fetching data. Please try again later.");
-        setJobLevels([]);
-        setFilteredJobLevels([]);
+        setUsers([]);
+        setFilteredUsers([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchJobLevels();
+    fetchUsers();
   }, []);
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
 
   const handleSearchClick = () => {
-    // Filter the job types when search button is clicked
-    const filtered = jobLevels.filter((jobLevel) =>
-      jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = users.filter((user) =>
+      user.value.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredJobLevels(filtered); // Update the filtered job types
+    setFilteredUsers(filtered);
   };
 
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
-    setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+    setNewUser({ code: "", type: "JOBLEVEL", value: "" });
   };
 
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
-    setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+    setNewUser({ code: "", type: "JOBLEVEL", value: "" });
   };
 
-  const handleOpenUpdateModal = (jobLevel) => {
-    setUpdateJobLevel(jobLevel);
+  const handleOpenUpdateModal = (user) => {
+    setUpdateUser(user);
     setUpdateModalOpen(true);
   };
 
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
-    setUpdateJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+    setUpdateUser({ code: "", type: "JOBLEVEL", value: "" });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (isCreateModalOpen) {
-      setNewJobLevel((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation({ ...newJobLevel, [name]: value }, true);
+      setNewUser((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidation({ ...newUser, [name]: value }, true);
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
-      setUpdateJobLevel((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation(
-        { ...updateJobLevel, [name]: value },
-        true
-      );
+      setUpdateUser((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidation({ ...updateUser, [name]: value }, true);
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     }
   };
@@ -132,7 +129,7 @@ const ManageLevel = () => {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(newJobLevel, true);
+    const validationErrors = AdminValidation(newUser, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -140,8 +137,8 @@ const ManageLevel = () => {
 
     const userData = {
       type: "JOBLEVEL",
-      value: newJobLevel.value,
-      code: newJobLevel.code,
+      value: newUser.value,
+      code: newUser.code,
     };
 
     try {
@@ -149,8 +146,8 @@ const ManageLevel = () => {
       console.log("Create Response:", response);
 
       if (response.data && response.data.errCode === 0) {
-        setJobLevels((prev) => [...prev, userData]);
-        setFilteredJobLevels((prev) => [...prev, userData]);
+        setUsers((prev) => [...prev, userData]);
+        setFilteredUsers((prev) => [...prev, userData]);
       } else {
         console.error(
           "Failed to create job level:",
@@ -167,16 +164,16 @@ const ManageLevel = () => {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(updateJobLevel, false);
+    const validationErrors = AdminValidation(updateUser, false);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
     }
 
     const userData = {
-      type: updateJobLevel.type,
-      value: updateJobLevel.value,
-      code: updateJobLevel.code,
+      type: updateUser.type,
+      value: updateUser.value,
+      code: updateUser.code,
     };
 
     try {
@@ -185,18 +182,18 @@ const ManageLevel = () => {
 
       if (response.data && response.data.errCode === 0) {
         // Update the job level in the list
-        setJobLevels((prev) =>
-          prev.map((jobLevel) =>
-            jobLevel.code === userData.code
-              ? { ...jobLevel, value: userData.value }
-              : jobLevel
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.code === userData.code
+              ? { ...user, value: userData.value }
+              : user
           )
         );
-        setFilteredJobLevels((prev) =>
-          prev.map((jobLevel) =>
-            jobLevel.code === userData.code
-              ? { ...jobLevel, value: userData.value }
-              : jobLevel
+        setFilteredUsers((prev) =>
+          prev.map((user) =>
+            user.code === userData.code
+              ? { ...user, value: userData.value }
+              : user
           )
         );
       } else {
@@ -216,12 +213,8 @@ const ManageLevel = () => {
     try {
       const response = await handleDeleteAllCode({ code });
       if (response.data && response.data.errCode === 0) {
-        setJobLevels((prev) =>
-          prev.filter((jobLevel) => jobLevel.code !== code)
-        );
-        setFilteredJobLevels((prev) =>
-          prev.filter((jobLevel) => jobLevel.code !== code)
-        );
+        setUsers((prev) => prev.filter((user) => user.code !== code));
+        setFilteredUsers((prev) => prev.filter((user) => user.code !== code));
       } else {
         console.error(
           "Failed to delete job level:",
@@ -238,13 +231,10 @@ const ManageLevel = () => {
   // );
 
   // Pagination logic
-  const indexOfLastJobLevel = currentPage * jobLevelsPerPage;
-  const indexOfFirstJobLevel = indexOfLastJobLevel - jobLevelsPerPage;
-  const currentJobLevels = filteredJobLevels.slice(
-    indexOfFirstJobLevel,
-    indexOfLastJobLevel
-  );
-  const totalPages = Math.ceil(filteredJobLevels.length / jobLevelsPerPage);
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -283,30 +273,51 @@ const ManageLevel = () => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px] text-center">STT</TableHead>
-            <TableHead className="text-center">Job Level</TableHead>
+            <TableHead className="text-center">Image</TableHead>
+            <TableHead className="text-center">First Name</TableHead>
+            <TableHead className="text-center">Last Name</TableHead>
+            <TableHead className="text-center">Email</TableHead>
+            <TableHead className="text-center">Address</TableHead>
+            <TableHead className="text-center">Phone Number</TableHead>
+            <TableHead className="text-center">Role</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentJobLevels.map((jobLevel, index) => (
+          {currentUsers.map((user, index) => (
             <TableRow
-              key={jobLevel.code}
+              key={user.code}
+              user={user}
               className="cursor-pointer hover:bg-slate-300"
             >
               <TableCell className="text-center">
-                {index + 1 + indexOfFirstJobLevel}
+                {index + 1 + indexOfFirstUser}
               </TableCell>
-              <TableCell className="text-center">{jobLevel.value}</TableCell>
+              <TableCell className="text-center">{user.value}</TableCell>
+              <TableCell className="text-center">
+                {user.firstName || "N/A"}
+              </TableCell>
+              <TableCell className="text-center">
+                {user.lastName || "N/A"}
+              </TableCell>
+              <TableCell className="text-center">{user.email}</TableCell>
+              <TableCell className="text-center">
+                {user.address || "N/A"}
+              </TableCell>
+              <TableCell className="text-center">
+                {user.phoneNumber || "N/A"}
+              </TableCell>
+              <TableCell className="text-center">{user.roleCode}</TableCell>
               <TableCell className="text-center flex space-x-3 items-center justify-center">
                 <Button
-                  onClick={() => handleOpenUpdateModal(jobLevel)} // Open update modal with jobLevel data
+                  onClick={() => handleOpenUpdateModal(user)} // Open update modal with jobLevel data
                   className="text-white bg-third hover:bg-primary rounded-md w-10 h-9"
                 >
                   <EditNoteOutlinedIcon />
                 </Button>
 
                 <Button
-                  onClick={() => handleDelete(jobLevel.code)}
+                  onClick={() => handleDelete(user.code)}
                   className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
                 >
                   <DeleteIcon />
@@ -345,7 +356,7 @@ const ManageLevel = () => {
                   type="text"
                   id="code"
                   name="code"
-                  value={newJobLevel.code}
+                  value={newUser.code}
                   onChange={handleInputChange}
                   className={`${
                     errorMessage.code
@@ -363,7 +374,7 @@ const ManageLevel = () => {
                   type="text"
                   id="value"
                   name="value"
-                  value={newJobLevel.value}
+                  value={newUser.value}
                   onChange={handleInputChange}
                   className={`${
                     errorMessage.value
@@ -403,7 +414,7 @@ const ManageLevel = () => {
                   type="text"
                   id="code"
                   name="code"
-                  value={updateJobLevel.code}
+                  value={updateUser.code}
                   readOnly
                 />
               </div>
@@ -413,7 +424,7 @@ const ManageLevel = () => {
                   type="text"
                   id="value"
                   name="value"
-                  value={updateJobLevel.value}
+                  value={updateUser.value}
                   onChange={handleInputChange}
                   className={`${
                     errorMessage.value
@@ -439,4 +450,4 @@ const ManageLevel = () => {
   );
 };
 
-export default ManageLevel;
+export default ManageUser;

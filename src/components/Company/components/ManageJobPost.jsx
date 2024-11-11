@@ -77,9 +77,8 @@ const ManageJobPost = () => {
       });
       if (res.data.errCode === 0) {
         setCompany(res.data.data);
-        console.log("company ne", res.data.data);
+        console.log('company ne',res.data.data)
         setPost(res.data.data.postData);
-
         const userCvData = {};
         const userDetailsData = {};
         const scheduleData = {};
@@ -89,14 +88,9 @@ const ManageJobPost = () => {
           const id = cvEntry.id;
           console.log(`Fetching CVs for post ID: ${id}`);
 
-          const resUserCV = await axios.get(
-            `/getAllListCvByPost?postId=${id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
+          const resUserCV = await axios.get(`/getAllListCvByPost?postId=${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          });
           console.log(`CV Response for post ID ${id}:`, resUserCV);
           userCvData[id] = resUserCV.data.data || [];
 
@@ -105,19 +99,11 @@ const ManageJobPost = () => {
             console.log(`Fetching details for user ID: ${userId}`);
             if (!userDetailsData[userId]) {
               const resUserDetail = await axios.get(
-                `/getUserById?id=${userId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                }
+                `/getUserById?id=${userId}`
               );
               const resSchedule = await axios.get(
-                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
+                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`, {
+                  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }
               );
               console.log(
@@ -153,21 +139,15 @@ const ManageJobPost = () => {
   };
   const handleSubmitForm = async () => {
     try {
-      const res = await axios.post(
-        `/createInterviewSchedule`,
-        {
-          interviewDate: scheduleForm.interviewDate,
-          interviewLocation: scheduleForm.interviewLocation,
-          interviewNote: scheduleForm.interviewNote,
-          cvPostId: scheduleForm.cvPostId,
-          companyId: scheduleForm.companyId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios.post(`/createInterviewSchedule`, {
+        interviewDate: scheduleForm.interviewDate,
+        interviewLocation: scheduleForm.interviewLocation,
+        interviewNote: scheduleForm.interviewNote,
+        cvPostId: scheduleForm.cvPostId,
+        companyId: scheduleForm.companyId,
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       if (res.data.errCode === 0) {
         console.log("form ne", res);
         setOpenSchedule(null);
@@ -396,8 +376,7 @@ const ManageJobPost = () => {
                                         </Dialog>
                                       </TableCell>
                                       <TableCell className="flex gap-4 my-2">
-                                        <Dialog
-                                          side="top"
+                                        <Popover
                                           key={userCv.id}
                                           open={openSchedule === userCv.id}
                                           onOpenChange={(isOpen) =>
@@ -406,7 +385,7 @@ const ManageJobPost = () => {
                                             )
                                           }
                                         >
-                                          <DialogTrigger
+                                          <PopoverTrigger
                                             onClick={() => {
                                               setOpenSchedule(userCv.id);
                                               setScheduleForm({
@@ -418,8 +397,8 @@ const ManageJobPost = () => {
                                             className="bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md font-medium transition px-3 py-2"
                                           >
                                             Set Schedule
-                                          </DialogTrigger>
-                                          <DialogContent className="w-[500px] flex flex-col gap-6">
+                                          </PopoverTrigger>
+                                          <PopoverContent className="w-[500px] flex flex-col gap-6">
                                             <div className="flex flex-col gap-y-3">
                                               <Label>Interview Date</Label>
                                               <Popover>
@@ -533,8 +512,8 @@ const ManageJobPost = () => {
                                                 Set Schedule
                                               </Button>
                                             </div>
-                                          </DialogContent>
-                                        </Dialog>
+                                          </PopoverContent>
+                                        </Popover>
                                         {/* dialog confirm reject */}
                                         <Dialog open={rejectDialog}>
                                           <DialogTrigger

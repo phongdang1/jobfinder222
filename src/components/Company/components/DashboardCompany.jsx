@@ -73,9 +73,10 @@ const DashboardCompany = () => {
       expired: 0,
     };
     const currentTime = new Date().toISOString(); // Get current time
-
+    console.log("post ne 123", posts);
     posts.forEach((post) => {
       if (post.userId === parseInt(userId)) {
+
         if (post.statusCode === "ACTIVE") {
           if (post.timeEnd > currentTime) {
             counts.active++;

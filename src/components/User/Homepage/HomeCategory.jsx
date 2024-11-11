@@ -68,19 +68,19 @@ function HomeCategory() {
                   key={index}
                   className="w-full flex basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 flex-shrink-0"
                 >
-                  <Card>
-                    <CardHeader className="pt-6 px-4 flex-col items-start mb-2 h-20 max-h-20 overflow-hidden">
+                  <Card className="bg-white shadow-2xl border border-slate-300">
+                    <CardHeader className="pt-6 px-4 flex-col mb-2 h-14 max-h-20 overflow-hidden items-center">
                       <h3 className="font-bold text-base whitespace-normal">
                         {item.value}
                       </h3>
                     </CardHeader>
-                    <CardBody className="overflow-visible mt-2">
+                    <CardBody className="overflow-visible mt-2 p-5">
                       <Image
                         alt="Card background"
-                        className="object-cover rounded-lg"
-                        src="https://nextui.org/images/hero-card-complete.jpeg"
+                        className="object-contain rounded-lg p-2 border-1 border-primary/35 shadow-inner bg-primary/15"
+                        src={item.image}
                         width={250}
-                        height={200}
+                        height={250}
                       />
                     </CardBody>
                   </Card>

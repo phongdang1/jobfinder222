@@ -7,6 +7,9 @@ const getAllCompanies = (searchKey) => {
     },
   });
 };
+const getAllCompaniesInHomePage = () => {
+  return axios.get("/getAllCompanies");
+}
 const getAllCompaniesUser = (searchKey) => {
   return axios.get(`/getAllCompanies?searchKey=${searchKey}`,{
     headers: {
@@ -105,4 +108,5 @@ export {
   getAllCompaniesUser,
   updateCompany,
   createNewCompany,
+  getAllCompaniesInHomePage
 };

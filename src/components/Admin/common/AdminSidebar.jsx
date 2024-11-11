@@ -13,6 +13,7 @@ import { SiLevelsdotfyi } from "react-icons/si";
 import { LuPackageSearch } from "react-icons/lu";
 import { BsFilePost } from "react-icons/bs";
 import { Link, useMatch } from "react-router-dom";
+import { FaUserCog } from "react-icons/fa";
 
 const AdminSidebar = () => {
   const matchDashboard = useMatch("/admin/dashboard");
@@ -23,6 +24,7 @@ const AdminSidebar = () => {
   const matchPackage = useMatch("/admin/package");
   const matchCompany = useMatch("/admin/company");
   const matchPost = useMatch("/admin/post");
+  const matchUser = useMatch("/admin/user");
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -135,6 +137,18 @@ const AdminSidebar = () => {
             >
               <BsFilePost className="mr-4" />
               {isOpen && "Manage Post"}
+            </Link>
+          </li>
+
+          <li className="group">
+            <Link
+              className={`flex items-center p-4 cursor-pointer text-white transition-colors duration-200 ${
+                matchUser ? "bg-primary" : "hover:bg-primary"
+              }`}
+              to="/admin/user"
+            >
+              <FaUserCog className="mr-4" />
+              {isOpen && "Manage User"}
             </Link>
           </li>
         </ul>

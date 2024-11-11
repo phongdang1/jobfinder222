@@ -40,6 +40,23 @@ function AdminValidation(formData, isCreateModal) {
         error.value = "Job Type must be between 10 and 100 characters.";
       }
     }
+
+    if (formData.name !== undefined) {
+      if (formData.name === "") {
+        error.name = "Skill name is required!";
+      } else if (!nameRegex.test(formData.name)) {
+        error.name = "Skill name cannot contain only numbers!";
+      } else if (spaceRegex.test(formData.name)) {
+        error.name = "Skill name cannot be empty or contain only spaces!";
+      } else {
+        // Remove accents and spaces, then check if the transformed value matches the original input
+        const normalizedCode = removeAccents(formData.name);
+        if (formData.name !== normalizedCode) {
+          error.name =
+            "Skill name cannot contain accents or spaces. Please use only lowercase letters and numbers.";
+        }
+      }
+    }
   }
 
   if (formData.value !== undefined) {
