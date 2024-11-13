@@ -3,27 +3,32 @@ import axios from "../../../fetchData/axios";
 import { getCvByUserId } from "../../../fetchData/CvPost";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const YourApplication = () => {
   const userId = localStorage.getItem("user_id");
   const [user, setUser] = useState();
   const [cvData, setCvData] = useState([]);
+  const [countJob, setCountJob] = useState();
+
   useEffect(() => {
     fetchUserData();
   }, []);
 
-  const [countJob, setCountJob] = useState();
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`/getUserById?id=${userId}`);
+      const response = await axios.get(`/getUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       const cvResponse = await getCvByUserId(userId);
       if (response.data.errCode === 0 && cvResponse.data.errCode === 0) {
         setUser(response.data.data);
         setCvData(cvResponse.data.data);
         setCountJob(response.data.count);
-        console.log("user cv", cvResponse.data.data);
       } else {
-        console.log("loi roi", cvResponse);
+        console.error("Error fetching CV data:", cvResponse);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -33,65 +38,73 @@ const YourApplication = () => {
   return (
     <div className="w-full flex flex-col gap-y-4">
       <div className="bg-white h-fit p-4">
-        {cvData > 0 ? (
-          <p className="font-poppins text-xl md:text-2xl font-medium italic mb-4">
-            You can see all the jobs you have applied here
-          </p>
-        ) : (
-          <p className="font-poppins text-xl md:text-2xl font-medium italic mb-4">
-            You have not apply any jobs
-          </p>
-        )}
+        <p className="font-poppins text-xl md:text-2xl font-medium italic mb-4">
+          {cvData && cvData.length > 0
+            ? "You can see all the jobs you have applied here"
+            : "You have not applied for any jobs"}
+        </p>
 
-        <div className="space-y-6">
+        <div className="space-y-4 ">
           {cvData.map((cv, index) => (
             <Card
               key={index}
-              className="flex flex-col gap-y-4 border border-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white"
+              className="flex flex-col md:flex-row items-center p-6 border border-gray-300 rounded-lg shadow-md hover:shadow-lg hover:border-primary hover:bg-primary/10 transition bg-white  group hover:outline-2 hover:outline-primary "
             >
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-800">
+              <div className="flex-1 ">
+                <div className="flex flex-col gap-1">
+                     <h3 className="text-lg font-semibold text-gray-800">
                   {cv.postCvData?.postDetailData?.name || "N/A"}
-                </h2>
+                </h3>
+                <p className="text-sm text-gray-400 ">{cv.description || "No description provided."}</p>
+                <p className="text-xs text-gray-500 my-3">
+                  Applied on: <span className="font-semibold text-primary">{new Date(cv.createdAt).toLocaleDateString()}</span>
+                </p>
+                </div>
+             
+
+                <div className="text-sm text-gray-600 mt-1 flex gap-3">
+                  <Badge
+                    variant="outline"
+                    className="bg-white w-fit text-nowrap rounded-lg hover:bg-primary/20"
+                  >
+                    {cv.postCvData?.postDetailData?.jobLevelPostData?.value ||
+                      "N/A"}
+                  </Badge>
+
+                  <Badge
+                    variant="outline"
+                    className="bg-white w-fit text-nowrap rounded-lg hover:bg-primary/20"
+                  >
+                    {cv.postCvData?.postDetailData?.provincePostData?.value ||
+                      "N/A"}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="bg-white w-fit text-nowrap rounded-lg hover:bg-primary/20"
+                  >
+                    {cv.postCvData?.postDetailData?.salaryTypePostData?.value ||
+                      "Negotiable"}
+                  </Badge>
+                </div>   
+              </div>
+              <div className="flex flex-col md:items-end md:text-right justify-between">
                 <span
-                  className={`px-3 py-1 text-sm font-medium rounded-full ${
+                  className={`px-3 py-1 text-xs font-semibold rounded-full mb-2 ${
                     cv.statusCode === "PENDING"
                       ? "bg-yellow-100 text-yellow-800"
                       : cv.statusCode === "APPROVED"
                       ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      : cv.statusCode === "REJECTED" 
+                      ? "bg-red-100 text-red-800"
+                      : "bg-blue-300 text-blue-800"
                   }`}
                 >
                   {cv.statusCode}
                 </span>
-              </div>
 
-              <div className="text-sm text-gray-600 leading-relaxed space-y-2">
-                <p>
-                  <strong className="font-semibold">Description:</strong>{" "}
-                  {cv.description || "No description provided."}
-                </p>
-                <p>
-                  <strong className="font-semibold">Job Level:</strong>{" "}
-                  {cv.postCvData?.postDetailData?.jobLevelPostData?.value ||
-                    "N/A"}
-                </p>
-                <p>
-                  <strong className="font-semibold">Location:</strong>{" "}
-                  {cv.postCvData?.postDetailData?.provincePostData?.value ||
-                    "N/A"}
-                </p>
-                <p>
-                  <strong className="font-semibold">Salary:</strong>{" "}
-                  {cv.postCvData?.postDetailData?.salaryTypePostData?.value ||
-                    "Negotiable"}
-                </p>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-sm text-gray-500">
-                  Applied on: {new Date(cv.createdAt).toLocaleDateString()}
-                </p>
+                <Button variant="outline" className="mt-2 border border-primary text-primary font-semibold hover:text-white hover:bg-primary">
+                  View Details
+                </Button>
               </div>
             </Card>
           ))}

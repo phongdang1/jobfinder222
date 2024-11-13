@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import firebase from "../../../utils/firebase";
 import Validation from "@/components/User/Common/Validation";
+import toast from "react-hot-toast";
 
 const roles = ["USER", "COMPANY"];
 
@@ -103,6 +104,7 @@ const SignUp = () => {
       } catch (error) {
         console.log("image", formData.image);
         console.error("Sign Up Error:", error);
+        toast.error("Email address existed !")
       }
     } else {
       console.log("con loi");

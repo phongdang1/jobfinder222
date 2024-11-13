@@ -87,7 +87,7 @@ function UserProfilePage() {
 
   useEffect(() => {
     fetchUserData();
-  }, [userId, uploadComplete]);
+  }, [userId, selectedItem]);
 
   useEffect(() => {
     if (saveAvatar && image) {

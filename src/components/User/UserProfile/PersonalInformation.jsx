@@ -251,6 +251,7 @@ function PersonalInformation() {
     console.log(res);
     console.log("email: " + email + " otp: " + otp.length);
     if (res.data.errCode === 0) {
+
       toast.success("OTP verified successfully!");
       setTimeout(async () => {
         window.location.reload();
@@ -260,6 +261,7 @@ function PersonalInformation() {
         setIsDialogOpen(false);
       }, 200);
     } else if (res.data.errCode === -1) {
+
       console.log("abc sai roi");
       setOtp("");
       toast.error("Invalid OTP");

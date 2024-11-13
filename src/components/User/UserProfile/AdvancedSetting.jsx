@@ -705,7 +705,7 @@ function AdvancedSetting() {
 
         <div className="relative ">
           {/* Tooltip overlay and lock icon for non-VIP users */}
-          {!user.isVip && (
+          {user && !user.isVip ? (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -721,12 +721,14 @@ function AdvancedSetting() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+          ) : (
+            ""
           )}
 
           {/* Main content div */}
           <div
-            className={`bg-white rounded-lg font-poppins text-xl md:text-2xl font-medium p-4 gap-6 flex flex-col h-full${
-              !user.isVip ? "pointer-events-none" : ""
+            className={`bg-white rounded-lg font-poppins text-xl md:text-2xl font-medium p-4 gap-6 flex flex-col h-full ${
+              !user?.isVip ? "pointer-events-none" : ""
             }`}
           >
             <p>Vip Functionality</p>

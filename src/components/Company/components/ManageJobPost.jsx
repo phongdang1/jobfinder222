@@ -45,6 +45,8 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { Avatar } from "@mui/material";
+import defaultAvatar from "../../../assets/images/avatar_ne.png"
 const ManageJobPost = () => {
   const [company, setCompany] = useState([]);
   const [post, setPost] = useState([]);
@@ -203,7 +205,7 @@ const ManageJobPost = () => {
         fetchCompanyData();
         setApproveDialog(false);
       } else {
-        console.log("loi approved");
+        console.log("loi approved", res);
       }
     } catch (error) {
       console.log("error approve", error);
@@ -286,12 +288,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "PENDING" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                        {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}
@@ -632,12 +643,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "INTERVIEW" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                      {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}
@@ -900,12 +920,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "REJECTED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                      {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}
@@ -1055,12 +1084,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "APPROVED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                      {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}

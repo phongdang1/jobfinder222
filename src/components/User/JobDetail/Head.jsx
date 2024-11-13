@@ -137,6 +137,7 @@ const Head = ({ job }) => {
         fetchUserData();
       } else {
         console.log(response);
+        toast.error(response.data.errMessage);
       }
     } catch (error) {
       console.error("Error applying job:", error);
@@ -348,6 +349,7 @@ const Head = ({ job }) => {
                           <Button
                             onClick={() => {
                               setIsOpen(false);
+                              setDescription("")
                             }}
                             className="bg-white border border-primary text-primary hover:text-white"
                           >
@@ -368,7 +370,7 @@ const Head = ({ job }) => {
                     className="w-full flex gap-2 py-4 mr-3  lg:w-auto px-6 text-center bg-white text-primary hover:bg-primary hover:text-white border-primary text-base font-medium"
                     variant="outline"
                     onClick={() => {
-                      console.log(isApplied);
+                      navigate("/userProfile/viewApplication")
                     }}
                   >
                     <MdOutlineDoubleArrow />
