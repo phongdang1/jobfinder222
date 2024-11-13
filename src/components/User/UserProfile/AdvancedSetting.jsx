@@ -70,7 +70,25 @@ function AdvancedSetting() {
   });
 
   const userId = localStorage.getItem("user_id");
-  const user = JSON.parse(localStorage.getItem("user")).data;
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")).data
+  );
+  const [isFindJob, setIsFindJob] = useState(false);
+  const [isTakeMail, setIsTakeMail] = useState(false);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await getUsersById(userId); // Replace with your API call
+        if (response.data) {
+          setIsFindJob(response.data.data.UserDetailData.isFindJob === 1);
+          setIsTakeMail(response.data.data.UserDetailData.isTakeMail === 1);
+        }
+      } catch (error) {
+        console.error("Error fetching user data", error);
+      }
+    };
+    fetchUserData();
+  }, [userId]);
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -138,6 +156,7 @@ function AdvancedSetting() {
 
       setDreamJobValue(userData);
       setUserSkill(userData);
+      setUser(userData);
 
       const codes = [
         userData.UserDetailData.addressCode,
@@ -164,7 +183,8 @@ function AdvancedSetting() {
 
   useEffect(() => {
     fetchUserSkill();
-  }, []);
+    console.log("isFindJob", isFindJob);
+  }, [isFindJob]);
 
   const handleBadgeClick = (skill) => {
     setSuggestedSkills(suggestedSkills.filter((s) => s.id !== skill.id));
@@ -272,6 +292,11 @@ function AdvancedSetting() {
     if (res.data.errCode === 0) {
       toast.success("Job Seeker mode has been enabled");
       console.log(res);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 500);
+      setIsFindJob(true);
+      // fetchUserSkill();
     } else {
       console.log("loi turn on");
     }
@@ -287,6 +312,10 @@ function AdvancedSetting() {
     if (res.data.errCode === 0) {
       toast.error("Disabled Job Seeker mode");
       console.log(res);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 500);
+      setIsFindJob(false);
     } else {
       console.log("loi turn off");
     }
@@ -302,6 +331,7 @@ function AdvancedSetting() {
     if (res.data.errCode === 0) {
       toast.success("Job Suggestion has been enabled");
       console.log(res);
+      setIsTakeMail(true);
     } else {
       console.log("loi turn on");
     }
@@ -317,6 +347,7 @@ function AdvancedSetting() {
     if (res.data.errCode === 0) {
       toast.error("Disabled Job Suggestion");
       console.log(res);
+      setIsTakeMail(false)
     } else {
       console.log("loi turn off");
     }
@@ -753,11 +784,14 @@ function AdvancedSetting() {
                   </Tooltip>
                 </TooltipProvider>{" "}
                 <Switch
+                  checked={isFindJob}
                   onCheckedChange={(checked) => {
                     if (checked) {
                       handleEnableJobSeeker();
+                      console.log("check ne", isFindJob);
                     } else {
                       handleDisableJobSeeker();
+                      console.log("check ne", isFindJob);
                     }
                   }}
                 />
@@ -783,6 +817,7 @@ function AdvancedSetting() {
                   </Tooltip>
                 </TooltipProvider>{" "}
                 <Switch
+                  checked={isTakeMail}
                   onCheckedChange={(checked) => {
                     if (checked) {
                       handleEnableJobSuggestion();
