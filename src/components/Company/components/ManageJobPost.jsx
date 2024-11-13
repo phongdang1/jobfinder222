@@ -45,6 +45,8 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { Avatar } from "@mui/material";
+import defaultAvatar from "../../../assets/images/avatar_ne.png"
 const ManageJobPost = () => {
   const [company, setCompany] = useState([]);
   const [post, setPost] = useState([]);
@@ -77,7 +79,7 @@ const ManageJobPost = () => {
       });
       if (res.data.errCode === 0) {
         setCompany(res.data.data);
-        console.log('company ne',res.data.data)
+        console.log("company ne", res.data.data);
         setPost(res.data.data.postData);
         const userCvData = {};
         const userDetailsData = {};
@@ -88,9 +90,14 @@ const ManageJobPost = () => {
           const id = cvEntry.id;
           console.log(`Fetching CVs for post ID: ${id}`);
 
-          const resUserCV = await axios.get(`/getAllListCvByPost?postId=${id}`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-          });
+          const resUserCV = await axios.get(
+            `/getAllListCvByPost?postId=${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
           console.log(`CV Response for post ID ${id}:`, resUserCV);
           userCvData[id] = resUserCV.data.data || [];
 
@@ -99,11 +106,19 @@ const ManageJobPost = () => {
             console.log(`Fetching details for user ID: ${userId}`);
             if (!userDetailsData[userId]) {
               const resUserDetail = await axios.get(
-                `/getUserById?id=${userId}`
+                `/getUserById?id=${userId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                }
               );
               const resSchedule = await axios.get(
-                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`, {
-                  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                `/getInterviewScheduleByCvPost?cvPostId=${userCv.id}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
                 }
               );
               console.log(
@@ -139,15 +154,19 @@ const ManageJobPost = () => {
   };
   const handleSubmitForm = async () => {
     try {
-      const res = await axios.post(`/createInterviewSchedule`, {
-        interviewDate: scheduleForm.interviewDate,
-        interviewLocation: scheduleForm.interviewLocation,
-        interviewNote: scheduleForm.interviewNote,
-        cvPostId: scheduleForm.cvPostId,
-        companyId: scheduleForm.companyId,
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await axios.post(
+        `/createInterviewSchedule`,
+        {
+          interviewDate: scheduleForm.interviewDate,
+          interviewLocation: scheduleForm.interviewLocation,
+          interviewNote: scheduleForm.interviewNote,
+          cvPostId: scheduleForm.cvPostId,
+          companyId: scheduleForm.companyId,
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       if (res.data.errCode === 0) {
         console.log("form ne", res);
         setOpenSchedule(null);
@@ -186,7 +205,7 @@ const ManageJobPost = () => {
         fetchCompanyData();
         setApproveDialog(false);
       } else {
-        console.log("loi approved");
+        console.log("loi approved", res);
       }
     } catch (error) {
       console.log("error approve", error);
@@ -269,12 +288,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "PENDING" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                        {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}
@@ -615,12 +643,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "INTERVIEW" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                      {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}
@@ -883,12 +920,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "REJECTED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                      {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}
@@ -1038,12 +1084,21 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "APPROVED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                        <img
-                                          className="rounded-full w-14 h-14"
-                                          src={
-                                            userDetails[userCv.userId]?.image
-                                          }
-                                        />
+                                      {userDetails[userCv.userId]?.image ? (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              userDetails[userCv.userId]?.image
+                                            }
+                                          />
+                                        ) : (
+                                          <img
+                                            className="rounded-full w-14 h-14"
+                                            src={
+                                              defaultAvatar
+                                            }
+                                          />
+                                        )}
                                       </TableCell>
                                       <TableCell>
                                         {userDetails[userCv.userId]?.firstName}{" "}

@@ -22,6 +22,7 @@ const VipFeature = () => {
     // Cuộn lên đầu trang khi component được render
     window.scrollTo(0, 0);
   }, []);
+  const user = JSON.parse(localStorage.getItem("user"));
   const handleUpdateVip = async () => {
     const res = await createPaymentVip(7);
     if (res.data.errCode == 0) {
@@ -59,9 +60,10 @@ const VipFeature = () => {
           </div>
           <Button
             onClick={handleUpdateVip}
+            disabled={user.isVip = 1}
             className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
           >
-            Upgrade Now
+           {user.isVip == 1 ? "You are already VIP member !" : " Upgrade Now "}
           </Button>
         </div>
         {/* image */}

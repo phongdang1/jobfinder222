@@ -4,7 +4,7 @@ import Typewriter from "typewriter-effect";
 import checkCircleAnimation from "../../../../../assets/svgicon/check-circle-animation.json";
 import Lottie from "lottie-react";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { executePaymentViewCv } from "@/fetchData/Transaction";
 import toast from "react-hot-toast";
 
@@ -34,6 +34,7 @@ const PaymentSuccess = () => {
   const [message, setMessage] = useState("");
   const [typewriter, setTypewriter] = useState(false);
   const [showButton, setShowButton] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     const orderData = JSON.parse(localStorage.getItem("orderData"));
     if (orderData) {
@@ -54,10 +55,10 @@ const PaymentSuccess = () => {
       setTypewriter(true);
     }, 1500);
     const buttonTimeout = setTimeout(() => {
-      setShowButton(true);
+      navigate("/company/dashboard")
     }, 6500);
     return () => {
-      clearTimeout(timeout, buttonTimeout);
+      clearTimeout(timeout);
     };
   }, []);
   useEffect(() => {}, []);

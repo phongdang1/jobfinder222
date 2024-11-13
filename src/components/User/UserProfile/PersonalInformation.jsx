@@ -254,7 +254,10 @@ function PersonalInformation() {
       fetchUserData();
       setIsDialogOpen(false);
       toast.success("OTP sent successfully!");
-    } else if (res.data.errCode === -1) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
       console.log("abc sai roi");
       setOtp("");
       toast.error("Invalid OTP");
