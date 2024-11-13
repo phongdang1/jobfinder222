@@ -54,7 +54,6 @@ const ManagePackages = () => {
 
   const fetchPackages = async (searchKey = "", selectedType = "all") => {
     try {
-      setLoading(true);
       const response = await axios.get("/getAllPackage", {
         params: {
           searchKey,
@@ -218,12 +217,6 @@ const ManagePackages = () => {
               <SearchIcon sx={{ color: "gray" }} />
             </div>
           </div>
-          <Button
-            onClick={() => setSearchTerm("")}
-            className="p-3 text-white bg-third hover:bg-primary rounded-md"
-          >
-            Reset Search
-          </Button>
         </div>
         <div className="flex items-center gap-4">
           <Label htmlFor="type-select">Filter by Type:</Label>
