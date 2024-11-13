@@ -25,11 +25,11 @@ const handleUpdateSkill = (userData) => {
 }
 
 const handleDeleteSkill = (userData) => {
-    return axios.post("/deleteSkill", userData,{
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      })
+  return axios.post("/deleteSkill", userData,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  })
 }
 
 const getAllSkillByCategory = (categoryJobCode) => {

@@ -69,7 +69,6 @@ const ManageSkill = () => {
 
   const fetchSkills = async (searchKey = "", selectedCategory = "all") => {
     try {
-      setLoading(true);
       const offset = (currentPage - 1) * skillsPerPage; // Calculate offset
       const response = await axios.get("/getAllSkillWithLimit", {
         params: {
@@ -96,8 +95,8 @@ const ManageSkill = () => {
   };
 
   useEffect(() => {
-    fetchSkills(searchTerm, selectedCategory);
-  }, [currentPage, selectedCategory]);
+    fetchSkills(searchTerm, selectedCategory); // Trigger search whenever `searchTerm` or `selectedCategory` changes
+  }, [searchTerm, currentPage, selectedCategory]);
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
 
@@ -152,6 +151,7 @@ const ManageSkill = () => {
       const response = await handleCreateNewSkill(newSkill);
       if (response.data && response.data.errCode === 0) {
         setSkills((prev) => [...prev, newSkill]);
+        fetchSkills([]);
       } else {
         console.error(
           "Failed to create skill:",
@@ -201,14 +201,23 @@ const ManageSkill = () => {
 
   const handleDeleteSkill = async (skillId) => {
     try {
-      const response = await axios.post("/deleteSkill", {
-        skillId: skillId,
-      });
-      console.log("respone ne", response);
+      const token = localStorage.getItem("token"); // Adjust if token is stored elsewhere
+      const response = await axios.post(
+        "/deleteSkill",
+        {
+          skillId: skillId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token if required
+          },
+        }
+      );
+
       if (response.data && response.data.errCode === 0) {
         fetchSkills();
       } else {
-        console.error("Failed to delete skill:", response.data.message);
+        console.error("Failed to delete skill:", response.data);
       }
     } catch (error) {
       console.error("Error deleting skill:", error);
@@ -233,8 +242,10 @@ const ManageSkill = () => {
   };
   const sortedSkills =
     selectedCategory === "all"
-      ? skills
-      : skills.filter((skill) => skill.categoryJobCode === selectedCategory);
+      ? filteredSkills
+      : filteredSkills.filter(
+          (skill) => skill.categoryJobCode === selectedCategory
+        );
 
   // Pagination logic
   const totalPages = Math.ceil(sortedSkills.length / skillsPerPage);
@@ -266,12 +277,6 @@ const ManageSkill = () => {
               <SearchIcon sx={{ color: "gray" }} />
             </div>
           </div>
-          <Button
-            onClick={handleSearchClick}
-            className="p-3 text-white bg-third hover:bg-primary rounded-md"
-          >
-            Search
-          </Button>
         </div>
         <div className="flex items-center gap-4">
           <Label htmlFor="category-select">Sort by Category:</Label>
@@ -306,7 +311,7 @@ const ManageSkill = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedSkills.map((skill, index) => (
+          {currentSkills.map((skill, index) => (
             <TableRow
               key={skill.id}
               className="cursor-pointer hover:bg-slate-300"
@@ -379,21 +384,23 @@ const ManageSkill = () => {
               <select
                 id="category"
                 name="categoryJobCode"
-                value={newSkill.categoryJobCode}
+                value={newSkill.categoryJobCode || "congNgheThongTin"} // Default to a valid category if no selection
                 onChange={handleInputChange}
                 required
                 className="border border-gray-300 rounded-md p-2"
               >
-                {categories.map((category) => (
-                  <option key={category.code} value={category.code}>
-                    {category.label}
-                  </option>
-                ))}
+                {categories
+                  .filter((category) => category.code !== "all") // Exclude "All"
+                  .map((category) => (
+                    <option key={category.code} value={category.code}>
+                      {category.label}
+                    </option>
+                  ))}
               </select>
             </div>
             <Button
               type="submit"
-              className="bg-third hover:text-white text-white rounded-md"
+              className="p-3 bg-third hover:text-white text-white rounded-md"
             >
               Create
             </Button>
@@ -407,7 +414,7 @@ const ManageSkill = () => {
           <DialogHeader>
             <DialogTitle>Update Skill</DialogTitle>
             <DialogDescription>
-              Update the skill details below.
+              Modify the skill details below.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateSubmit}>
@@ -421,13 +428,13 @@ const ManageSkill = () => {
                 onChange={handleInputChange}
                 className={`${
                   errorMessage.name ? "border-red-500" : "focus:border-primary"
-                } `}
+                }`}
               />
               {errorMessage.name && (
                 <p className="text-red-500 mb-3">{errorMessage.name}</p>
               )}
             </div>
-            <div className="mb-4 flex flex-col space-y-2">
+            <div className="mb-4">
               <Label htmlFor="update-category">Category</Label>
               <select
                 id="update-category"
@@ -437,18 +444,17 @@ const ManageSkill = () => {
                 required
                 className="border border-gray-300 rounded-md p-2"
               >
-                {categories.map((category) => (
-                  <option key={category.code} value={category.code}>
-                    {category.label}
-                  </option>
-                ))}
+                {categories
+                  .filter((category) => category.code !== "all") // Exclude "All"
+                  .map((category) => (
+                    <option key={category.code} value={category.code}>
+                      {category.label}
+                    </option>
+                  ))}
               </select>
             </div>
-            <Button
-              type="submit"
-              className="bg-third hover:text-white text-white rounded-md"
-            >
-              Update
+            <Button type="submit" className="bg-primary text-white">
+              Update Skill
             </Button>
           </form>
         </DialogContent>
