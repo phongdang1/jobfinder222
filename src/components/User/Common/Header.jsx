@@ -151,6 +151,16 @@ function Header() {
       console.log("Company Approved Event:", msg);
     });
 
+    socket.on("cvPostApproved", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("Company Approved Event:", msg);
+    });
+
+    socket.on("cvPostRejected", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("Company Approved Event:", msg);
+    });
+
     // Lắng nghe khi kết nối hoặc mất kết nối
     socket.on("connect", () => {
       console.log("Đã kết nối với server Socket.IO");

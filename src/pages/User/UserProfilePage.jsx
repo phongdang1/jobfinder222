@@ -62,11 +62,9 @@ function UserProfilePage() {
       };
 
       await handleSetDataUserDetail(userDataImage);
+      await fetchUserData();
       setUploading(false);
       setUploadComplete(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error) {
       console.error("Error uploading image to backend: ", error);
       setUploading(false);
@@ -74,19 +72,20 @@ function UserProfilePage() {
   };
 
   const [data, setData] = useState();
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await getUsersById(userId);
-        const user = response.data.data;
-        setData(user);
-        setImage(user.image);
-        console.log(user);
-      } catch (error) {
-        console.error("Error fetching user data: ", error);
-      }
-    };
 
+  const fetchUserData = async () => {
+    try {
+      const response = await getUsersById(userId);
+      const user = response.data.data;
+      setData(user);
+      setImage(user.image);
+      console.log(user);
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+    }
+  };
+
+  useEffect(() => {
     fetchUserData();
   }, [userId, uploadComplete]);
 
