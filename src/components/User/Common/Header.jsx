@@ -85,7 +85,7 @@ function Header() {
   };
   useEffect(() => {
     fetchUser(userId);
-  }, []);
+  }, [userId]);
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -462,9 +462,17 @@ function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link
+                      to="/userProfile/viewApplication"
+                      className="cursor-pointer"
+                    >
+                      Your Application
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <button
                       onClick={handleLogout}
-                      className="text-red-500 hover:text-red-700 cursor-pointer w-full"
+                      className="text-red-500 hover:text-red-700 cursor-pointer w-full font-semibold"
                     >
                       Logout
                     </button>

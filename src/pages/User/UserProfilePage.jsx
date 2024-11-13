@@ -88,7 +88,7 @@ function UserProfilePage() {
     };
 
     fetchUserData();
-  }, [userId, uploadComplete]);
+  }, [userId, selectedItem]);
 
   useEffect(() => {
     if (saveAvatar && image) {
