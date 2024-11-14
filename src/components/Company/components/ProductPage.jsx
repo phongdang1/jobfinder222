@@ -9,8 +9,13 @@ import postcard from "../../../assets/images/img1.jpg";
 import viewCandidate from "../../../assets/illustration/viewCandidate.png";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Button } from "@/components/ui/button";
-import { createPaymentHotPost, createPaymentViewCv } from "../../../fetchData/Transaction";
+import {
+  createPaymentHotPost,
+  createPaymentViewCv,
+} from "../../../fetchData/Transaction";
 const URL = "/getAllPackage";
+import { FaGift } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function ProductPage() {
   const [products, setProducts] = useState([]);
@@ -102,7 +107,7 @@ function ProductPage() {
       };
       localStorage.setItem("orderData", JSON.stringify(data));
       // const userId = JSON.parse(localStorage.getItem("user_id"));
-      // const packageId = selectedViewPlanId; 
+      // const packageId = selectedViewPlanId;
       const redirectUrl = `${res.data.link}`;
       console.log("Redirecting to:", redirectUrl);
       window.location.href = redirectUrl;
@@ -122,7 +127,7 @@ function ProductPage() {
       };
       localStorage.setItem("orderData", JSON.stringify(data));
       // const userId = JSON.parse(localStorage.getItem("user_id"));
-      // const packageId = selectedViewPlanId; 
+      // const packageId = selectedViewPlanId;
       const redirectUrl = `${res.data.link}`;
       console.log("Redirecting to:", redirectUrl);
       window.location.href = redirectUrl;
@@ -134,24 +139,36 @@ function ProductPage() {
 
   return (
     <div className="mb-5">
-      <div className="flex items-center justify-center bg-opacity-80 rounded-2xl mb-6">
-        <ProductHero />
+      <div className="flex flex-col  bg-opacity-80 rounded-2xl mb-6">
+        <ProductHero />  
       </div>
-
+    
       {/* Post Package Card */}
       <div
         data-aos="fade-right"
         className="flex justify-center items-center mx-auto max-w-6xl mb-8"
       >
-        <div className="flex items-center justify-between bg-transparent p-8 rounded-lg w-full">
-          {/* Left - Image */}
-          <div className="w-1/2 p-4">
+        <div className="flex flex-col justify-between bg-transparent p-8 rounded-lg w-full">
+        <Link 
+      to="/company/exchangePoint"
+      className="flex">
+        <Button
+          variant="outline"
+          className="border border-primary mx-4 mb-14 bg-white flex  items-center gap-2 hover:text-primary"
+        >
+          <FaGift /> Exchange your point
+        </Button>
+      </Link>
+          <div className="flex items-center justify-between">
+            {/* Left - Image */}
+             <div className="w-1/2 p-4">
             <img
               src={postcard}
               alt="Post Package Illustration"
               className="w-full rounded-md"
             />
           </div>
+          
           {/* Right - Details */}
           <div className="w-1/2 p-4">
             <h2 className="text-3xl font-semibold mb-5 text-center ">
@@ -183,6 +200,8 @@ function ProductPage() {
               <FaShoppingCart className="mr-2" /> Buy Now
             </Button>
           </div>
+          </div>
+         
         </div>
       </div>
 

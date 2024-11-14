@@ -1,46 +1,54 @@
 import axios from "./axios";
 const token = localStorage.getItem("token");
 const getAllCompanies = (searchKey) => {
-  return axios.get(`/getAllCompaniesInactive?searchKey=${searchKey}`,{
+  return axios.get(`/getAllCompaniesInactive?searchKey=${searchKey}`, {
     headers: {
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 const getAllCompaniesInHomePage = () => {
   return axios.get("/getAllCompanies");
-}
+};
 const getAllCompaniesUser = (searchKey) => {
-  return axios.get(`/getAllCompanies?searchKey=${searchKey}`,{
+  return axios.get(`/getAllCompanies?searchKey=${searchKey}`, {
     headers: {
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 const getCompanyById = (companyId) => {
-  return axios.get(`/getCompanyById?id=${companyId}`,{
+  return axios.get(`/getCompanyById?id=${companyId}`, {
     headers: {
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 const banCompany = (companyId) => {
-  return axios.post(`/banCompany`, {
-    companyId: companyId,
-  },{
-    headers: {
-      Authorization: `Bearer ${token}`, 
+  return axios.post(
+    `/banCompany`,
+    {
+      companyId: companyId,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 const unbanCompany = (companyId) => {
-  return axios.post(`/unBanCompany`, {
-    companyId: companyId,
-  },{
-    headers: {
-      Authorization: `Bearer ${token}`, 
+  return axios.post(
+    `/unBanCompany`,
+    {
+      companyId: companyId,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 const updateCompany = (
   companyId,
@@ -53,47 +61,75 @@ const updateCompany = (
   thumbnail,
   file
 ) => {
-  return axios.post(`/updateCompany`, {
-    companyId: companyId,
-    name: name,
-    address: address,
-    description: description,
-    phonenumber: phonenumber,
-    amountEmployer: amountEmployer,
-    coverimage: coverimage,
-    thumbnail: thumbnail,
-    file: file,
-  },{
-    headers: {
-      Authorization: `Bearer ${token}`, 
+  return axios.post(
+    `/updateCompany`,
+    {
+      companyId: companyId,
+      name: name,
+      address: address,
+      description: description,
+      phonenumber: phonenumber,
+      amountEmployer: amountEmployer,
+      coverimage: coverimage,
+      thumbnail: thumbnail,
+      file: file,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 const inactiveCompany = (companyId) => {
-  return axios.post(`/rejectCompany`, {
-    companyId: companyId,
-  },{
-    headers: {
-      Authorization: `Bearer ${token}`, 
+  return axios.post(
+    `/rejectCompany`,
+    {
+      companyId: companyId,
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 const activeCompany = (companyId) => {
-  return axios.post(`/approveCompany`, {
-    companyId: companyId,
-  },{
+  return axios.post(
+    `/approveCompany`,
+    {
+      companyId: companyId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const createNewCompany = (data) => {
+  return axios.post(`/createNewCompany`, data, {
     headers: {
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 
-const createNewCompany = (data) => {
-  return axios.post(`/createNewCompany`, data,{
+const exchangePointToView = (data) => {
+  return axios.post(`/exchangePointToView`, data, {
     headers: {
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const exchangePointToPost = (data) => {
+  return axios.post(`/exchangePointToPost`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
   });
 };
@@ -108,5 +144,7 @@ export {
   getAllCompaniesUser,
   updateCompany,
   createNewCompany,
-  getAllCompaniesInHomePage
+  getAllCompaniesInHomePage,
+  exchangePointToView,
+  exchangePointToPost
 };

@@ -81,13 +81,13 @@ function CandidateCard({ candidates }) {
     return "text-green-500";
   };
 
-  const sortCandidate = candidates.sort(
+  const sortCandidate = candidates?.sort(
     (a, b) => parseFloat(b.file) - parseFloat(a.file)
   );
 
   return (
     <>
-      {sortCandidate.map((c, index) => {
+      {sortCandidate?.map((c, index) => {
         const matchPercentage = parseFloat(c.file) || 0;
 
         return (
