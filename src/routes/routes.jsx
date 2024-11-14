@@ -58,6 +58,7 @@ import PostPaymentSuccess from "@/components/Company/components/Payment/HotPostP
 import VipPaymentSuccess from "@/pages/User/VipPaymentSuccess";
 import PostPaymentCancel from "@/components/Company/components/Payment/HotPostPayment/PostPaymentCancel";
 import ManageUser from "@/components/Admin/components/ManageUser";
+import ExchangePoint from "@/components/Company/components/ExchangePoint";
 import ManageReport from "@/components/Admin/components/ManageReport";
 
 const routes = [
@@ -139,6 +140,7 @@ const routes = [
       { path: "product", element: <ProductPage /> },
       { path: "createJobPost", element: <CreateJobPost /> },
       { path: "cart", element: <ProductCart /> },
+      { path: "exchangePoint", element: <ExchangePoint /> },
       {
         path: "candidateDetail/:userId/:allowCv",
         element: <CandidateDetail />,
