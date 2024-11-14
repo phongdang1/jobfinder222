@@ -15,9 +15,38 @@ const getUsersById = (id) => {
     },
   });
 };
-
-const getAllUsers = () => {
-  return axios.get("/getAllUsers",{
+const getAllUsers = (searchKey) => {
+  return axios.get(`/getAllUsers?searchKey=${searchKey}`,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
+};
+const banUser = (userId, note) => {
+  return axios.post("/banUser",
+    { userId: userId, 
+      note: note
+    },
+    {
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
+};
+const unBanUser = (userId) => {
+  return axios.post("/unBanUser",
+    { userId: userId
+    },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
+};
+const setUserToAdmin = (userId) => {
+  return axios.post("/setUserToAdmin",
+    {
+      userId: userId
+    },{
     headers: {
       Authorization: `Bearer ${token}`, 
     },
@@ -38,4 +67,4 @@ const resetPassword = (id, oldPassword, newPassword) => {
     }
   );
 };
-export { handleSetDataUserDetail, getUsersById, resetPassword, getAllUsers };
+export { handleSetDataUserDetail, getUsersById, banUser, unBanUser, setUserToAdmin, resetPassword, getAllUsers };

@@ -85,14 +85,16 @@ const ManageTypeJob = () => {
     fetchJobTypes();
   }, []);
 
-  const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
+  const handleSearchInputChange = (e) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
 
-  const handleSearchClick = () => {
-    // Filter the job types when search button is clicked
+    // Filter job types based on the input
     const filtered = jobTypes.filter((jobType) =>
       jobType.value.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredJobTypes(filtered); // Update the filtered job types
+
+    setFilteredJobTypes(filtered); // Update the filtered job types in real-time
   };
 
   const handleOpenCreateModal = () => {
@@ -250,18 +252,12 @@ const ManageTypeJob = () => {
               type="text"
               placeholder="Search by type..."
               value={searchTerm}
-              onChange={handleSearchInputChange}
+              onChange={handleSearchInputChange} // Directly updates filtered list
             />
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <SearchIcon sx={{ color: "gray" }} />
             </div>
           </div>
-          <Button
-            onClick={handleSearchClick}
-            className="p-3 text-white bg-third hover:bg-primary rounded-md"
-          >
-            Search
-          </Button>
         </div>
         <Button
           onClick={handleOpenCreateModal}
