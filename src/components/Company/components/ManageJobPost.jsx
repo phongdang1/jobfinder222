@@ -1242,6 +1242,11 @@ const ManageJobPost = () => {
                             ? "bg-red-100 text-red-700"
                             : ""
                         }
+                        ${
+                          post.statusCode.toUpperCase() === "PENDING"
+                            ? "bg-slate-300 text-slate-700"
+                            : ""
+                        }
                       `}
                 >
                   {post.statusCode}
