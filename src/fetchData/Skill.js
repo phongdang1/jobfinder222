@@ -8,6 +8,14 @@ const getAllSkillWithLimit = (userData, limit, offset) => {
       })
 }
 
+const getAllSkill = () => { 
+  return axios.get(`getAllSkill`,{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
+};
+
 const handleCreateNewSkill = (userData) => {
     return axios.post("createNewSkill", userData,{
         headers: {
@@ -42,4 +50,4 @@ const getAllSkillByCategory = (categoryJobCode) => {
 
 123
 
-export {getAllSkillWithLimit, handleCreateNewSkill, handleUpdateSkill, handleDeleteSkill, getAllSkillByCategory};
+export {getAllSkillWithLimit, handleCreateNewSkill, handleUpdateSkill, handleDeleteSkill, getAllSkillByCategory, getAllSkill};

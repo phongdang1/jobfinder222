@@ -27,7 +27,7 @@ function JobCard({ expand, data }) {
     <>
     {data && data.length > 0 ? (
       data.map((card, index) =>
-        card.isHot === 1 ? ( // Đặt điều kiện đúng cách
+        card.isHot === 1 ? (
           <div key={index}>
             <Card
               className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer"
@@ -90,7 +90,7 @@ function JobCard({ expand, data }) {
               </CardBody>
             </Card>
           </div>
-        ) : null // Nếu không thỏa điều kiện, trả về `null`
+        ) : null
       )
     ) : (
       <p>No data available</p> // Trường hợp không có dữ liệu

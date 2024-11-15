@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -44,7 +44,6 @@ function UserProfilePage() {
       getBase64(file)
         .then((base64) => {
           setImage(base64);
-          uploadImage(base64);
         })
         .catch((error) => {
           console.error("Error converting file to base64: ", error);
@@ -53,26 +52,26 @@ function UserProfilePage() {
   };
 
   const uploadImage = async (image) => {
-    setUploading(true);
-    try {
-      const userDataImage = {
-        userId: userId,
-        image: image,
-        data: {},
-      };
+    if (saveAvatar) {
+      setUploading(true);
+      try {
+        const userDataImage = {
+          userId: userId,
+          image: image,
+          data: {},
+        };
 
-      await handleSetDataUserDetail(userDataImage);
-      await fetchUserData();
-      setUploading(false);
-      setUploadComplete(true);
-    } catch (error) {
-      console.error("Error uploading image to backend: ", error);
-      setUploading(false);
+        await handleSetDataUserDetail(userDataImage);
+        setUploading(false);
+        setUploadComplete(true);
+      } catch (error) {
+        console.error("Error uploading image to backend: ", error);
+        setUploading(false);
+      }
     }
   };
 
   const [data, setData] = useState();
-
   const fetchUserData = async () => {
     try {
       const response = await getUsersById(userId);
@@ -90,11 +89,29 @@ function UserProfilePage() {
   }, [userId, selectedItem]);
 
   useEffect(() => {
-    if (saveAvatar && image) {
+    if (saveAvatar) {
+      console.log("avatar", saveAvatar, image);
       uploadImage(image);
-      setSaveAvatar(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     }
+    setSaveAvatar(false);
   }, [saveAvatar, image]);
+
+  const location = useLocation();
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes("/userProfile/personalInfo")) {
+      setSelectedItem("personalInfo");
+    } else if (path.includes("/userProfile/advancedSetting")) {
+      setSelectedItem("advancedSetting");
+    } else if (path.includes("/userProfile/changePassword")) {
+      setSelectedItem("changePassword");
+    } else if (path.includes("/userProfile/viewApplication")) {
+      setSelectedItem("viewApplication");
+    }
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col w-full lg:w-1/3 items-center text-center space-y-4 ">
@@ -104,7 +121,7 @@ function UserProfilePage() {
             <div
               className="h-32 w-32 bg-contain bg-center mx-auto rounded-full relative"
               style={{
-                backgroundImage: `url(${image ? image : Bg})`,
+                backgroundImage: `url(${saveAvatar ? image : data?.image})`,
                 backgroundSize: "cover",
               }}
             >

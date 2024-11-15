@@ -33,39 +33,41 @@ const ManageReport = () => {
   // Dialog State
   const [showDialog, setShowDialog] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [reportsResponse, postsResponse] = await Promise.all([
+        getAllReport(),
+        getAllPost(),
+      ]);
 
+      if (
+        Array.isArray(reportsResponse.data.data) &&
+        Array.isArray(postsResponse.data.data)
+      ) {
+        const filteredReports = reportsResponse.data.data.filter(
+          (report) => report.isChecked === 1 // Filter by isChecked = 1
+        );
+        setReports(filteredReports);
+        setPosts(postsResponse.data.data);
+        setTotalCount(filteredReports.length);
+        setFilteredReports(filteredReports); // Set filtered reports initially
+      } else {
+        setError("Error fetching data. Please try again later.");
+        console.log(
+          "Error fetching data. Please try again later.",
+          reportsResponse
+        );
+      }
+    } catch (error) {
+      setError("loi roi");
+      console.log("Error fetching data. Please try again later.", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   // Fetch reports and posts
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [reportsResponse, postsResponse] = await Promise.all([
-          getAllReport(),
-          getAllPost(),
-        ]);
-
-        if (
-          Array.isArray(reportsResponse.data.data) &&
-          Array.isArray(postsResponse.data.data)
-        ) {
-          setReports(reportsResponse.data.data);
-          setPosts(postsResponse.data.data);
-          setTotalCount(reportsResponse.data.data.length);
-          filterReports("all", reportsResponse.data.data); // Initial filter
-        } else {
-          setError("Error fetching data. Please try again later.");
-          console.log(
-            "Error fetching data. Please try again later.",
-            reportsResponse
-          );
-        }
-      } catch (error) {
-        setError("loi roi");
-        console.log("Error fetching data. Please try again later.", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -107,6 +109,7 @@ const ManageReport = () => {
               : report
           )
         );
+        fetchData();
         setShowDialog(false);
       } catch (error) {
         console.error("Error checking report", error);
@@ -174,7 +177,7 @@ const ManageReport = () => {
             <Input
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md"
               type="text"
-              placeholder="Search by reason..."
+              placeholder="Search by post name..."
               value={searchTerm}
               onChange={handleSearchInputChange}
             />
@@ -244,7 +247,11 @@ const ManageReport = () => {
                     onChange={() => handleToggle(report)}
                     disabled={report.isAdminChecked === 1}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:dark:bg-primary peer-checked:bg-primary peer-checked:ring-0 flex items-center justify-between p-1">
+                  <div
+                    className={`w-11 h-6 rounded-full flex items-center justify-between p-1 ${
+                      report.isAdminChecked === 1 ? "bg-primary" : "bg-gray-200"
+                    } peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer dark:bg-gray-700 peer-checked:dark:bg-blue peer-checked:bg-blue peer-checked:ring-0`}
+                  >
                     <span
                       className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-all ${
                         report.isAdminChecked === 1

@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import CandidateCard from "./CandidateCard";
 import { handleFindCv } from "@/fetchData/CvPost";
+import { getCompanyById } from "@/fetchData/Company";
 
 const FindCandidate = () => {
   const [dreamJob, setDreamJob] = useState({
@@ -29,6 +30,7 @@ const FindCandidate = () => {
     workType: "",
     exp: "",
     genderPost: "",
+    // skill: [],
   });
   const [province, setProvince] = useState([]);
   const [jobType, setJobType] = useState([]);
@@ -47,7 +49,7 @@ const FindCandidate = () => {
     "SALARYTYPE",
     "WORKTYPE",
     "EXPTYPE",
-    "GENDERPOST",
+    "GENDEr",
   ];
   useEffect(() => {
     const fetchJobType = async () => {
@@ -92,29 +94,32 @@ const FindCandidate = () => {
     fetchCategory();
   }, []);
 
-  useEffect(() => {
-    const fetchSkill = async () => {
-      if (cateJobCode) {
-        try {
-          const response = await getAllSkillByCategory(cateJobCode);
-          const fetchedSkills = response.data.data;
-          const filteredSkills = fetchedSkills.filter(
-            (skill) => !selectedSkills.some((s) => s.id === skill.id)
-          );
+  const fetchSkill = async () => {
+    if (cateJobCode) {
+      try {
+        const response = await getAllSkillByCategory(cateJobCode);
+        const fetchedSkills = response.data.data;
+        const filteredSkills = fetchedSkills.filter(
+          (skill) => !selectedSkills.some((s) => s.id === skill.id)
+        );
 
-          setSuggestedSkills(filteredSkills);
-          console.log(response.data.data);
-        } catch (error) {
-          console.log("Error fetching skills");
-        }
+        setSuggestedSkills(filteredSkills);
+        console.log(response.data.data);
+      } catch (error) {
+        console.log("Error fetching skills");
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchSkill();
   }, [cateJobCode]);
 
   const handleBadgeClick = (skill) => {
-    setSuggestedSkills(suggestedSkills.filter((s) => s.id !== skill.id));
-    setSelectedSkills([...selectedSkills, skill]);
+    if (!selectedSkills.find((s) => s.id === skill.id)) {
+      setSuggestedSkills(suggestedSkills.filter((s) => s.id !== skill.id));
+      setSelectedSkills([...selectedSkills, skill]);
+    }
   };
 
   const handleRemove = (skill) => {
@@ -133,7 +138,10 @@ const FindCandidate = () => {
     experienceJobCode: dreamJob.exp,
     salaryJobCode: dreamJob.salary,
     jobLevelCode: dreamJob.jobLevel,
-    selectedSkills: selectedSkills.map((skill) => skill.id),
+    workTypeCode: dreamJob.workType,
+    categoryJobCode: dreamJob.jobType,
+    genderCode: dreamJob.genderPost,
+    listSkills: selectedSkills.map((skill) => skill.id),
   };
 
   useEffect(() => {
@@ -165,7 +173,7 @@ const FindCandidate = () => {
       const count = response.data.count;
       setFetchedCandidate(response.data.data);
       setCount(count);
-      console.log(response.data.data);
+      console.log("candidates", response.data.data);
       if (response) {
         console.log("Profile updated successfully");
       } else {
@@ -194,6 +202,23 @@ const FindCandidate = () => {
     setFetchedCandidate([]);
   };
 
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
+  const [view, setView] = useState();
+  const fetchCompany = async (companyId) => {
+    try {
+      const response = await getCompanyById(companyId);
+      const company = response.data.data;
+      setView(company.allowCv);
+      console.log("Response ", response, company.allowCv);
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompany(companyId);
+  }, []);
+
   return (
     <div className="grid grid-cols-3 gap-4 overflow-visible flex-grow">
       {/* left */}
@@ -209,6 +234,33 @@ const FindCandidate = () => {
           <Separator className="mt-2" />
           {/* form */}
           <ScrollArea className="max-h-[70vh] overflow-auto">
+            <div className="w-full mb-4">
+              <p className="text-xl font-medium mt-2 mb-2 text-primary">
+                Sort candidates with category
+              </p>
+              <div className="ml-1 w-4/5">
+                <Select
+                  className=""
+                  value={dreamJob.jobType}
+                  onValueChange={(value) =>
+                    setDreamJob({ ...dreamJob, jobType: value })
+                  }
+                >
+                  <SelectTrigger className="w-full shrink basis-1/4 ">
+                    <SelectValue placeholder="Choose a category..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.isArray(jobType) &&
+                      jobType.map((data, index) => (
+                        <SelectItem key={index} value={data.code}>
+                          {data.value}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             {/* desired job */}
             <div>
               <p className="text-xl font-medium mt-2 mb-4 text-primary">
@@ -216,7 +268,7 @@ const FindCandidate = () => {
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-1">
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2 col-span-1">
                   <div className="font-medium">Work Location:</div>
 
                   <Select
@@ -232,29 +284,6 @@ const FindCandidate = () => {
                     <SelectContent>
                       {Array.isArray(province) &&
                         province.map((data, index) => (
-                          <SelectItem key={index} value={data.code}>
-                            {data.value}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="font-medium">Occupation Category:</div>
-                  <Select
-                    className="flex items-center"
-                    value={dreamJob.jobType}
-                    onValueChange={(value) =>
-                      setDreamJob({ ...dreamJob, jobType: value })
-                    }
-                  >
-                    <SelectTrigger className="w-full shrink basis-1/4 ">
-                      <SelectValue placeholder="Choose a category..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.isArray(jobType) &&
-                        jobType.map((data, index) => (
                           <SelectItem key={index} value={data.code}>
                             {data.value}
                           </SelectItem>
@@ -467,6 +496,7 @@ const FindCandidate = () => {
           <p className="text-2xl font-semibold text-primary">
             Filtered Candidate
           </p>
+
           <p className="text-md font-medium text-primary">
             Found {count} candidate(s)
           </p>
@@ -476,7 +506,7 @@ const FindCandidate = () => {
         {/* card  */}
         <div>
           <div className="flex flex-col">
-            <CandidateCard candidates={fetchedCandidate} />
+            <CandidateCard candidates={fetchedCandidate} view={view} />
           </div>
         </div>
       </div>

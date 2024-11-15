@@ -28,7 +28,7 @@ import {
 import { Label } from "@/components/ui/label";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AdminPagination from "./AdminPagination";
-import AdminValidation from "../common/AdminValidation";
+import AdminValidationTypeJob from "../common/AdminValidationTypeJob";
 
 const ManageTypeJob = () => {
   const [jobTypes, setJobTypes] = useState([]);
@@ -36,6 +36,8 @@ const ManageTypeJob = () => {
   const [filteredJobTypes, setFilteredJobTypes] = useState([]); // State for filtered job types
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [jobTypeToDelete, setJobTypeToDelete] = useState(null);
   const [errorMessage, setErrorMessage] = useState({});
 
   const [newJobType, setNewJobType] = useState({
@@ -113,6 +115,11 @@ const ManageTypeJob = () => {
     setUpdateModalOpen(true);
   };
 
+  const handleDeleteConfirmation = (jobType) => {
+    setJobTypeToDelete(jobType);
+    setDeleteConfirmOpen(true); // Open the confirmation dialog
+  };
+
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdateJobType({ code: "", type: "JOBTYPE", value: "" });
@@ -123,20 +130,17 @@ const ManageTypeJob = () => {
     const { name, value } = e.target;
 
     if (isCreateModalOpen) {
-      setNewJobType((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-      const errors = AdminValidation({ ...newJobType, [name]: value }, true);
+      setNewJobType((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidationTypeJob(
+        { ...newJobType, [name]: value },
+        true
+      );
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
-      setUpdateJobType((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-      const errors = AdminValidation(
+      setUpdateJobType((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidationTypeJob(
         { ...updateJobType, [name]: value },
-        false
+        true
       );
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     }
@@ -144,7 +148,7 @@ const ManageTypeJob = () => {
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = AdminValidation(newJobType, true);
+    const validationErrors = AdminValidationTypeJob(newJobType, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -162,21 +166,23 @@ const ManageTypeJob = () => {
         setJobTypes((prev) => [...prev, userData]);
         setFilteredJobTypes((prev) => [...prev, userData]); // Add to filtered list as well
       } else {
-        console.error(
-          "Failed to create job type:",
-          response.data.message || "No message"
+        // Log the full response for debugging
+        console.error("Failed to create job type:", response.data);
+        alert(
+          `Failed to create job type. ${response.data.message || "No message"}`
         );
       }
 
       handleCloseCreateModal();
     } catch (error) {
       console.error("Error saving job type:", error);
+      alert("An error occurred while creating the job type. Please try again.");
     }
   };
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = AdminValidation(updateJobType, false);
+    const validationErrors = AdminValidationTypeJob(updateJobType, false);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -218,13 +224,19 @@ const ManageTypeJob = () => {
     }
   };
 
-  const handleDeleteJobType = async (code) => {
+  const handleDeleteJobType = async () => {
+    if (!jobTypeToDelete) return;
+
     try {
-      const response = await handleDeleteAllCode({ code });
+      const response = await handleDeleteAllCode({
+        code: jobTypeToDelete.code,
+      });
       if (response.data && response.data.errCode === 0) {
-        setJobTypes((prev) => prev.filter((jobType) => jobType.code !== code));
+        setJobTypes((prev) =>
+          prev.filter((jobType) => jobType.code !== jobTypeToDelete.code)
+        );
         setFilteredJobTypes((prev) =>
-          prev.filter((jobType) => jobType.code !== code)
+          prev.filter((jobType) => jobType.code !== jobTypeToDelete.code)
         ); // Remove from filtered list as well
       } else {
         console.error(
@@ -234,7 +246,15 @@ const ManageTypeJob = () => {
       }
     } catch (error) {
       console.error("Error deleting job type:", error);
+    } finally {
+      setDeleteConfirmOpen(false); // Close the confirmation dialog
+      setJobTypeToDelete(null); // Clear the job type to be deleted
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmOpen(false); // Close the confirmation dialog without deleting
+    setJobTypeToDelete(null); // Clear the job type to be deleted
   };
 
   if (loading) return <p>Loading...</p>;
@@ -250,7 +270,7 @@ const ManageTypeJob = () => {
             <Input
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md"
               type="text"
-              placeholder="Search by type..."
+              placeholder="Search by type of job..."
               value={searchTerm}
               onChange={handleSearchInputChange} // Directly updates filtered list
             />
@@ -293,7 +313,7 @@ const ManageTypeJob = () => {
                   <EditNoteOutlinedIcon />
                 </Button>
                 <Button
-                  onClick={() => handleDeleteJobType(jobType.code)}
+                  onClick={() => handleDeleteConfirmation(jobType)} // Open delete confirmation dialog
                   className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
                 >
                   <DeleteIcon />
@@ -412,6 +432,33 @@ const ManageTypeJob = () => {
               Update
             </Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog for Delete */}
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={handleCancelDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this job type? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-4 mt-4">
+            <Button
+              onClick={handleCancelDelete}
+              className="bg-third hover:text-white text-white rounded-md mt-4"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteJobType}
+              className="bg-third hover:text-white text-white rounded-md mt-4"
+            >
+              Delete
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
