@@ -24,11 +24,12 @@ import {
   handleCreateNewSkill,
   handleUpdateSkill,
   handleDeleteSkill,
+  getAllSkill,
 } from "../../../fetchData/Skill";
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
-import AdminValidation from "../common/AdminValidation";
+import AdminValidationSkill from "../common/AdminValidationSkill";
 
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
@@ -69,11 +70,8 @@ const ManageSkill = () => {
 
   const fetchSkills = async (searchKey = "", selectedCategory = "all") => {
     try {
-      const offset = (currentPage - 1) * skillsPerPage; // Calculate offset
-      const response = await axios.get("/getAllSkillWithLimit", {
+      const response = await axios.get("/getAllSkill", {
         params: {
-          limit: skillsPerPage,
-          offset,
           searchKey,
           category: selectedCategory,
         },
@@ -107,21 +105,25 @@ const ManageSkill = () => {
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
     setNewSkill({ name: "", categoryJobCode: "" });
+    setErrorMessage({}); // Reset errorMessage for create modal
   };
 
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
     setNewSkill({ name: "", categoryJobCode: "" });
+    setErrorMessage({}); // Reset errorMessage when closing create modal
   };
 
   const handleOpenUpdateModal = (skill) => {
     setUpdateSkill(skill);
     setUpdateModalOpen(true);
+    setErrorMessage({}); // Reset errorMessage for update modal
   };
 
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdateSkill({ id: "", name: "", categoryJobCode: "" });
+    setErrorMessage({}); // Reset errorMessage when closing update modal
   };
 
   const handleInputChange = (e) => {
@@ -129,11 +131,14 @@ const ManageSkill = () => {
 
     if (isCreateModalOpen) {
       setNewSkill((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation({ ...newSkill, [name]: value }, true);
+      const errors = AdminValidationSkill({ ...newSkill, [name]: value }, true);
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
-    } else {
+    } else if (isUpdateModalOpen) {
       setUpdateSkill((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation({ ...updateSkill, [name]: value }, true);
+      const errors = AdminValidationSkill(
+        { ...updateSkill, [name]: value },
+        false
+      );
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     }
   };
@@ -141,7 +146,7 @@ const ManageSkill = () => {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(newSkill, true);
+    const validationErrors = AdminValidationSkill(newSkill, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -167,7 +172,7 @@ const ManageSkill = () => {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(updateSkill, false);
+    const validationErrors = AdminValidationSkill(updateSkill, false);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;

@@ -28,7 +28,7 @@ import {
 } from "../../../fetchData/AllCode";
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
-import AdminValidation from "../common/AdminValidation";
+import AdminValidationWorkForm from "../common/AdminValidationWorkForm";
 
 const ManageWorkForm = () => {
   const [workTypes, setWorkTypes] = useState([]);
@@ -37,6 +37,8 @@ const ManageWorkForm = () => {
   const [filteredWorkTypes, setFilteredWorkTypes] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false); // New state for delete confirmation
+  const [deleteItem, setDeleteItem] = useState(null); // State to store the item being deleted
 
   const [newWorkType, setNewWorkType] = useState({
     code: "",
@@ -105,32 +107,39 @@ const ManageWorkForm = () => {
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
     setNewWorkType({ code: "", type: "WORKTYPE", value: "" });
+    setErrorMessage({});
   };
 
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
     setNewWorkType({ code: "", type: "WORKTYPE", value: "" });
+    setErrorMessage({});
   };
 
   const handleOpenUpdateModal = (workType) => {
     setUpdateWorkType(workType);
     setUpdateModalOpen(true);
+    setErrorMessage({});
   };
 
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdateWorkType({ code: "", type: "WORKTYPE", value: "" });
+    setErrorMessage({});
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (isCreateModalOpen) {
       setNewWorkType((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation({ ...newWorkType, [name]: value }, true);
+      const errors = AdminValidationWorkForm(
+        { ...newWorkType, [name]: value },
+        true
+      );
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
       setUpdateWorkType((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation(
+      const errors = AdminValidationWorkForm(
         { ...updateWorkType, [name]: value },
         true
       );
@@ -141,7 +150,7 @@ const ManageWorkForm = () => {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(newWorkType, true);
+    const validationErrors = AdminValidationWorkForm(newWorkType, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -177,7 +186,7 @@ const ManageWorkForm = () => {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(updateWorkType, false);
+    const validationErrors = AdminValidationWorkForm(updateWorkType, false);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -221,15 +230,17 @@ const ManageWorkForm = () => {
     }
   };
 
-  const handleDelete = async (code) => {
+  const handleDelete = async () => {
     try {
-      const response = await handleDeleteAllCode({ code });
+      if (!deleteItem) return;
+
+      const response = await handleDeleteAllCode({ code: deleteItem.code });
       if (response.data && response.data.errCode === 0) {
         setWorkTypes((prev) =>
-          prev.filter((workType) => workType.code !== code)
+          prev.filter((workType) => workType.code !== deleteItem.code)
         );
         setFilteredWorkTypes((prev) =>
-          prev.filter((workType) => workType.code !== code)
+          prev.filter((workType) => workType.code !== deleteItem.code)
         );
         setTotalCount((prev) => prev - 1);
       } else {
@@ -238,9 +249,20 @@ const ManageWorkForm = () => {
           response.data.errMessage || "No message"
         );
       }
+      setDeleteConfirmOpen(false); // Close the confirmation dialog after deletion
     } catch (error) {
       console.error("Error deleting job type:", error);
     }
+  };
+
+  const handleOpenDeleteConfirm = (workType) => {
+    setDeleteItem(workType);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setDeleteConfirmOpen(false);
+    setDeleteItem(null);
   };
 
   // // Filter work types based on search term
@@ -268,7 +290,7 @@ const ManageWorkForm = () => {
             <Input
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md"
               type="text"
-              placeholder="Search by type..."
+              placeholder="Search by type of work..."
               value={searchTerm}
               onChange={handleSearchInputChange}
             />
@@ -312,7 +334,7 @@ const ManageWorkForm = () => {
                 </Button>
 
                 <Button
-                  onClick={() => handleDelete(workType.code)}
+                  onClick={() => handleOpenDeleteConfirm(workType)}
                   className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
                 >
                   <DeleteIcon />
@@ -427,15 +449,8 @@ const ManageWorkForm = () => {
                   name="code"
                   value={updateWorkType.code}
                   onChange={handleInputChange}
-                  className={`${
-                    errorMessage.code
-                      ? "border-red-500"
-                      : "focus:border-primary"
-                  } `}
+                  readOnly
                 />
-                {errorMessage.code && (
-                  <p className="text-red-500 mb-3">{errorMessage.code}</p>
-                )}
               </div>
             </div>
             <div className="flex justify-end mt-4">
@@ -447,6 +462,35 @@ const ManageWorkForm = () => {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={isDeleteConfirmOpen}
+        onOpenChange={handleCloseDeleteConfirm}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{"Confirm Delete"}</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the work type {deleteItem?.value}?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2">
+            <Button
+              onClick={handleCloseDeleteConfirm}
+              className="bg-third hover:text-white text-white rounded-md"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDelete}
+              className="bg-third hover:text-white text-white rounded-md"
+            >
+              Confirm
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
