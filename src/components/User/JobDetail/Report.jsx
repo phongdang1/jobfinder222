@@ -61,7 +61,7 @@ function Report({ data }) {
         setSelectedReasons([]);
         setDescription("");
       } else {
-        toast.success(report.data.errMessage);
+        toast.success("Report successfully!");
         setSelectedReasons([]);
         setDescription("");
         setIsDialogOpen(false);

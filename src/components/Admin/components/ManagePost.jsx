@@ -27,12 +27,14 @@ import {
   inactivePost,
   activePost,
 } from "@/fetchData/Post";
+// import { getAllReport } from "@/fetchData/Report";
 import AdminPagination from "./AdminPagination";
 
 const ManagePostAdmin = () => {
   const [action, setAction] = useState("");
   const [note, setNote] = useState("");
   const [posts, setposts] = useState([]);
+  // const [reports, setReports] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [search, setSearch] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
@@ -73,6 +75,7 @@ const ManagePostAdmin = () => {
   useEffect(() => {
     fetchPosts();
   }, [search]);
+
   const fetchPostDetails = async () => {
     if (currentPostId !== null) {
       try {
@@ -89,6 +92,53 @@ const ManagePostAdmin = () => {
   useEffect(() => {
     fetchPostDetails();
   }, [currentPostId]);
+
+  // useEffect(() => {
+  //   // Fetch reports from API
+  //   const fetchReports = async () => {
+  //     try {
+  //       const response = await getAllReport();
+  //       if (response.data.errorCode === 0) {
+  //         setReports(response.data.data);
+  //       } else {
+  //         console.error(response.data.errMessage);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching reports:", error);
+  //     }
+  //   };
+
+  //   fetchReports();
+  // }, []);
+
+  // // Function to check if a post should be banned based on reports
+  // const checkAndBanPost = (postId) => {
+  //   // Filter reports for the postId and count those with isAdminChecked: 1
+  //   const filteredReports = reports.filter(
+  //     (report) => report.postId === postId && report.isAdminChecked === 1
+  //   );
+
+  //   // If there are 10 reports with isAdminChecked: 1, ban the post
+  //   if (filteredReports.length >= 10) {
+  //     // Assuming you want to ban the post without any note, you can modify as needed
+  //     banPost(postId, "Automatically banned due to 10 admin-checked reports.")
+  //       .then((response) => {
+  //         console.log("Post banned successfully:", response);
+  //         // Optionally update the post's status locally
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error banning post:", error);
+  //       });
+  //   }
+  // };
+
+  // // Example: Check all posts and automatically ban if necessary
+  // useEffect(() => {
+  //   // Assuming `posts` state holds the list of posts you want to check
+  //   posts.forEach((post) => {
+  //     checkAndBanPost(post.id);
+  //   });
+  // }, [reports, posts]); // This effect runs when either reports or posts change
 
   const handleStatusChange = (e) => {
     const status = e.target.value;

@@ -14,6 +14,7 @@ import { LuPackageSearch } from "react-icons/lu";
 import { BsFilePost } from "react-icons/bs";
 import { Link, useMatch } from "react-router-dom";
 import { FaUserCog } from "react-icons/fa";
+import { TbMessageReportFilled } from "react-icons/tb";
 
 const AdminSidebar = () => {
   const matchDashboard = useMatch("/admin/dashboard");
@@ -25,6 +26,7 @@ const AdminSidebar = () => {
   const matchCompany = useMatch("/admin/company");
   const matchPost = useMatch("/admin/post");
   const matchUser = useMatch("/admin/user");
+  const matchReport = useMatch("/admin/report");
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -149,6 +151,18 @@ const AdminSidebar = () => {
             >
               <FaUserCog className="mr-4" />
               {isOpen && "Manage User"}
+            </Link>
+          </li>
+
+          <li className="group">
+            <Link
+              className={`flex items-center p-4 cursor-pointer text-white transition-colors duration-200 ${
+                matchReport ? "bg-primary" : "hover:bg-primary"
+              }`}
+              to="/admin/report"
+            >
+              <TbMessageReportFilled className="mr-4" />
+              {isOpen && "Manage Report"}
             </Link>
           </li>
         </ul>

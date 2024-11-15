@@ -83,7 +83,17 @@ const ManageLevel = () => {
     fetchJobLevels();
   }, []);
 
-  const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
+  const handleSearchInputChange = (e) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+
+    // Filter job types based on the input
+    const filtered = jobLevels.filter((jobLevel) =>
+      jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setFilteredJobLevels(filtered); // Update the filtered job types in real-time
+  };
 
   const handleSearchClick = () => {
     // Filter the job types when search button is clicked
@@ -265,12 +275,6 @@ const ManageLevel = () => {
               <SearchIcon sx={{ color: "gray" }} />
             </div>
           </div>
-          <Button
-            onClick={handleSearchClick}
-            className="p-3 text-white bg-third hover:bg-primary rounded-md"
-          >
-            Search
-          </Button>
         </div>
         <Button
           onClick={handleOpenCreateModal}

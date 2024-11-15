@@ -59,6 +59,7 @@ import VipPaymentSuccess from "@/pages/User/VipPaymentSuccess";
 import PostPaymentCancel from "@/components/Company/components/Payment/HotPostPayment/PostPaymentCancel";
 import ManageUser from "@/components/Admin/components/ManageUser";
 import ExchangePoint from "@/components/Company/components/ExchangePoint";
+import ManageReport from "@/components/Admin/components/ManageReport";
 
 const routes = [
   {
@@ -224,6 +225,7 @@ const routes = [
       { path: "company", element: <ManageCompanyAdmin /> },
       { path: "post", element: <ManagePostAdmin /> },
       { path: "user", element: <ManageUser /> },
+      { path: "report", element: <ManageReport /> },
     ],
   },
   {

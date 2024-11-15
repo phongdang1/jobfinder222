@@ -66,15 +66,16 @@ function PersonalInformation() {
   const [isCompleteOTP, setIsCompleteOTP] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dialogRef = useRef(null);
-  const token = localStorage.getItem('token');	
+  const token = localStorage.getItem("token");
 
   const fetchUserData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/getUserById?id=${userId}`,{
+        `http://localhost:5000/getUserById?id=${userId}`,
+        {
           headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -136,12 +137,12 @@ function PersonalInformation() {
               genderCode: inputValue.gender,
               file: inputValue.file,
             },
-          },{
+          },
+          {
             headers: {
-              Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
             },
           }
-          
         );
 
         if (response.data.errCode === 0) {
@@ -244,20 +245,23 @@ function PersonalInformation() {
     await sendOtp(email);
     setIsDialogOpen(true);
   };
+
   const handleSubmitOtp = async (email, otp) => {
     const res = await verifyOtp(email, otp);
     console.log(res);
     console.log("email: " + email + " otp: " + otp.length);
     if (res.data.errCode === 0) {
-      setIsCompleteOTP(true);
-      setOtp("");
-      fetchUserData();
-      setIsDialogOpen(false);
-      toast.success("OTP sent successfully!");
-      setTimeout(() => {
+
+      toast.success("OTP verified successfully!");
+      setTimeout(async () => {
         window.location.reload();
-      }, 1500);
-    } else {
+        await fetchUserData();
+        setIsCompleteOTP(true);
+        setOtp("");
+        setIsDialogOpen(false);
+      }, 200);
+    } else if (res.data.errCode === -1) {
+
       console.log("abc sai roi");
       setOtp("");
       toast.error("Invalid OTP");
