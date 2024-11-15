@@ -29,13 +29,23 @@ import {
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
+import AdminValidationPackage from "../common/AdminValidationPackage";
 
 const ManagePackages = () => {
   const [packages, setPackages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
+  const [errorMessage, setErrorMessage] = useState({});
+
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [newPackage, setNewPackage] = useState({
+    id: "",
+    name: "",
+    type: "",
+    price: "",
+    statusCode: "",
+  });
   const [updatePackage, setUpdatePackage] = useState({
     id: "",
     name: "",
@@ -47,7 +57,7 @@ const ManagePackages = () => {
   const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1); // Pagination
-  const packagesPerPage = 10; // Number of packages per page
+  const packagesPerPage = 5; // Number of packages per page
   const [totalCount, setTotalCount] = useState(0); // Total number of packages
 
   const packageTypes = ["View", "VIP", "Post"];
@@ -63,7 +73,6 @@ const ManagePackages = () => {
 
       if (response.data.errCode === 0) {
         setPackages(response.data.data);
-        setTotalCount(response.data.count); // Set total count for pagination
       } else {
         setError(response.data.errMessage || "Error fetching packages");
       }
@@ -76,7 +85,7 @@ const ManagePackages = () => {
 
   useEffect(() => {
     fetchPackages(searchTerm, selectedType);
-  }, [currentPage, searchTerm, selectedType]);
+  }, [searchTerm, selectedType]);
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
 
@@ -89,6 +98,7 @@ const ManagePackages = () => {
       price: "",
       statusCode: "active",
     });
+    setErrorMessage({});
   };
 
   const handleCloseCreateModal = () => {
@@ -100,11 +110,24 @@ const ManagePackages = () => {
       price: "",
       statusCode: "active",
     });
+    setErrorMessage({});
+  };
+
+  const handleOpenCreateModel = () => {
+    setCreateModalOpen(true);
+    setNewPackage({
+      id: "",
+      name: "",
+      type: "",
+      price: "",
+      statusCode: "active",
+    });
   };
 
   const handleOpenUpdateModal = (packageData) => {
     setUpdatePackage(packageData);
     setUpdateModalOpen(true);
+    setErrorMessage({});
   };
 
   const handleCloseUpdateModal = () => {
@@ -116,26 +139,58 @@ const ManagePackages = () => {
       price: "",
       statusCode: "active",
     });
+    setErrorMessage({});
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUpdatePackage((prev) => ({ ...prev, [name]: value }));
+
+    if (isCreateModalOpen) {
+      setNewPackage((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidationPackage(
+        { ...newPackage, [name]: value },
+        true
+      );
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
+    } else {
+      setUpdatePackage((prev) => ({ ...prev, [name]: value }));
+      const errors = AdminValidationPackage(
+        { ...updatePackage, [name]: value },
+        true
+      );
+      setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
+    }
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+    // Run validation and check if there are errors
+    const errors = AdminValidationPackage(newPackage, true);
+    setErrorMessage(errors);
+
+    // If there are errors, prevent submission
+    if (Object.keys(errors).length > 0) {
+      return; // Exit function early if there are validation errors
+    }
+
     try {
-      const response = await handleCreateNewPackage(updatePackage);
+      const response = await handleCreateNewPackage(newPackage);
       if (response.data && response.data.errCode === 0) {
         fetchPackages(searchTerm, selectedType);
+        setNewPackage({
+          id: "",
+          name: "",
+          type: "",
+          price: "",
+          statusCode: "active",
+        });
       } else {
         console.error(
           "Failed to create package:",
           response.data.message || "No message"
         );
       }
-      handleCloseCreateModal();
+      setCreateModalOpen(false);
     } catch (error) {
       console.error("Error creating package:", error);
     }
@@ -143,19 +198,40 @@ const ManagePackages = () => {
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = AdminValidationPackage(updatePackage, true);
+    setErrorMessage(errors);
+
+    // If there are errors, prevent submission
+    if (Object.keys(errors).length > 0) {
+      return; // Exit function early if there are validation errors
+    }
+
     try {
+      console.log("Updating package with data: ", updatePackage);
       const response = await handleUpdatePackage(updatePackage);
       if (response.data && response.data.errCode === 0) {
         fetchPackages(searchTerm, selectedType);
+        setNewPackage({
+          id: updatePackage.id,
+          name: updatePackage.name,
+          type: updatePackage.type,
+          price: updatePackage.price,
+          statusCode: "active",
+        });
       } else {
         console.error(
           "Failed to update package:",
-          response.data.message || "No message"
+          response.data.message || "No message",
+          response.data // Log the entire response to understand the issue better
         );
       }
       handleCloseUpdateModal();
     } catch (error) {
-      console.error("Error updating package:", error);
+      console.error("Error updating package:", error.response || error);
+      alert(
+        "Error occurred while updating the package. Please check the console for details."
+      );
     }
   };
 
@@ -291,7 +367,11 @@ const ManagePackages = () => {
       />
 
       {/* Create Modal */}
-      <Dialog open={isCreateModalOpen} onOpenChange={handleCloseCreateModal}>
+      {/* Modal for creating a new package */}
+      <Dialog
+        open={isCreateModalOpen}
+        onOpenChange={() => setCreateModalOpen(false)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Package</DialogTitle>
@@ -304,34 +384,42 @@ const ManagePackages = () => {
               <Input
                 name="name"
                 placeholder="Package Name"
-                value={updatePackage.name}
+                value={newPackage.name}
                 onChange={handleInputChange}
-                required
+                className={`${
+                  errorMessage.name ? "border-red-500" : "focus:border-primary"
+                }`}
               />
+              {errorMessage.name && (
+                <p className="text-red-500  mb-3">{errorMessage.name}</p>
+              )}
               <select
                 name="type"
-                value={updatePackage.type}
+                value={newPackage.type}
                 onChange={handleInputChange}
                 required
               >
                 <option value="">Select Type</option>
-                {packageTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
+                <option value="View">View</option>
+                <option value="VIP">VIP</option>
+                <option value="Post">Post</option>
               </select>
               <Input
                 name="price"
                 placeholder="Price"
                 type="number"
-                value={updatePackage.price}
+                value={newPackage.price}
                 onChange={handleInputChange}
-                required
+                className={`${
+                  errorMessage.price ? "border-red-500" : "focus:border-primary"
+                }`}
               />
+              {errorMessage.price && (
+                <p className="text-red-500  mb-3">{errorMessage.price}</p>
+              )}
               <Button
                 type="submit"
-                className="bg-third hover:text-white text-white rounded-md"
+                className="p-3 bg-third hover:text-white text-white rounded-md w-20"
               >
                 Create
               </Button>
@@ -340,8 +428,11 @@ const ManagePackages = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Update Modal */}
-      <Dialog open={isUpdateModalOpen} onOpenChange={handleCloseUpdateModal}>
+      {/* Modal for updating package */}
+      <Dialog
+        open={isUpdateModalOpen}
+        onOpenChange={() => setUpdateModalOpen(false)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Package</DialogTitle>
@@ -354,19 +445,22 @@ const ManagePackages = () => {
                 placeholder="Package Name"
                 value={updatePackage.name}
                 onChange={handleInputChange}
-                required
+                className={`${
+                  errorMessage.name ? "border-red-500" : "focus:border-primary"
+                }`}
               />
+              {errorMessage.name && (
+                <p className="text-red-500  mb-3">{errorMessage.name}</p>
+              )}
               <select
                 name="type"
                 value={updatePackage.type}
                 onChange={handleInputChange}
                 required
               >
-                {packageTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
+                <option value="View">View</option>
+                <option value="VIP">VIP</option>
+                <option value="Post">Post</option>
               </select>
               <Input
                 name="price"
@@ -374,11 +468,16 @@ const ManagePackages = () => {
                 type="number"
                 value={updatePackage.price}
                 onChange={handleInputChange}
-                required
+                className={`${
+                  errorMessage.price ? "border-red-500" : "focus:border-primary"
+                }`}
               />
+              {errorMessage.price && (
+                <p className="text-red-500  mb-3">{errorMessage.price}</p>
+              )}
               <Button
                 type="submit"
-                className="bg-third hover:text-white text-white rounded-md"
+                className="p-3 bg-third hover:text-white text-white rounded-md w-20"
               >
                 Update
               </Button>
