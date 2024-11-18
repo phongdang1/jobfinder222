@@ -66,7 +66,7 @@ const unbanPost = (id, note, userId) => {
   });
 };
 
-const rejectPost = (id, note) => {
+const inactivePost = (id, note) => {
   return axios.post(`/rejectPost`, {
     id: id,
 
@@ -78,7 +78,7 @@ const rejectPost = (id, note) => {
 
   });
 };
-const approvePost = (id) => {
+const activePost = (id) => {
   return axios.post(`/approvePost`, {
     id: id
   },{
@@ -92,8 +92,8 @@ export {
   getDetailPostById,
   banPost,
   unbanPost,
-  rejectPost,
-  approvePost,
+  activePost,
+  inactivePost,
   getAllPostsInactive,
   getAllPostWithLimit,
   getAllPost,
