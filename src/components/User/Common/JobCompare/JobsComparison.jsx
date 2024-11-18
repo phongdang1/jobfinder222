@@ -78,7 +78,11 @@ function JobsComparison() {
                   clasName="object-cover rounded-lg"
                   height={90}
                   shadow="md"
-                  src="https://nextui.org/images/album-cover.png"
+                  src={
+                    job1.userPostData?.userCompanyData?.thumbnail
+                      ? job1.userPostData?.userCompanyData?.thumbnail
+                      : "https://nextui.org/images/album-cover.png"
+                  }
                   width={90}
                 />
               </div>
@@ -103,7 +107,11 @@ function JobsComparison() {
                       clasName="object-cover rounded-lg"
                       height={90}
                       shadow="md"
-                      src="https://nextui.org/images/album-cover.png"
+                      src={
+                        job2.userPostData?.userCompanyData?.thumbnail
+                          ? job2.userPostData?.userCompanyData?.thumbnail
+                          : "https://nextui.org/images/album-cover.png"
+                      }
                       width={90}
                     />
                   </div>
