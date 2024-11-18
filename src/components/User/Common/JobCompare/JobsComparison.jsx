@@ -50,7 +50,11 @@ function JobsComparison() {
   }, []);
 
   const handleGetId = async (id2) => {
-    console.log("Selected Job ID:", id2); // Check if the ID is passed correctly
+    if (id2 === id) {
+      console.error("Selected job cannot be the same as the first job");
+      return;
+    }
+
     const response = await getDetailPostById(id2);
     setJob2(response.data.data);
     console.log("Job 2 data:", response.data.data);
@@ -151,61 +155,63 @@ function JobsComparison() {
 
                           <div className="w-full flex flex-col gap-4 py-10 px-4">
                             <div className="space-y-2">
-                              {allJobs.map((job, index) => (
-                                <div
-                                  onClick={() => handleGetId(job.id)}
-                                  key={index}
-                                >
-                                  <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
-                                    <CardBody>
-                                      <div className="flex gap-6 items-center">
-                                        <div className="relative bg-transparent shrink-0">
-                                          <Image
-                                            alt="Job cover"
-                                            className="object-cover rounded-lg"
-                                            height={90}
-                                            shadow="md"
-                                            src="https://nextui.org/images/album-cover.png" // Replace with actual image URL
-                                            width={90}
-                                          />
-                                        </div>
-                                        <div className="flex flex-col w-full">
-                                          <p className="text-base font-medium group-hover:text-primary">
-                                            {
-                                              job.userPostData.userCompanyData
-                                                .name
-                                            }
-                                          </p>
+                              {allJobs
+                                .filter((job) => job.id !== parseInt(id))
+                                .map((job, index) => (
+                                  <div
+                                    onClick={() => handleGetId(job.id)}
+                                    key={index}
+                                  >
+                                    <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
+                                      <CardBody>
+                                        <div className="flex gap-6 items-center">
+                                          <div className="relative bg-transparent shrink-0">
+                                            <Image
+                                              alt="Job cover"
+                                              className="object-cover rounded-lg"
+                                              height={90}
+                                              shadow="md"
+                                              src="https://nextui.org/images/album-cover.png" // Replace with actual image URL
+                                              width={90}
+                                            />
+                                          </div>
+                                          <div className="flex flex-col w-full">
+                                            <p className="text-base font-medium group-hover:text-primary">
+                                              {
+                                                job.userPostData.userCompanyData
+                                                  .name
+                                              }
+                                            </p>
 
-                                          <p className="font-normal text-base text-gray-500">
-                                            {job.postDetailData.name}
-                                          </p>
-                                          <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
-                                            <Badge
-                                              variant="outline"
-                                              className="bg-white w-fit text-nowrap rounded-lg"
-                                            >
-                                              {
-                                                job.postDetailData
-                                                  .salaryTypePostData.value
-                                              }
-                                            </Badge>
-                                            <Badge
-                                              variant="outline"
-                                              className="bg-white w-fit text-nowrap rounded-lg"
-                                            >
-                                              {
-                                                job.postDetailData
-                                                  .provincePostData.value
-                                              }
-                                            </Badge>
+                                            <p className="font-normal text-base text-gray-500">
+                                              {job.postDetailData.name}
+                                            </p>
+                                            <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                                              <Badge
+                                                variant="outline"
+                                                className="bg-white w-fit text-nowrap rounded-lg"
+                                              >
+                                                {
+                                                  job.postDetailData
+                                                    .salaryTypePostData.value
+                                                }
+                                              </Badge>
+                                              <Badge
+                                                variant="outline"
+                                                className="bg-white w-fit text-nowrap rounded-lg"
+                                              >
+                                                {
+                                                  job.postDetailData
+                                                    .provincePostData.value
+                                                }
+                                              </Badge>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    </CardBody>
-                                  </Card>
-                                </div>
-                              ))}
+                                      </CardBody>
+                                    </Card>
+                                  </div>
+                                ))}
                             </div>
                           </div>
                         </div>
@@ -214,11 +220,6 @@ function JobsComparison() {
                   </DialogContent>
                 </Dialog>
               )}
-            </TableCell>
-          </TableRow>
-          <TableRow className="grid grid-cols-3">
-            <TableCell className="font-medium text-base border-t-0">
-              Description
             </TableCell>
           </TableRow>
 

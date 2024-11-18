@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { FavoriteRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-
 function TooltipBox({ id }) {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -36,12 +35,12 @@ function TooltipBox({ id }) {
 
   const handleNavigate = (id) => {
     console.log(id);
-    navigate(`job-detail/${id}`);
+    navigate(`/job-detail/${id}`);
   };
 
   const handleNavigateCompare = (id) => {
     console.log(id);
-    navigate(`jobsComparison/${id}`);
+    navigate(`/jobsComparison/${id}`);
   };
 
   return (
@@ -125,7 +124,6 @@ function TooltipBox({ id }) {
         >
           Compare Job
         </Button>
-
       </div>
     </div>
   );
