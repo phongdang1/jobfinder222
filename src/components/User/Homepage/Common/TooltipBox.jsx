@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip"
 import { getUsersById } from "@/fetchData/User";
 
+
 function TooltipBox({ id }) {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -48,12 +49,12 @@ function TooltipBox({ id }) {
 
   const handleNavigate = (id) => {
     console.log(id);
-    navigate(`job-detail/${id}`);
+    navigate(`/job-detail/${id}`);
   };
 
   const handleNavigateCompare = (id) => {
     console.log(id);
-    navigate(`jobsComparison/${id}`);
+    navigate(`/jobsComparison/${id}`);
   };
 
   return (
@@ -142,7 +143,6 @@ function TooltipBox({ id }) {
         >
            {!user && user?.isVip !== 1 ? "VIP Member Only" : "Compare Job"}
         </Button>
-        
 
       </div>
     </div>

@@ -16,7 +16,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-function JobCard({ expand, data }) {
+function JobCard({ data }) {
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     console.log(id);

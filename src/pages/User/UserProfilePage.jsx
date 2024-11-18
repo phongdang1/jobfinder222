@@ -20,6 +20,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { RiVipCrownFill } from "react-icons/ri";
+import loadingAnimation from "../../assets/animation/loadingAnimation.json";
+import Lottie from "lottie-react";
 
 function UserProfilePage() {
   const [image, setImage] = useState(null);
@@ -29,6 +31,7 @@ function UserProfilePage() {
   const [uploadComplete, setUploadComplete] = useState(false);
   const [saveAvatar, setSaveAvatar] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [isLoading, setIsLoading] = useState(false);
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -52,6 +55,7 @@ function UserProfilePage() {
   };
 
   const uploadImage = async (image) => {
+    console.log("img", image);
     if (saveAvatar) {
       setUploading(true);
       try {
@@ -92,11 +96,14 @@ function UserProfilePage() {
     if (saveAvatar) {
       console.log("avatar", saveAvatar, image);
       uploadImage(image);
+      setSaveAvatar(true);
       setTimeout(() => {
         window.location.reload();
       }, 3000);
     }
-    setSaveAvatar(false);
+    setTimeout(() => {
+      setSaveAvatar(false);
+    }, 4000);
   }, [saveAvatar, image]);
 
   const location = useLocation();
@@ -114,7 +121,7 @@ function UserProfilePage() {
   }, [location.pathname]);
 
   return (
-    <div className="flex flex-col w-full lg:w-1/3 items-center text-center space-y-4 ">
+    <div className="flex flex-col w-full lg:w-1/3 items-center text-center space-y-4 relative">
       <div className="bg-white w-full rounded-lg py-8 ">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="ml-4">
@@ -182,6 +189,13 @@ function UserProfilePage() {
                       Save
                     </Button>
                   </DialogFooter>
+                  <Lottie
+                    className={`absolute left-[150px] opacity-55 ${
+                      saveAvatar ? "block" : "hidden"
+                    }  z-10 w-[300px] h-[300px]`}
+                    animationData={loadingAnimation}
+                    loop={true}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
