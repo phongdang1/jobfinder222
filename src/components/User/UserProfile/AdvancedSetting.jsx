@@ -187,8 +187,10 @@ function AdvancedSetting() {
   }, [isFindJob]);
 
   const handleBadgeClick = (skill) => {
-    setSuggestedSkills(suggestedSkills.filter((s) => s.id !== skill.id));
-    setSelectedSkills([...selectedSkills, skill]);
+    if (!selectedSkills.find((s) => s.id === skill.id)) {
+      setSuggestedSkills(suggestedSkills.filter((s) => s.id !== skill.id));
+      setSelectedSkills([...selectedSkills, skill]);
+    }
   };
 
   const handleRemove = (skill) => {
@@ -209,13 +211,20 @@ function AdvancedSetting() {
     setSuggestedSkills([...suggestedSkills, skillToRemove]);
   };
 
+  // Function to handle updating skills and clearing the selection after saving
   const handleSkill = async (e) => {
     e.preventDefault();
 
+    // Get all skill IDs, including previous user skills and selected skills
     const skillIds = [
       ...selectedSkills.map((skill) => skill.id),
       ...userSkill.listSkill.map((uskill) => uskill.skillId),
     ];
+
+    if (skillIds.length === 0) {
+      toast.error("Please select at least one skill to add.");
+      return;
+    }
 
     try {
       const dataSent = {
@@ -224,12 +233,23 @@ function AdvancedSetting() {
       };
 
       const response = await handleSetDataUserDetail(dataSent);
-      // console.log(dataSent);
 
       if (response) {
-        setTimeout(() => {
-          toast.success("Successfully updated your profile!");
-        }, 2000);
+        // Update userSkill with combined skills and clear selectedSkills
+        setUserSkill((prevUserSkill) => ({
+          ...prevUserSkill,
+          listSkill: [
+            ...prevUserSkill.listSkill,
+            ...selectedSkills.map((skill) => ({
+              skillId: skill.id,
+              skillData: skill,
+            })),
+          ],
+        }));
+
+        setSelectedSkills([]); // Clear the selected skills after saving
+
+        toast.success("Successfully updated your profile!");
         fetchSkill();
         fetchUserSkill();
         setOpen(false);
@@ -301,6 +321,7 @@ function AdvancedSetting() {
       console.log("loi turn on");
     }
   };
+
   const handleDisableJobSeeker = async () => {
     const userData = {
       userId: userId,
@@ -320,6 +341,7 @@ function AdvancedSetting() {
       console.log("loi turn off");
     }
   };
+
   const handleEnableJobSuggestion = async () => {
     const userData = {
       userId: userId,
@@ -336,6 +358,7 @@ function AdvancedSetting() {
       console.log("loi turn on");
     }
   };
+
   const handleDisableJobSuggestion = async () => {
     const userData = {
       userId: userId,
@@ -763,7 +786,7 @@ function AdvancedSetting() {
             }`}
           >
             <p>Vip Functionality</p>
-            <div className="flex justify-between">
+            <div className="flex gap-20">
               {/* Job Seeker Mode */}
               <div className="flex justify-center items-center gap-2">
                 <TooltipProvider>

@@ -23,6 +23,7 @@ const VipFeature = () => {
     window.scrollTo(0, 0);
   }, []);
   const user = JSON.parse(localStorage.getItem("user"));
+  console.log("userid:", user.data.isVip);
   const handleUpdateVip = async () => {
     const res = await createPaymentVip(7);
     if (res.data.errCode == 0) {

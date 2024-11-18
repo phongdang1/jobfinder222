@@ -20,14 +20,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkViewCompany } from "@/fetchData/CvPost";
 
-function CandidateCard({ candidates }) {
+function CandidateCard({ candidates, view }) {
+  const [views, setViews] = useState();
   const [values, setValues] = useState([]);
   const navigate = useNavigate();
+  const companyId = localStorage.getItem("user_id");
 
   const handleProceedClick = async (userId) => {
     try {
-      const response = await checkViewCompany(userId);
+      const response = await checkViewCompany(companyId);
       const allowCv = response.data.allowCv;
+      setViews(allowCv);
+      console.log("view:", views);
       console.log(response.data.allowCv);
       if (response.data) {
         navigate(`/company/candidateDetail/${userId}/${allowCv}`);
@@ -155,12 +159,8 @@ function CandidateCard({ candidates }) {
                   <DialogHeader>
                     <DialogTitle>
                       <div className="flex items-center gap-2">
-                        Lost 1 view to see{" "}
-                        <p className="text-primary">
-                          {c.UserDetailData.firstName}{" "}
-                          {c.UserDetailData.lastName}
-                        </p>{" "}
-                        Information
+                        You have {view} CV views. You will lost 1 view if seeing
+                        this profile
                       </div>
                     </DialogTitle>
                     <DialogDescription>

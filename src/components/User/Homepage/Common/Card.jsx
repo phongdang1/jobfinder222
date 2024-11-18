@@ -73,34 +73,34 @@ function JobCard({ expand, data }) {
                           </Tooltip>
                         </TooltipProvider>
 
-                        <p className="font-normal text-base text-gray-500">
-                          {card.postDetailData.name}
-                        </p>
-                        <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
-                          <Badge
-                            variant="outline"
-                            className="bg-white w-fit text-nowrap rounded-lg"
-                          >
-                            {card.postDetailData.salaryTypePostData.value}
-                          </Badge>
-                          <Badge
-                            variant="outline"
-                            className="bg-white w-fit text-nowrap rounded-lg"
-                          >
-                            {card.postDetailData.provincePostData.value}
-                          </Badge>
-                        </div>
-                      </div>
+                    <p className="font-normal text-base text-gray-500">
+                      {card.postDetailData.name}
+                    </p>
+                    <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                      <Badge
+                        variant="outline"
+                        className="bg-white w-fit text-nowrap rounded-lg"
+                      >
+                        {card.postDetailData.salaryTypePostData.value}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="bg-white w-fit text-nowrap rounded-lg"
+                      >
+                        {card.postDetailData.provincePostData.value}
+                      </Badge>
                     </div>
-                  </CardBody>
-                </Card>
-              </div>
-            ) : null // Nếu không thỏa điều kiện, trả về `null`
-        )
-      ) : (
-        <p>No data available</p> // Trường hợp không có dữ liệu
-      )}
-    </>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        ) : null
+      )
+    ) : (
+      <p>No data available</p> // Trường hợp không có dữ liệu
+    )}
+  </>
   );
 }
 

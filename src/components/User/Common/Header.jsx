@@ -440,7 +440,7 @@ function Header() {
                     </button>
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuContent className="p-2">
                   <DropdownMenuLabel>
                     Hello, {user?.data?.firstName}
                   </DropdownMenuLabel>

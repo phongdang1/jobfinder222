@@ -137,6 +137,11 @@ const CompanyHeader = () => {
       console.log("postRejected:", msg);
     });
 
+    socket.on("autoBanPost", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("postRejected:", msg);
+    });
+
     // Lắng nghe khi kết nối hoặc mất kết nối
     socket.on("connect", () => {
       console.log("Đã kết nối với server Socket.IO");

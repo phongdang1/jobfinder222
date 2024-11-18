@@ -46,7 +46,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { Avatar } from "@mui/material";
-import defaultAvatar from "../../../assets/images/avatar_ne.png"
+import defaultAvatar from "../../../assets/images/avatar_ne.png";
 const ManageJobPost = () => {
   const [company, setCompany] = useState([]);
   const [post, setPost] = useState([]);
@@ -172,6 +172,13 @@ const ManageJobPost = () => {
         setOpenSchedule(null);
         toast.success("Set interview schedule successfully !!!");
         fetchCompanyData();
+        setScheduleForm({
+          interviewDate: "",
+          interviewLocation: "",
+          interviewNote: "",
+          cvPostId: "",
+          companyId: "",
+        });
       } else {
         toast.error(res.data.errMessage);
         console.log("loi roi", res);
@@ -189,6 +196,13 @@ const ManageJobPost = () => {
         toast.success("CV Rejected !!");
         setRejectDialog(false);
         fetchCompanyData();
+        setScheduleForm({
+          interviewDate: "",
+          interviewLocation: "",
+          interviewNote: "",
+          cvPostId: "",
+          companyId: "",
+        });
       } else {
         console.log("loi rejected");
       }
@@ -298,9 +312,7 @@ const ManageJobPost = () => {
                                         ) : (
                                           <img
                                             className="rounded-full w-14 h-14"
-                                            src={
-                                              defaultAvatar
-                                            }
+                                            src={defaultAvatar}
                                           />
                                         )}
                                       </TableCell>
@@ -643,7 +655,7 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "INTERVIEW" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                      {userDetails[userCv.userId]?.image ? (
+                                        {userDetails[userCv.userId]?.image ? (
                                           <img
                                             className="rounded-full w-14 h-14"
                                             src={
@@ -653,9 +665,7 @@ const ManageJobPost = () => {
                                         ) : (
                                           <img
                                             className="rounded-full w-14 h-14"
-                                            src={
-                                              defaultAvatar
-                                            }
+                                            src={defaultAvatar}
                                           />
                                         )}
                                       </TableCell>
@@ -695,7 +705,7 @@ const ManageJobPost = () => {
                                       <TableCell>
                                         <span>
                                           {new Date(
-                                            schedule[userCv.id].interviewDate
+                                            schedule[userCv.id]?.interviewDate
                                           ).toLocaleDateString("en-GB", {
                                             day: "2-digit",
                                             month: "2-digit",
@@ -704,7 +714,7 @@ const ManageJobPost = () => {
                                         </span>
                                       </TableCell>
                                       <TableCell className="max-w-[300px] break-words whitespace-normal">
-                                        {schedule[userCv.id].interviewLocation}
+                                        {schedule[userCv.id]?.interviewLocation}
                                       </TableCell>
                                       <TableCell>
                                         <Dialog className="w-[1500px]">
@@ -754,7 +764,7 @@ const ManageJobPost = () => {
                                         </Dialog>
                                       </TableCell>
                                       <TableCell>
-                                        {schedule[userCv.id].interviewNote}
+                                        {schedule[userCv.id]?.interviewNote}
                                       </TableCell>
                                       <TableCell className="flex gap-4">
                                         <Dialog open={approveDialog}>
@@ -920,7 +930,7 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "REJECTED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                      {userDetails[userCv.userId]?.image ? (
+                                        {userDetails[userCv.userId]?.image ? (
                                           <img
                                             className="rounded-full w-14 h-14"
                                             src={
@@ -930,9 +940,7 @@ const ManageJobPost = () => {
                                         ) : (
                                           <img
                                             className="rounded-full w-14 h-14"
-                                            src={
-                                              defaultAvatar
-                                            }
+                                            src={defaultAvatar}
                                           />
                                         )}
                                       </TableCell>
@@ -1084,7 +1092,7 @@ const ManageJobPost = () => {
                                   userCv.statusCode === "APPROVED" ? (
                                     <TableRow key={index}>
                                       <TableCell className="font-medium">
-                                      {userDetails[userCv.userId]?.image ? (
+                                        {userDetails[userCv.userId]?.image ? (
                                           <img
                                             className="rounded-full w-14 h-14"
                                             src={
@@ -1094,9 +1102,7 @@ const ManageJobPost = () => {
                                         ) : (
                                           <img
                                             className="rounded-full w-14 h-14"
-                                            src={
-                                              defaultAvatar
-                                            }
+                                            src={defaultAvatar}
                                           />
                                         )}
                                       </TableCell>

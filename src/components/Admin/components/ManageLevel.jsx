@@ -29,7 +29,7 @@ import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination"; // Import the pagination component
 import DeleteIcon from "@mui/icons-material/Delete";
 import { SiLevelsdotfyi } from "react-icons/si";
-import AdminValidation from "../common/AdminValidation";
+import AdminValidationLevel from "../common/AdminValidationLevel";
 
 const ManageLevel = () => {
   const [jobLevels, setJobLevels] = useState([]);
@@ -38,6 +38,8 @@ const ManageLevel = () => {
   const [filteredJobLevels, setFilteredJobLevels] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // State for delete confirmation modal
+  const [jobLevelToDelete, setJobLevelToDelete] = useState(null); // State to store job level to be deleted
 
   // form data for new create joblevel
   const [newJobLevel, setNewJobLevel] = useState({
@@ -106,32 +108,39 @@ const ManageLevel = () => {
   const handleOpenCreateModal = () => {
     setCreateModalOpen(true);
     setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+    setErrorMessage({});
   };
 
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
     setNewJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+    setErrorMessage({});
   };
 
   const handleOpenUpdateModal = (jobLevel) => {
     setUpdateJobLevel(jobLevel);
     setUpdateModalOpen(true);
+    setErrorMessage({});
   };
 
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdateJobLevel({ code: "", type: "JOBLEVEL", value: "" });
+    setErrorMessage({});
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (isCreateModalOpen) {
       setNewJobLevel((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation({ ...newJobLevel, [name]: value }, true);
+      const errors = AdminValidationLevel(
+        { ...newJobLevel, [name]: value },
+        true
+      );
       setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
     } else {
       setUpdateJobLevel((prev) => ({ ...prev, [name]: value }));
-      const errors = AdminValidation(
+      const errors = AdminValidationLevel(
         { ...updateJobLevel, [name]: value },
         true
       );
@@ -142,7 +151,7 @@ const ManageLevel = () => {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(newJobLevel, true);
+    const validationErrors = AdminValidationLevel(newJobLevel, true);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -177,7 +186,7 @@ const ManageLevel = () => {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = AdminValidation(updateJobLevel, false);
+    const validationErrors = AdminValidationLevel(updateJobLevel, false);
     if (Object.keys(validationErrors).length > 0) {
       setErrorMessage(validationErrors);
       return;
@@ -240,6 +249,43 @@ const ManageLevel = () => {
       }
     } catch (error) {
       console.error("Error deleting job level:", error);
+    }
+  };
+
+  const handleOpenDeleteModal = (jobLevel) => {
+    setJobLevelToDelete(jobLevel); // Store the job level to delete
+    setDeleteModalOpen(true); // Open the delete confirmation dialog
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false); // Close the delete confirmation dialog
+    setJobLevelToDelete(null); // Clear the stored job level
+  };
+
+  const handleConfirmDelete = async () => {
+    if (jobLevelToDelete) {
+      try {
+        const response = await handleDeleteAllCode({
+          code: jobLevelToDelete.code,
+        });
+        if (response.data && response.data.errCode === 0) {
+          setJobLevels((prev) =>
+            prev.filter((jobLevel) => jobLevel.code !== jobLevelToDelete.code)
+          );
+          setFilteredJobLevels((prev) =>
+            prev.filter((jobLevel) => jobLevel.code !== jobLevelToDelete.code)
+          );
+        } else {
+          console.error(
+            "Failed to delete job level:",
+            response.data.errMessage || "No message"
+          );
+        }
+      } catch (error) {
+        console.error("Error deleting job level:", error);
+      } finally {
+        handleCloseDeleteModal(); // Close the modal after the action
+      }
     }
   };
 
@@ -310,7 +356,7 @@ const ManageLevel = () => {
                 </Button>
 
                 <Button
-                  onClick={() => handleDelete(jobLevel.code)}
+                  onClick={() => handleOpenDeleteModal(jobLevel)} // Open delete confirmation modal
                   className="text-white bg-red-500 hover:bg-red-600 rounded-md w-10 h-9"
                 >
                   <DeleteIcon />
@@ -437,6 +483,32 @@ const ManageLevel = () => {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={handleCloseDeleteModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{"Confirm Delete"}</DialogTitle>
+            <DialogDescription>
+              {"Are you sure you want to delete this job level?"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2">
+            <Button
+              onClick={handleCloseDeleteModal}
+              className="bg-third hover:text-white text-white rounded-md"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmDelete}
+              className="bg-third hover:text-white text-white rounded-md"
+            >
+              Confirm
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
