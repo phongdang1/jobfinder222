@@ -60,10 +60,14 @@ const VipFeature = () => {
           </div>
           <Button
             onClick={handleUpdateVip}
-            disabled={user.isVip = 1}
+            disabled={user.isVip === 1 || user.status === false}
             className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
           >
-           {user.isVip == 1 ? "You are already VIP member !" : " Upgrade Now "}
+            {user.status === false
+              ? "You are not logged in !"
+              : user?.isVip === 1
+              ? "You are already VIP member !"
+              : "Upgrade Now"}
           </Button>
         </div>
         {/* image */}

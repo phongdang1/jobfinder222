@@ -34,7 +34,11 @@ function CompareCard({ data }) {
                   className="object-cover rounded-lg"
                   height={90}
                   shadow="md"
-                  src="https://nextui.org/images/album-cover.png" // Replace with actual image URL
+                  src= {
+                    job.userPostData?.userCompanyData?.thumbnail
+                      ? job.userPostData?.userCompanyData?.thumbnail
+                      : "https://nextui.org/images/album-cover.png"
+                  } // Replace with actual image URL
                   width={90}
                 />
               </div>

@@ -41,19 +41,6 @@ function Introduction() {
           A system that connects your career opportunities with your passions
           and talents, helping you thrive in a fulfilling professional journey.
         </p>
-        <div className="relative flex w-full max-w-2xl items-center gap-2">
-          <Input
-            className="border-r-2"
-            type="email"
-            placeholder="What service are you looking for today?"
-          />
-          <Button
-            type="submit"
-            className="p-3 bg-third absolute right-0 top-0 rounded-r-full"
-          >
-            <SearchIcon sx={{ color: "white" }} />
-          </Button>
-        </div>
 
         {/*  Images */}
 
@@ -61,13 +48,13 @@ function Introduction() {
         {/* Left */}
         <img
           src={facebook}
-          className="absolute w-20 h-20 md:left-24 left-10  md:-bottom-5 sm:-bottom-14 hidden sm:block"
+          className="absolute w-20 h-20 md:left-24 left-10  md:-bottom-14 sm:-bottom-14 hidden sm:block"
           data-aos="fade-up"
           data-aos-delay="200"
         />
         <img
           src={star}
-          className="absolute w-20 h-20 left-56 -top-28 xl:-top-10 opacity-75 hidden sm:block"
+          className="absolute w-20 h-20 left-56 -top-20 xl:-top-10 opacity-75 hidden sm:block"
           data-aos="fade-up"
           data-aos-delay="400"
         />
@@ -79,7 +66,7 @@ function Introduction() {
         />
         <img
           src={instagram}
-          className="absolute w-20 h-20 xl:left-80 right-10 md:-bottom-3 sm:-bottom-14 hidden sm:block"
+          className="absolute w-20 h-20 xl:left-80 right-10 md:-bottom-10 sm:-bottom-14 hidden sm:block"
           data-aos="fade-up"
           data-aos-delay="800"
         />
