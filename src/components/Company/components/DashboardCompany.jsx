@@ -76,7 +76,6 @@ const DashboardCompany = () => {
     console.log("post ne 123", posts);
     posts.forEach((post) => {
       if (post.userId === parseInt(userId)) {
-
         if (post.statusCode === "ACTIVE") {
           if (post.timeEnd > currentTime) {
             counts.active++;
@@ -145,7 +144,7 @@ const DashboardCompany = () => {
                     </Link>
                   </div>
                   <div className="flex items-center">
-                    <FcHome class="mr-2" />
+                    <FcHome className="mr-2" />
                     <Link
                       to="/company/product"
                       className="text-blue-700 hover:text-black"

@@ -9,18 +9,32 @@ import { Separator } from "@/components/ui/separator";
 import { FavoriteRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { getUsersById } from "@/fetchData/User";
+
+
 function TooltipBox({ id }) {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const userId = localStorage.getItem('user_id');
+  const [user, setUser] = useState();
 
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
         const response = await getDetailPostById(id);
+        const resUser = await getUsersById(userId);
         const fetchedData = response.data.data;
-
+        setUser(resUser.data.data)
+        console.log('res user', resUser)
         if (Array.isArray(fetchedData)) {
           setData(fetchedData);
+          console.log('fetched data',fetchedData)
         } else {
           setData([fetchedData]);
         }
@@ -31,7 +45,7 @@ function TooltipBox({ id }) {
     };
 
     fetchAllPosts();
-  }, [id]);
+  }, [id,userId]);
 
   const handleNavigate = (id) => {
     console.log(id);
@@ -54,7 +68,11 @@ function TooltipBox({ id }) {
                 className="object-cover rounded-lg"
                 height={100}
                 shadow="md"
-                src="https://nextui.org/images/album-cover.png"
+                src={
+                  card.companyData.thumbnail
+                    ? card.companyData.thumbnail
+                    : "https://nextui.org/images/album-cover.png"
+                }
                 width={100}
               />
             </div>
@@ -121,9 +139,11 @@ function TooltipBox({ id }) {
           variant="outline"
           className="w-full border-primary text-center text-primary hover:bg-primary hover:text-white text-base font-medium"
           onClick={() => handleNavigateCompare(id)}
+          disabled={!user || user?.isVip !== 1}
         >
-          Compare Job
+           {!user && user?.isVip !== 1 ? "VIP Member Only" : "Compare Job"}
         </Button>
+
       </div>
     </div>
   );

@@ -14,7 +14,6 @@ import PeopleIcon from "@mui/icons-material/People";
 import PlaceIcon from "@mui/icons-material/Place";
 import MapSharpIcon from "@mui/icons-material/MapSharp";
 import { Separator } from "@/components/ui/separator";
-import JobCard from "@/components/User/Jobpage/JobCard";
 import { Card, CardBody } from "@nextui-org/card";
 import { Image } from "@nextui-org/react";
 import {
@@ -26,6 +25,8 @@ import {
 import TooltipBox from "@/components/User/Homepage/Common/TooltipBox";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { getCompanyById } from "@/fetchData/Company";
+import JobCard from "@/components/User/Homepage/Card";
 
 function CompanyDetail() {
   const { id } = useParams();
@@ -43,11 +44,8 @@ function CompanyDetail() {
     const fetchCompanyData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/getCompanyById?id=${id}`
-        );
+        const response = await getCompanyById(id);
         if (response.data.errCode === 0) {
-          console.log("company ne", response.data.data);
           setCompanyDetail(response.data.data);
         } else {
           setError(response.data.errMessage);

@@ -87,7 +87,7 @@ function BestJob() {
       try {
         const response = await getAllPostWithLimit(9, 0);
         setData(response.data.data);
-        console.log(response.data.data);
+        console.log('jpb',response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -166,15 +166,18 @@ function BestJob() {
       {/* Job cards */}
       <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 py-10 px-4">
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="flex space-x-6">
-              <Skeleton className="  w-[100px] h-[100px] shrink-0" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-[250px]" />
-                <Skeleton className="h-4 w-[200px]" />
-              </div>
+         Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 items-center md:items-start"
+          >
+            <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 shrink-0" />
+            <div className="space-y-2 w-full">
+              <Skeleton className="h-4 w-3/4 sm:w-[250px] lg:w-[300px]" />
+              <Skeleton className="h-4 w-1/2 sm:w-[200px] lg:w-[250px]" />
             </div>
-          ))
+          </div>
+        ))
         ) : data && data.length > 0 ? (
           <JobCard expand="" data={data} />
         ) : (

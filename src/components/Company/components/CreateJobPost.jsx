@@ -58,6 +58,7 @@ function CreateJobPost() {
     benefit: "",
     requirement: "",
     skillRequirement: "",
+    isHot: 0,
   });
   const [province, setProvince] = useState([]);
   const [jobType, setJobType] = useState([]);
@@ -66,11 +67,12 @@ function CreateJobPost() {
   const [workType, setWorkType] = useState([]);
   const [gender, setGender] = useState([]);
   const [experience, setExperience] = useState([]);
-  const [hotPost, setHotPost] = useState([]);
+  let [hotPost, setHotPost] = useState([]);
   const [ref1Filled, setRef1Filled] = useState(false);
   const [ref3Filled, setRef3Filled] = useState(false);
   const [ref4Filled, setRef4Filled] = useState(false);
   const [value, setValue] = useState("");
+  const [isToggle, setIsToggle] = useState(false);
   const typeKey = [
     "PROVINCE",
     "JOBTYPE",
@@ -136,30 +138,49 @@ function CreateJobPost() {
     }));
   };
 
+  const handleEnableFeaturedPost = () => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      isHot: 1,
+    }));
+    setIsToggle(true);
+  };
+  const handleDisableFeaturedPost = () => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      isHot: 0,
+    }));
+    setIsToggle(false);
+  };
+
   const handleSubmitForm = async () => {
     try {
-
-      const res = await axios.post("/createNewPost", {
-        name: form.name,
-        categoryJobCode: form.category,
-        addressCode: form.address,
-        salaryJobCode: form.salary,
-        amount: goal,
-        timeEnd: form.timeEnd,
-        jobLevelCode: form.jobLevel,
-        userId: localStorage.getItem("user_id"), // TODO: Replace with user id
-        workTypeCode: form.workType,
-        experienceJobCode: form.experience,
-        genderPostCode: form.gender,
-        description: form.description,
-        benefit: form.benefit,
-        requirement: form.requirement,
-        skillRequirement: form.skillRequirement,
-      },{
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const res = await axios.post(
+        "/createNewPost",
+        {
+          name: form.name,
+          categoryJobCode: form.category,
+          addressCode: form.address,
+          salaryJobCode: form.salary,
+          amount: goal,
+          timeEnd: form.timeEnd,
+          jobLevelCode: form.jobLevel,
+          userId: localStorage.getItem("user_id"), // TODO: Replace with user id
+          workTypeCode: form.workType,
+          experienceJobCode: form.experience,
+          genderPostCode: form.gender,
+          description: form.description,
+          benefit: form.benefit,
+          requirement: form.requirement,
+          skillRequirement: form.skillRequirement,
+          isHot: form.isHot,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (res.data.errCode === 0) {
         toast.success(res.data.errMessage);
@@ -179,8 +200,10 @@ function CreateJobPost() {
           benefit: "",
           requirement: "",
           skillRequirement: "",
+          isHot : 0
         });
         setGoal(1);
+        setIsToggle(false);
         console.log(res.data);
       } else {
         toast.error(res.data.errMessage);
@@ -433,17 +456,52 @@ function CreateJobPost() {
                     <TooltipTrigger>
                       <div className="flex gap-2 items-center">
                         <p className="text-sm">Enable Featured Post</p>{" "}
-                        <Switch className="mr-6" />{" "}
+                        <Switch
+                          checked={isToggle}
+                          disabled={hotPost === 0}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              handleEnableFeaturedPost();
+                              console.log(form.isHot);
+                            } else {
+                              handleDisableFeaturedPost();
+                              console.log(form.isHot);
+                            }
+                          }}
+                          className="mr-6"
+                        />{" "}
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>You will lost 1 Featured Post</p>
-                      <div>
-                        <span className="text-primary font-semibold">
-                          {hotPost}
-                        </span>{" "}
-                        posts remaining
-                      </div>
+                      {isToggle ? (
+                        <>
+                          {hotPost > 0 ? (
+                            <>
+                              <p>Featured Post Enabled</p>
+                              <div>
+                                <span className="text-primary font-semibold">
+                                  {hotPost - 1}
+                                </span>{" "}
+                                posts remaining
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p>No Featured Posts Remaining</p>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <p>You will lose 1 Featured Post</p>
+                          <div>
+                            <span className="text-primary font-semibold">
+                              {hotPost}
+                            </span>{" "}
+                            posts remaining
+                          </div>
+                        </>
+                      )}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -480,7 +538,7 @@ function CreateJobPost() {
               <Input
                 type="text"
                 name="skillRequirement"
-                placeholder="Skill Requirement..."
+                placeholder="List each skill requirement by a comma. Ex : ReactJS, NodeJS, Tailwind,..."
                 className="rounded-lg"
                 value={form.skillRequirement}
                 onChange={handleInputChange}

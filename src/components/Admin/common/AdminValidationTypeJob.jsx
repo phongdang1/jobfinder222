@@ -1,4 +1,4 @@
-function AdminValidation(formData, isCreateModal) {
+function AdminValidationTypeJob(formData, isCreateModal) {
   const error = {};
   const nameRegex = /^[\p{L}\s]+$/u;
   const spaceRegex = /^\s*$/; // Regular expression to check for spaces only
@@ -24,9 +24,23 @@ function AdminValidation(formData, isCreateModal) {
         error.code =
           "Job code can only contain letters (no numbers or spaces)!";
       }
-    }
 
-    if (formData.value !== undefined) {
+      if (formData.value === "") {
+        error.value = "Job type is required!";
+      } else if (!nameRegex.test(formData.value)) {
+        error.value = "Job type cannot contain only numbers!";
+      }
+      //  else if (spaceRegex.test(formData.value)) {
+      //   error.value = "Job Type cannot be empty or contain only spaces!";
+      // }
+      else if (!accentRegex.test(formData.value)) {
+        error.value = "Job type must include at least one accented character!";
+      }
+    }
+  }
+
+  if (formData.name !== undefined) {
+    if (formData.value === "") {
       error.value = "Job type is required!";
     } else if (!nameRegex.test(formData.value)) {
       error.value = "Job type cannot contain only numbers!";
@@ -39,19 +53,7 @@ function AdminValidation(formData, isCreateModal) {
     }
   }
 
-  if (formData.value !== undefined) {
-    if (formData.value === "") {
-      error.value = "This field is required!";
-    } else if (!nameRegex.test(formData.value)) {
-      error.value = "This field cannot contain only numbers! 1";
-    } else if (spaceRegex.test(formData.value)) {
-      error.value = "This field cannot be empty or contain only spaces!";
-    } else if (!accentRegex.test(formData.value)) {
-      error.value = "This field must include at least one accented character!";
-    }
-  }
-
   return error;
 }
 
-export default AdminValidation;
+export default AdminValidationTypeJob;

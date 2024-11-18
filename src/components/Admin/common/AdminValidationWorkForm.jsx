@@ -1,4 +1,4 @@
-function AdminValidation(formData, isCreateModal) {
+function AdminValidationWorkForm(formData, isCreateModal) {
   const error = {};
   const nameRegex = /^[\p{L}\s]+$/u;
   const spaceRegex = /^\s*$/; // Regular expression to check for spaces only
@@ -17,41 +17,45 @@ function AdminValidation(formData, isCreateModal) {
   };
 
   if (isCreateModal) {
-    if (formData.code !== undefined) {
+    if (formData.value !== undefined) {
+      if (formData.value === "") {
+        error.value = "Type of work is required!";
+      } else if (!nameRegex.test(formData.value)) {
+        error.value = "Type of work cannot contain only numbers!";
+      }
+      //  else if (spaceRegex.test(formData.value)) {
+      //   error.value = "Job Type cannot be empty or contain only spaces!";
+      // }
+      else if (!accentRegex.test(formData.value)) {
+        error.value =
+          "Type of work must include at least one accented character!";
+      }
+
       if (formData.code === "") {
-        error.code = "Job code is required!";
+        error.code = "Type of work code is required!";
       } else if (!codeRegex.test(formData.code)) {
         error.code =
-          "Job code can only contain letters (no numbers or spaces)!";
+          "Type of work code can only contain letters (no numbers or spaces)!";
       }
     }
+  }
 
-    if (formData.value !== undefined) {
-      error.value = "Job type is required!";
+  if (formData.name !== undefined) {
+    if (formData.value === "") {
+      error.value = "Type of work is required!";
     } else if (!nameRegex.test(formData.value)) {
-      error.value = "Job type cannot contain only numbers!";
+      error.value = "Type of work cannot contain only numbers!";
     }
     //  else if (spaceRegex.test(formData.value)) {
     //   error.value = "Job Type cannot be empty or contain only spaces!";
     // }
     else if (!accentRegex.test(formData.value)) {
-      error.value = "Job type must include at least one accented character!";
-    }
-  }
-
-  if (formData.value !== undefined) {
-    if (formData.value === "") {
-      error.value = "This field is required!";
-    } else if (!nameRegex.test(formData.value)) {
-      error.value = "This field cannot contain only numbers! 1";
-    } else if (spaceRegex.test(formData.value)) {
-      error.value = "This field cannot be empty or contain only spaces!";
-    } else if (!accentRegex.test(formData.value)) {
-      error.value = "This field must include at least one accented character!";
+      error.value =
+        "Type of work must include at least one accented character!";
     }
   }
 
   return error;
 }
 
-export default AdminValidation;
+export default AdminValidationWorkForm;
