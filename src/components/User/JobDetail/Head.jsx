@@ -65,6 +65,7 @@ const Head = ({ job }) => {
   const currentTime = new Date();
   useEffect(() => {
     fetchUserData();
+    console.log('job ne', job)
   }, [userId, jobId]);
   const handleBackClick = () => {
     if (prevLocation) {
@@ -397,7 +398,6 @@ const Head = ({ job }) => {
               <p className="list-item list-inside">
                 {job.data.postDetailData?.description}
               </p>
-              <p className="list-item list-inside">{job.data.note}</p>
               <p className="list-item list-inside">
                 Wage: {job.data.postDetailData?.salaryTypePostData.value}
               </p>
