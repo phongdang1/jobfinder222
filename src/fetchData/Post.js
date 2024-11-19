@@ -88,6 +88,16 @@ const activePost = (id) => {
   });
 };
 
+const handleClosePost = (id) => {
+  return axios.post(`/closePost`, {
+    id: id
+  },{
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+  });
+}
+
 export {
   getDetailPostById,
   banPost,
@@ -98,4 +108,5 @@ export {
   getAllPostWithLimit,
   getAllPost,
   createNewPost,
+  handleClosePost
 };

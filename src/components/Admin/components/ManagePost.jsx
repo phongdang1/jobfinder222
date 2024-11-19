@@ -29,6 +29,7 @@ import {
 } from "@/fetchData/Post";
 // import { getAllReport } from "@/fetchData/Report";
 import AdminPagination from "./AdminPagination";
+import toast from "react-hot-toast";
 
 const ManagePostAdmin = () => {
   const [action, setAction] = useState("");
@@ -50,7 +51,7 @@ const ManagePostAdmin = () => {
   const [filteredposts, setFilteredposts] = useState([]);
   const currentposts = filteredposts.slice(indexOfFirstPost, indexOfLastPost);
   const totalPages = Math.ceil(filteredposts.length / postsPerPage);
-  const [selectedStatus, setSelectedStatus] = useState("ALL"); // State for selected status
+  const [selectedStatus, setSelectedStatus] = useState("ALL");
 
   if (currentPostDetail) console.log("currentPostDetail: ", currentPostDetail);
   const fetchPosts = async () => {
@@ -174,16 +175,16 @@ const ManagePostAdmin = () => {
       const res = await inactivePost(currentPostDetail.id, note);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("Bài viết đã bị inactive thành công!");
+        toast.success("Bài viết đã bị từ chối!");
         fetchPosts();
         fetchPostDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
   const handleActive = async () => {
@@ -191,16 +192,16 @@ const ManagePostAdmin = () => {
       const res = await activePost(currentPostDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("Bài viết đã active thành công!");
+        toast.success("Bài viết đã approve thành công!");
         fetchPosts();
         fetchPostDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
   const handleUnban = async (note) => {
@@ -212,16 +213,16 @@ const ManagePostAdmin = () => {
       );
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("Bài viết đã được mở khóa!");
+        toast.success("Bài viết đã được mở khóa!");
         fetchPosts();
         fetchPostDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
   const handleBan = async (note) => {
@@ -231,14 +232,14 @@ const ManagePostAdmin = () => {
       if (res.data.errCode === 0) {
         fetchPosts();
         fetchPostDetails();
-        console.log("Bài viết đã bị cấm thành công!");
+        toast.success("Bài viết đã bị cấm thành công!");
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
 
@@ -278,9 +279,9 @@ const ManagePostAdmin = () => {
             {" "}
             <option value="ALL">All Status</option>
             <option value="PENDING">PENDING</option>
-            <option value="ACTIVE">ACTIVE</option>
+            <option value="ACTIVE">APPROVED</option>
             <option value="BANNED">BANNED</option>
-            <option value="INACTIVE">INACTIVE</option>
+            <option value="INACTIVE">REJECTED</option>
           </select>
         </div>
       </div>
@@ -324,7 +325,7 @@ const ManagePostAdmin = () => {
               <TableCell className="text-center">
                 <span
                   className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${
-                    post.statusCode.toUpperCase() === "ACTIVE"
+                    post.statusCode.toUpperCase() === "APPROVED"
                       ? "bg-green-500 text-white"
                       : post.statusCode.toUpperCase() === "PENDING"
                       ? "bg-gray-500 text-white"
@@ -333,13 +334,13 @@ const ManagePostAdmin = () => {
                       : "bg-red-500 text-white"
                   }`}
                 >
-                  {post.statusCode.toUpperCase() === "ACTIVE"
-                    ? "ACTIVE"
+                  {post.statusCode.toUpperCase() === "APPROVED"
+                    ? "APPROVED"
                     : post.statusCode.toUpperCase() === "PENDING"
                     ? "PENDING"
                     : post.statusCode.toUpperCase() === "BANNED"
                     ? "BANNED"
-                    : "INACTIVE"}
+                    : "REJECTED"}
                 </span>
               </TableCell>
             </TableRow>
@@ -477,7 +478,7 @@ const ManagePostAdmin = () => {
                             onClick={handleActive}
                             className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
                           >
-                            Active
+                            Approve
                           </button>
                           <button
                             onClick={() => {
@@ -486,7 +487,7 @@ const ManagePostAdmin = () => {
                             }}
                             className="p-3 text-white bg-gray-500 hover:bg-gray-700 rounded-md"
                           >
-                            Inactive
+                            Reject
                           </button>
                         </>
                       )}
@@ -500,7 +501,7 @@ const ManagePostAdmin = () => {
                             }}
                             className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
                           >
-                            Inactive
+                            Reject
                           </button>
                           <button
                             onClick={() => {
@@ -514,12 +515,12 @@ const ManagePostAdmin = () => {
                         </>
                       )}
                       {currentPostDetail.statusCode.toUpperCase() ===
-                        "INACTIVE".toUpperCase() && (
+                        "REJECTED".toUpperCase() && (
                         <button
                           onClick={handleActive}
                           className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
                         >
-                          Active
+                          Approve
                         </button>
                       )}
                       {currentPostDetail.statusCode.toUpperCase() ===

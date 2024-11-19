@@ -28,6 +28,7 @@ import {
 } from "@/fetchData/User";
 import AdminPagination from "./AdminPagination";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import toast from "react-hot-toast";
 
 const ManageUser = () => {
   const [action, setAction] = useState("");
@@ -40,6 +41,7 @@ const ManageUser = () => {
   const [currentUserId, setcurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [er, setEr] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [showConfirm, setShowConfirm] = useState(false);
   const usersPerPage = 10;
@@ -125,16 +127,16 @@ const ManageUser = () => {
       const res = await unBanUser(currentUserId);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("user đã active thành công!");
+        toast.success("User đã mở khóa thành công!");
         fetchUsers();
         fetchuserDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
 
@@ -143,16 +145,21 @@ const ManageUser = () => {
       const res = await setUserToAdmin(currentUserId);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("user đã active thành công!");
+        toast.success("Set admin thành công!");
         fetchUsers();
         fetchuserDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
+    }
+  };
+  const handleBlur = () => {
+    if (!note.trim()) {
+      setEr(true);
     }
   };
   const handleBan = async (note) => {
@@ -162,20 +169,20 @@ const ManageUser = () => {
       if (res.data.errCode === 0) {
         fetchUsers();
         fetchuserDetails();
-        console.log("user đã bị cấm thành công!");
+        toast.success("User đã bị cấm thành công!");
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-  console.log("filteredusers", filteredusers);
+ 
   return (
     <div className="border border-blue-gray-100 shadow-sm rounded-lg">
       <div className="flex justify-between items-center p-4">
@@ -208,10 +215,8 @@ const ManageUser = () => {
           >
             {" "}
             <option value="ALL">All Status</option>
-            <option value="PENDING">PENDING</option>
             <option value="ACTIVE">ACTIVE</option>
             <option value="BANNED">BANNED</option>
-            <option value="INACTIVE">INACTIVE</option>
           </select>
         </div>
       </div>
@@ -491,7 +496,7 @@ const ManageUser = () => {
                             }}
                             className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
                           >
-                            BANNED
+                            Ban
                           </button>
                         )}
                       {currentUserDetail.statusCode.toUpperCase() ===
@@ -529,9 +534,15 @@ const ManageUser = () => {
                               type="text"
                               className="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                               value={note}
+                              onBlur={handleBlur}
                               onChange={(e) => setNote(e.target.value)}
                               placeholder="Enter the reason for banning this user"
                             />
+                            {er && (
+                              <p className="mt-2 text-sm text-red-600">
+                                Please enter a reason for {action} this user.
+                              </p>
+                            )}
                           </div>
                           <div className="flex justify-center mt-4">
                             <button

@@ -206,7 +206,7 @@ const Login = () => {
         <Typewriter
           options={{
             strings: [
-              "Lorem ipsum dolor sit amet, consectetur adipiscing el Lorem ipsum dolor sit amet, consectetur adipiscing el",
+              "Explore endless opportunities and unlock your true potential—where your career aspirations come to life",
             ],
             autoStart: true,
             loop: true,

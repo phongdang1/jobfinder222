@@ -17,7 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 
-function JobCard({ expand, data }) {
+function JobCard({ data }) {
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     console.log(id);
@@ -27,6 +27,7 @@ function JobCard({ expand, data }) {
   return (
     <>
       {data && data.length > 0 ? (
+
         data.map((card, index) =>
           card.isHot === 1 ? (
             <div key={index}>
@@ -79,6 +80,7 @@ function JobCard({ expand, data }) {
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
+
 
                       <p className="font-normal text-base text-gray-500">
                         {card.postDetailData.name}
