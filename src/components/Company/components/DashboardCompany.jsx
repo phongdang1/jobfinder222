@@ -12,10 +12,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SdCardAlertIcon from "@mui/icons-material/SdCardAlert";
 import { getCompanyById } from "@/fetchData/Company";
+import { getAllUserPackage } from "@/fetchData/Package"; // Import the function to fetch user packages
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllPost } from "@/fetchData/Post";
@@ -31,6 +42,8 @@ const DashboardCompany = () => {
     inactive: 0,
     expired: 0,
   });
+  const [userPackages, setUserPackages] = useState([]); // State to store user package data
+
   const userId = localStorage.getItem("user_id");
   const companyId = JSON.parse(localStorage.getItem("companyId"));
 
@@ -97,13 +110,34 @@ const DashboardCompany = () => {
     setPostCounts(counts);
   };
 
+  const fetchUserPackages = async () => {
+    try {
+      const response = await getAllUserPackage(); // Fetch all user packages
+      if (response.data.errCode === 0) {
+        const userPackageData = response.data.data.filter(
+          (pkg) => pkg.userId === parseInt(userId)
+        );
+        setUserPackages(userPackageData); // Set the filtered packages for this user
+      } else {
+        setError("Error fetching user packages. Please try again later.");
+      }
+    } catch (error) {
+      setError("Error fetching user packages. Please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    fetchCompany();
+    fetchUserPackages(); // Fetch user packages on component mount
+  }, []);
+
   useEffect(() => {
     fetchCompany();
     fetchPosts(); // Fetch posts on component mount
   }, []);
 
   const jobData = [];
-  const [selectedOption, setSelectedOption] = useState("Thời gian");
+  const [selectedOption, setSelectedOption] = useState("Choose time");
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -126,13 +160,13 @@ const DashboardCompany = () => {
             <div className="absolute inset-0 bg-blue-100/60 z-10"></div>
             <div className="relative z-20 p-4">
               <CardHeader>
-                <CardTitle className="text-xl">Xin chào,</CardTitle>
+                <CardTitle className="text-xl">Welcome,</CardTitle>
                 <CardDescription className="text-xl font-medium text-orange-600">
                   {companyData?.name}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Đây là một số thông tin để bạn có thể bắt đầu sử dụng:</p>
+                <p>Here's some information to get you started:</p>
               </CardContent>
               <CardFooter></CardFooter>
               <CardFooter>
@@ -140,7 +174,7 @@ const DashboardCompany = () => {
                   <div className="flex items-center">
                     <FcFaq className="mr-2" />
                     <Link to="" className="text-blue-700 hover:text-black">
-                      <p>FAQ/Hướng dẫn sử dụng</p>
+                      <p>FAQ/User Instructions</p>
                     </Link>
                   </div>
                   <div className="flex items-center">
@@ -149,7 +183,7 @@ const DashboardCompany = () => {
                       to="/company/product"
                       className="text-blue-700 hover:text-black"
                     >
-                      <p>Khám phá sản phẩm</p>
+                      <p>Explore products</p>
                     </Link>
                   </div>
                 </div>
@@ -159,7 +193,7 @@ const DashboardCompany = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Điểm khả dụng</CardTitle>
+              <CardTitle className="text-lg">Available points</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
@@ -168,7 +202,7 @@ const DashboardCompany = () => {
                     <p className="text-blue-700 font-semibold text-2xl">
                       {companyData?.allowHotPost}
                     </p>
-                    <p>Gói đăng tuyển</p>
+                    <p>Job posting package</p>
                   </CardContent>
                 </Card>
 
@@ -177,7 +211,7 @@ const DashboardCompany = () => {
                     <p className="text-green-500 font-semibold text-2xl">
                       {companyData?.allowCv}
                     </p>
-                    <p>Gói xem hồ sơ</p>
+                    <p>Profile view package</p>
                   </CardContent>
                 </Card>
               </div>
@@ -189,7 +223,7 @@ const DashboardCompany = () => {
           <Card className="h-full relative">
             <CardHeader>
               <CardTitle className="text-lg font-normal">
-                Tổng số lượng hồ sơ trong 7 ngày
+                Total number of records in 7 days
               </CardTitle>
               <CardDescription className="text-black text-2xl font-semibold">
                 0
@@ -198,7 +232,7 @@ const DashboardCompany = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">
-                      Tất cả công việc <ChevronDown className="ml-2 h-4 w-4" />
+                      All work <ChevronDown className="ml-2 h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-fit">
@@ -228,7 +262,7 @@ const DashboardCompany = () => {
                 className="mb-2"
               />
               <p className="text-sm text-gray-500">
-                Không có dữ liệu cho báo cáo này
+                There is no data available for this report
               </p>
             </CardContent>
           </Card>
@@ -246,7 +280,7 @@ const DashboardCompany = () => {
                     <p className="text-2xl font-semibold text-green-600">
                       {postCounts.active}
                     </p>
-                    <p>Đang hiển thị</p>
+                    <p>Showing</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
@@ -254,7 +288,7 @@ const DashboardCompany = () => {
                     <p className="text-2xl font-semibold text-gray-600">
                       {postCounts.pending}
                     </p>
-                    <p>Chờ duyệt</p>
+                    <p>Waiting for approval</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
@@ -262,7 +296,7 @@ const DashboardCompany = () => {
                     <p className="text-2xl font-semibold text-red-600">
                       {postCounts.inactive}
                     </p>
-                    <p>Đang ẩn</p>
+                    <p>Hidden</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
@@ -270,7 +304,7 @@ const DashboardCompany = () => {
                     <p className="text-2xl font-semibold text-orange-600">
                       {postCounts.expired}
                     </p>
-                    <p>hết hạn</p>
+                    <p>Expired</p>
                   </CardContent>
                 </Card>
               </div>
@@ -282,15 +316,15 @@ const DashboardCompany = () => {
           <Card className="lg:h-44">
             <CardHeader>
               <CardTitle className="text-lg text-orange-500">
-                Có sản phẩm mới
+                There are new products
               </CardTitle>
               <CardDescription className="pt-4 font-normal text-black">
-                Bắt đầu tìm kiếm tài năng ngay với các sản phẩm của chúng tôi
+                Start finding talent now with our products
               </CardDescription>
             </CardHeader>
             <Link to="/company/product">
               <Button className="bg-third hover:text-white text-white rounded-md ml-6 mb-4">
-                Mua ngay
+                Buy now
               </Button>
             </Link>
           </Card>
@@ -298,7 +332,7 @@ const DashboardCompany = () => {
       </div>
 
       <div className="mt-4 relative">
-        <div className="absolute top-4 right-4">
+        {/* <div className="absolute top-4 right-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
@@ -306,7 +340,7 @@ const DashboardCompany = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-fit">
-              {["7 ngày", "15 ngày", "30 ngày"].map((option, index) => (
+              {["7 days", "15 days", "30 days"].map((option, index) => (
                 <DropdownMenuItem
                   key={index}
                   onClick={() => setSelectedOption(option)}
@@ -320,19 +354,45 @@ const DashboardCompany = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
 
-        <Card className="w-full">
+        <Card>
           <CardHeader>
-            <CardTitle>Transaction history</CardTitle>
+            <CardTitle className="text-lg">Transaction History</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center text-center">
-            <img
-              src="https://employer.vietnamworks.com/v2/dashboard/static/media/no-activity-log.ce6b25997d31d015c44e74ed61f2257f.svg"
-              alt="No Activity Log"
-              className="mb-2"
-            />
-            <p className="text-sm text-gray-500">Không có hoạt động nào</p>
+          <CardContent>
+            {userPackages.length > 0 ? (
+              <Table>
+                <TableCaption>User Packages</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Package Name</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Points Earned</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {userPackages.map((pkg) => (
+                    <TableRow key={pkg.packageId}>
+                      <TableCell>{pkg.PackageData.name}</TableCell>
+                      <TableCell>${pkg.PackageData.price}</TableCell>
+                      <TableCell>{pkg.PackageData.type}</TableCell>
+                      <TableCell>{pkg.poinEarned}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="flex flex-col items-center justify-center text-center">
+                <img
+                  src="https://employer.vietnamworks.com/v2/dashboard/static/media/icon-empty-current-status.dc7c121ad253b15972a4bb894e7084fd.svg"
+                  alt="No Data"
+                  className="mb-2"
+                />
+                <p className="text-sm text-gray-500">There are no activities</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
