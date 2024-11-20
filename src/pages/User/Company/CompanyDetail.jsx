@@ -14,8 +14,19 @@ import PeopleIcon from "@mui/icons-material/People";
 import PlaceIcon from "@mui/icons-material/Place";
 import MapSharpIcon from "@mui/icons-material/MapSharp";
 import { Separator } from "@/components/ui/separator";
-
-import JobCard from "@/components/User/Homepage/Common/Card";
+import { Card, CardBody } from "@nextui-org/card";
+import { Image } from "@nextui-org/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import TooltipBox from "@/components/User/Homepage/Common/TooltipBox";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { getCompanyById } from "@/fetchData/Company";
+import JobCard from "@/components/User/Homepage/Card";
 
 function CompanyDetail() {
   const { id } = useParams();
@@ -23,15 +34,18 @@ function CompanyDetail() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
+  const handleNavigate = (id) => {
+    console.log(id);
+    navigate(`job-detail/${id}`);
+  };
+
   useEffect(() => {
     const fetchCompanyData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/getCompanyById?id=${id}`
-        );
+        const response = await getCompanyById(id);
         if (response.data.errCode === 0) {
-          console.log("company ne", response.data.data);
           setCompanyDetail(response.data.data);
         } else {
           setError(response.data.errMessage);
@@ -149,7 +163,74 @@ function CompanyDetail() {
           </div>
           {/* Job Listings */}
           <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white space-y-4">
-            <JobCard />
+            <div>
+              <Card
+                className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer"
+                shadow=""
+              >
+                <CardBody>
+                  <div className="flex gap-8 items-center justify-start w-full ">
+                    <div
+                      onClick={() => handleNavigate(companyDetail.id)}
+                      className="relative bg-transparent shrink-0"
+                    >
+                      <Image
+                        alt="Album cover"
+                        className="object-cover rounded-lg"
+                        height={90}
+                        shadow="md"
+                        src="https://nextui.org/images/album-cover.png"
+                        width={90}
+                      />
+                    </div>
+
+                    <div className="flex flex-col w-full">
+                      <TooltipProvider>
+                        <Tooltip className="">
+                          <TooltipTrigger className="text-start">
+                            <p
+                              onClick={() =>
+                                handleNavigate(companyDetail.postData[0]?.id)
+                              }
+                              className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
+                            >
+                              {companyDetail.postData[0]?.postDetailData?.name}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent side={"right"}>
+                            <TooltipBox id={companyDetail.postData[0]?.id} />
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      <p className="font-normal text-base text-gray-500">
+                        {companyDetail.name}
+                      </p>
+                      <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                        <Badge
+                          variant="outline"
+                          className="bg-white w-fit text-nowrap rounded-lg"
+                        >
+                          {
+                            companyDetail.postData[0]?.postDetailData
+                              ?.salaryTypePostData?.value
+                          }
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="bg-white w-fit text-nowrap rounded-lg"
+                        >
+                          {
+                            companyDetail.postData[0]?.postDetailData
+                              ?.provincePostData?.value
+                          }
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
           </div>
         </div>
 

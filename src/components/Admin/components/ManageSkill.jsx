@@ -53,7 +53,7 @@ const ManageSkill = () => {
 
   const [currentPage, setCurrentPage] = useState(1); // Pagination
   const [totalCount, setTotalCount] = useState(null); // Total number of skills
-  const skillsPerPage = 10; // Number of skills per page
+  const skillsPerPage = 5; // Number of skills per page
 
   const categories = [
     { code: "all", label: "All" },
@@ -245,12 +245,13 @@ const ManageSkill = () => {
       setSkillToDelete(null); // Reset skill to delete
     }
   };
+  // Add the sorting logic here
   const sortedSkills =
     selectedCategory === "all"
-      ? filteredSkills
-      : filteredSkills.filter(
-          (skill) => skill.categoryJobCode === selectedCategory
-        );
+      ? filteredSkills.sort((a, b) => b.id - a.id) // Sort in descending order by id
+      : filteredSkills
+          .filter((skill) => skill.categoryJobCode === selectedCategory)
+          .sort((a, b) => b.id - a.id); // Sort filtered skills in descending order by id
 
   // Pagination logic
   const totalPages = Math.ceil(sortedSkills.length / skillsPerPage);
@@ -387,15 +388,25 @@ const ManageSkill = () => {
             <div className="mb-4">
               <Label htmlFor="category">Category</Label>
               <select
-                id="category"
+                id="category-select"
                 name="categoryJobCode"
-                value={newSkill.categoryJobCode || "congNgheThongTin"} // Default to a valid category if no selection
-                onChange={handleInputChange}
-                required
+                value={newSkill.categoryJobCode}
+                onChange={(e) => {
+                  const selectedCategory = e.target.value;
+                  setNewSkill((prevSkill) => ({
+                    ...prevSkill,
+                    categoryJobCode: selectedCategory,
+                  }));
+                  // Reset validation error for category
+                  setErrorMessage((prev) => ({
+                    ...prev,
+                    categoryJobCode: "",
+                  }));
+                }}
                 className="border border-gray-300 rounded-md p-2"
               >
                 {categories
-                  .filter((category) => category.code !== "all") // Exclude "All"
+                  // .filter((category) => category.code !== "all")
                   .map((category) => (
                     <option key={category.code} value={category.code}>
                       {category.label}

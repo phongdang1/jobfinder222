@@ -39,13 +39,6 @@ const CardDashboard = ({
 
         {/* Content */}
         <CardContent></CardContent>
-
-        {/* Footer */}
-        {footer && (
-          <CardFooter className="border-t border-blue-gray-50">
-            <span className="text-sm text-blue-gray-600">{footer}</span>
-          </CardFooter>
-        )}
       </Card>
     </div>
   );

@@ -27,6 +27,7 @@ import {
   unbanCompany,
 } from "@/fetchData/Company";
 import AdminPagination from "./AdminPagination";
+import toast from "react-hot-toast";
 
 const ManageCompanyAdmin = () => {
   const [companies, setCompanies] = useState([]);
@@ -124,16 +125,16 @@ const ManageCompanyAdmin = () => {
       const res = await inactiveCompany(currentCompanyDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("Công ty đã bị inactive thành công!");
+        toast.success("Công ty đã bị từ chối!");
         fetchCompanies();
         fetchCompanyDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
   const handleActive = async () => {
@@ -141,16 +142,16 @@ const ManageCompanyAdmin = () => {
       const res = await activeCompany(currentCompanyDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("Công ty đã active thành công!");
+        toast.success("Công ty đã approve thành công!");
         fetchCompanies();
         fetchCompanyDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
   const handleUnban = async () => {
@@ -158,16 +159,16 @@ const ManageCompanyAdmin = () => {
       const res = await unbanCompany(currentCompanyDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
-        console.log("Công ty đã được mở khóa!");
+        toast.success("Công ty đã được mở khóa!");
         fetchCompanies();
         fetchCompanyDetails();
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
   const handleBan = async () => {
@@ -177,14 +178,14 @@ const ManageCompanyAdmin = () => {
       if (res.data.errCode === 0) {
         fetchCompanies();
         fetchCompanyDetails();
-        console.log("Công ty đã bị cấm thành công!");
+        toast.success("Công ty đã bị cấm thành công!");
         setShowConfirm(false);
         setModalOpen(false);
       } else {
-        console.error("Có lỗi xảy ra:", res.data.message);
+        toast.error("Có lỗi xảy ra:", res.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
+      toast.error("Lỗi khi gọi API:", error);
     }
   };
 
@@ -224,9 +225,9 @@ const ManageCompanyAdmin = () => {
             {" "}
             <option value="ALL">All Status</option>
             <option value="PENDING">PENDING</option>
-            <option value="ACTIVE">ACTIVE</option>
+            <option value="ACTIVE">APPROVED</option>
             <option value="BANNED">BANNED</option>
-            <option value="INACTIVE">INACTIVE</option>
+            <option value="INACTIVE">REJECTED</option>
           </select>
         </div>
       </div>
@@ -262,7 +263,7 @@ const ManageCompanyAdmin = () => {
               <TableCell className="text-center">
                 <span
                   className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${
-                    company.statusCode.toUpperCase() === "ACTIVE"
+                    company.statusCode.toUpperCase() === "APPROVED"
                       ? "bg-green-500 text-white"
                       : company.statusCode.toUpperCase() === "PENDING"
                       ? "bg-gray-500 text-white"
@@ -271,13 +272,13 @@ const ManageCompanyAdmin = () => {
                       : "bg-red-500 text-white"
                   }`}
                 >
-                  {company.statusCode.toUpperCase() === "ACTIVE"
-                    ? "ACTIVE"
+                  {company.statusCode.toUpperCase() === "APPROVED"
+                    ? "APPROVED"
                     : company.statusCode.toUpperCase() === "PENDING"
                     ? "PENDING"
                     : company.statusCode.toUpperCase() === "BANNED"
                     ? "BANNED"
-                    : "INACTIVE"}
+                    : "REJECTED"}
                 </span>
               </TableCell>
             </TableRow>
@@ -394,24 +395,24 @@ const ManageCompanyAdmin = () => {
                             onClick={handleActive}
                             className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
                           >
-                            Active
+                            Approve
                           </button>
                           <button
                             onClick={handleInactive}
                             className="p-3 text-white bg-gray-500 hover:bg-gray-700 rounded-md"
                           >
-                            Inactive
+                            Reject
                           </button>
                         </>
                       )}
                       {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "ACTIVE".toUpperCase() && (
+                        "APPROVED".toUpperCase() && (
                         <>
                           <button
                             onClick={handleInactive}
                             className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
                           >
-                            Inactive
+                            Reject
                           </button>
                           <button
                             onClick={() => {
@@ -424,12 +425,12 @@ const ManageCompanyAdmin = () => {
                         </>
                       )}
                       {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "INACTIVE".toUpperCase() && (
+                        "REJECTED".toUpperCase() && (
                         <button
                           onClick={handleActive}
                           className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
                         >
-                          Active
+                          Approve
                         </button>
                       )}
                       {currentCompanyDetail.statusCode.toUpperCase() ===

@@ -1,4 +1,5 @@
 import { TrendingUp } from "lucide-react";
+import { format } from "date-fns";
 import { Label, Pie, PieChart } from "recharts";
 import {
   Card,
@@ -13,55 +14,157 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { getAllPost } from "../../../fetchData/Post";
+import { getAllCodeByType } from "../../../fetchData/AllCode";
+import { useEffect, useState } from "react";
 
 // Move chartConfig outside the component and export it if needed
 export const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  posts: {
+    label: "Posts",
   },
-  chrome: {
-    label: "Chrome",
+  it: {
+    label: "Technology",
     color: "hsl(var(--chart-1))",
   },
-  safari: {
-    label: "Safari",
+  business: {
+    label: "Business",
     color: "hsl(var(--chart-2))",
   },
-  firefox: {
-    label: "Firefox",
+  education: {
+    label: "Education",
     color: "hsl(var(--chart-3))",
   },
-  edge: {
-    label: "Edge",
+  estate: {
+    label: "Real Estate",
     color: "hsl(var(--chart-4))",
+  },
+  hr: {
+    label: "HR",
+    color: "hsl(var(--chart-5))",
+  },
+  law: {
+    label: "Law",
+    color: "#4B0082",
+  },
+  media: {
+    label: "Media",
+    color: "#00B8D4",
   },
   other: {
     label: "Other",
-    color: "hsl(var(--chart-5))",
+    color: "#9181F4",
   },
 };
 
 function Chart() {
+  const [jobTypeData, setJobTypeData] = useState([]);
+  const [postData, setPostData] = useState([]);
+  const [jobTypeCount, setJobTypeCount] = useState({
+    congNgheThongTin: 0,
+    kinhTe: 0,
+    giaoVien: 0,
+    batDongSan: 0,
+    quanLyNhanSu: 0,
+    luat: 0,
+    truyenThong: 0,
+    other: 0,
+  });
+
+  useEffect(() => {
+    // Fetch job types and posts
+    const fetchData = async () => {
+      try {
+        const [jobTypeResponse, postResponse] = await Promise.all([
+          getAllCodeByType("JOBTYPE"),
+          getAllPost(),
+        ]);
+
+        if (jobTypeResponse.data.errCode === 0) {
+          setJobTypeData(jobTypeResponse.data.data);
+          console.log("jobtype", jobTypeResponse);
+        }
+        if (postResponse.data.errCode === 0) {
+          setPostData(postResponse.data.data);
+          console.log("post data", postResponse.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const updatedJobTypeCount = { ...jobTypeCount };
+
+    postData.forEach((post) => {
+      const jobType = post?.postDetailData?.jobTypePostData?.code;
+      if (jobType && updatedJobTypeCount[jobType] !== undefined) {
+        updatedJobTypeCount[jobType] = (updatedJobTypeCount[jobType] || 0) + 1;
+      } else {
+        updatedJobTypeCount.other = (updatedJobTypeCount.other || 0) + 1;
+      }
+    });
+
+    setJobTypeCount(updatedJobTypeCount);
+  }, [postData]);
+
   const chartData = [
-    { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-    { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-    { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-    { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-    { browser: "other", visitors: 190, fill: "var(--color-other)" },
+    {
+      category: "Technology",
+      posts: jobTypeCount.congNgheThongTin,
+      fill: "var(--color-it)",
+    },
+    {
+      category: "Business",
+      posts: jobTypeCount.kinhTe,
+      fill: "var(--color-business)",
+    },
+    {
+      category: "Education",
+      posts: jobTypeCount.giaoDuc,
+      fill: "var(--color-education)",
+    },
+    {
+      category: "Real Estate",
+      posts: jobTypeCount.batDongSan,
+      fill: "var(--color-estate)",
+    },
+    {
+      category: "HR",
+      posts: jobTypeCount.quanLyNhanSu,
+      fill: "var(--color-hr)",
+    },
+    {
+      category: "Law",
+      posts: jobTypeCount.luat,
+      fill: "var(--color-law)",
+    },
+    {
+      category: "Media",
+      posts: jobTypeCount.truyenThong,
+      fill: "var(--color-media)",
+    },
+    {
+      category: "Other",
+      posts: jobTypeCount.other,
+      fill: "#9181F4",
+    },
   ];
 
-  // Calculate total visitors
-  const totalVisitors = chartData.reduce(
-    (sum, entry) => sum + entry.visitors,
-    0
-  );
+  // Calculate total posts
+  const totalPosts = postData.length;
+
+  const currentDate = format(new Date(), "MMMM dd, yyyy");
 
   return (
     <div>
       <Card className="flex flex-col">
         <CardHeader className="items-center pb-0">
           <CardTitle>Pie Chart - Donut with Text</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
+          <CardDescription>{currentDate}</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 pb-0">
           <ChartContainer
@@ -75,8 +178,8 @@ function Chart() {
               />
               <Pie
                 data={chartData}
-                dataKey="visitors"
-                nameKey="browser"
+                dataKey="posts"
+                nameKey="category"
                 innerRadius={60}
                 strokeWidth={5}
               >
@@ -95,14 +198,14 @@ function Chart() {
                             y={viewBox.cy}
                             className="fill-foreground text-3xl font-bold"
                           >
-                            {totalVisitors.toLocaleString()}
+                            {totalPosts.toLocaleString()}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
                             y={(viewBox.cy || 0) + 24}
                             className="fill-muted-foreground"
                           >
-                            Visitors
+                            Posts
                           </tspan>
                         </text>
                       );
@@ -116,10 +219,10 @@ function Chart() {
         </CardContent>
         <CardFooter className="flex-col gap-2 text-sm">
           <div className="flex items-center gap-2 font-medium leading-none">
-            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            <strong>Total Posts</strong>
           </div>
           <div className="leading-none text-muted-foreground">
-            Showing total visitors for the last 6 months
+            {totalPosts.toLocaleString()}
           </div>
         </CardFooter>
       </Card>
