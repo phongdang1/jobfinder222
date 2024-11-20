@@ -15,6 +15,7 @@ const JobCard = ({ job, currentPage }) => {
       state: { job, fromPage: currentPage, prevLocation: location.pathname },
     });
   };
+  const date = new Date()
 
   return (
     <div

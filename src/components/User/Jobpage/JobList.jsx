@@ -18,6 +18,7 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
+  const date = new Date()
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -36,6 +37,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
       handleSearchSubmit();
     }
   };
+  
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
@@ -70,6 +72,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
       </div>
       <div className="grid grid-cols-1 gap-6">
         {currentJobs.map((job) => (
+           date < new Date(job.timeEnd) &&
           <div key={job.id} className="w-full">
             <Card
               className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
