@@ -7,7 +7,7 @@ function JobCard() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
-
+  const date = new Date();
   useEffect(() => {
     async function fetchData() {
       const result = await getAllPosts();
@@ -62,6 +62,7 @@ function JobCard() {
             ))
         : Array.isArray(data) &&
           data.map((card, index) => (
+            date > new Date(card.timeEnd) &&
             <div
               key={index}
               className="flex bg-white border-2 border-gray-200 rounded-lg h-28 w-full gap-4 cursor-pointer hover:text-primary hover:border-primary "
