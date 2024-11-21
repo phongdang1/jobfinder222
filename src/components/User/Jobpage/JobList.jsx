@@ -18,7 +18,7 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
-  const date = new Date()
+  const date = new Date();
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -37,7 +37,6 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
       handleSearchSubmit();
     }
   };
-  
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
@@ -71,73 +70,74 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6">
-        {currentJobs.map((job) => (
-           date < new Date(job.timeEnd) &&
-          <div key={job.id} className="w-full">
-            <Card
-              className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
-                job.isHot === 1
-                  ? "bg-primary/20 hover:bg-violet-200"
-                  : "bg-white"
-              }`}
-            >
-              {job.isHot === 1 && (
-                <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
-                  <WhatshotIcon className="text-[#ffdd85] mr-2" />
-                  SUPER HOT
-                  <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 translate-x-1 translate-y-1"></span>
-                </span>
-              )}
-
-              <CardBody>
-                <Link
-                  to={`/job-detail/${job.id}`}
-                  className="flex gap-8 items-center justify-start w-full "
+        {currentJobs.map(
+          (job) =>
+            date < new Date(job.timeEnd) && (
+              <div key={job.id} className="w-full">
+                <Card
+                  className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
+                    job.isHot === 1
+                      ? "bg-primary/20 hover:bg-violet-200"
+                      : "bg-white"
+                  }`}
                 >
-                  <div className="relative bg-transparent shrink-0">
-                    <Image
-                      alt="Job cover"
-                      className="object-cover rounded-lg"
-                      height={90}
-                      shadow="md"
-                      src={
-                        job.userPostData?.userCompanyData?.thumbnail
-                          ? job.userPostData?.userCompanyData?.thumbnail
-                          : "https://nextui.org/images/album-cover.png"
-                      } // Replace with actual image URL
-                      width={90}
-                    />
-                  </div>
-                  <div className="flex flex-col w-full">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="text-start">
-                          <p className="text-base font-medium group-hover:text-primary">
-                            {job.userPostData.userCompanyData.name}
-                          </p>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <TooltipBox id={job.id} />
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <p className="font-normal text-base text-gray-500">
-                      {job.postDetailData.name}
-                    </p>
-                    <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
-                      <Badge
-                        variant="outline"
-                        className="bg-white w-fit text-nowrap rounded-lg"
-                      >
-                        {job.postDetailData.salaryTypePostData.value}
-                      </Badge>
-                      <Badge
-                        variant="outline"
-                        className="bg-white w-fit text-nowrap rounded-lg"
-                      >
-                        {job.postDetailData.provincePostData.value}
-                      </Badge>
-                      {/* <div className="flex gap-2 items-center ml-auto absolute -right-1">
+                  {job.isHot === 1 && (
+                    <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
+                      <WhatshotIcon className="text-[#ffdd85] mr-2" />
+                      SUPER HOT
+                      <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 translate-x-1 translate-y-1"></span>
+                    </span>
+                  )}
+
+                  <CardBody>
+                    <Link
+                      to={`/job-detail/${job.id}`}
+                      className="flex gap-8 items-center justify-start w-full "
+                    >
+                      <div className="relative bg-transparent shrink-0">
+                        <Image
+                          alt="Job cover"
+                          className="object-cover rounded-lg"
+                          height={90}
+                          shadow="md"
+                          src={
+                            job.userPostData?.userCompanyData?.thumbnail
+                              ? job.userPostData?.userCompanyData?.thumbnail
+                              : "https://nextui.org/images/album-cover.png"
+                          } // Replace with actual image URL
+                          width={90}
+                        />
+                      </div>
+                      <div className="flex flex-col w-full">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger className="text-start">
+                              <p className="text-base font-medium group-hover:text-primary">
+                                {job.userPostData.userCompanyData.name}
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <TooltipBox id={job.id} />
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <p className="font-normal text-base text-gray-500">
+                          {job.postDetailData.name}
+                        </p>
+                        <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                          <Badge
+                            variant="outline"
+                            className="bg-white w-fit text-nowrap rounded-lg"
+                          >
+                            {job.postDetailData.salaryTypePostData.value}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="bg-white w-fit text-nowrap rounded-lg"
+                          >
+                            {job.postDetailData.provincePostData.value}
+                          </Badge>
+                          {/* <div className="flex gap-2 items-center ml-auto absolute -right-1">
                         <Button
                           className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
                           variant="outline"
@@ -145,13 +145,14 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                           Apply
                         </Button>
                       </div> */}
-                    </div>
-                  </div>
-                </Link>
-              </CardBody>
-            </Card>
-          </div>
-        ))}
+                        </div>
+                      </div>
+                    </Link>
+                  </CardBody>
+                </Card>
+              </div>
+            )
+        )}
       </div>
     </div>
   );
