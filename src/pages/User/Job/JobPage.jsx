@@ -37,8 +37,8 @@ function JobPage() {
         ) {
           const activeJobs = response.data.data.filter(
             (job) =>
-              job.statusCode.toUpperCase() === "active".toUpperCase() &&
-              date < new Date(job.timeEnd)
+              job.statusCode.toUpperCase() === "approved".toUpperCase() &&
+              date < new Date(job?.timeEnd)
           );
           console.log("date ne", activeJobs);
           // Sort jobs by isHot to display hot jobs first

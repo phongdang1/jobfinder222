@@ -363,7 +363,7 @@ const DashboardCompany = () => {
           <CardContent>
             {userPackages.length > 0 ? (
               <Table>
-                <TableCaption>User Packages</TableCaption>
+                <TableCaption></TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Package Name</TableHead>
