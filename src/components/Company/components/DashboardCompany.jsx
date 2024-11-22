@@ -26,7 +26,9 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SdCardAlertIcon from "@mui/icons-material/SdCardAlert";
 import { getCompanyById } from "@/fetchData/Company";
-import { getAllUserPackage } from "@/fetchData/Package"; // Import the function to fetch user packages
+import { getAllUserPackage } from "@/fetchData/Package";
+import { getAllCvPostByCompanyId7Day } from "@/fetchData/CvPost";
+import { getUsersById } from "@/fetchData/User";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllPost } from "@/fetchData/Post";
@@ -43,16 +45,21 @@ const DashboardCompany = () => {
     expired: 0,
   });
   const [userPackages, setUserPackages] = useState([]); // State to store user package data
-
+  const [cvPosts, setCvPosts] = useState([]);
+  const [cvPostCount, setCvPostCount] = useState(0);
+  const [userNames, setUserNames] = useState({});
+  const [user, setUser] = useState();
   const userId = localStorage.getItem("user_id");
   const companyId = JSON.parse(localStorage.getItem("companyId"));
 
   const fetchCompany = async () => {
     try {
       const res = await getCompanyById(companyId);
+      const resUser = await getUsersById(userId);
       setLoading(true);
-      if (res) {
+      if (res && resUser) {
         setCompanyData(res.data.data);
+        setUser(resUser.data.data);
         console.log("company ne", res.data.data);
       } else {
         setError("Error fetching company data. Please try again later.");
@@ -126,14 +133,43 @@ const DashboardCompany = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCompany();
-    fetchUserPackages(); // Fetch user packages on component mount
-  }, []);
+  const fetchCvPostsIn7Days = async () => {
+    try {
+      const response = await getAllCvPostByCompanyId7Day(companyId);
+      if (response.data.errCode === 0) {
+        const posts = response.data.data;
+        setCvPostCount(posts.length);
+        setCvPosts(posts);
 
+        // Fetch user names for each CV post userId
+        const userIdSet = new Set(posts.map((post) => post.userId)); // Get unique userIds
+        userIdSet.forEach(async (userId) => {
+          try {
+            const userResponse = await getUsersById(userId);
+            if (userResponse.data.errCode === 0) {
+              setUserNames((prevState) => ({
+                ...prevState,
+                [userId]: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
+              }));
+            }
+          } catch (error) {
+            console.error(`Error fetching user with ID ${userId}:`, error);
+          }
+        });
+      } else {
+        setError("Error fetching CV posts. Please try again later.");
+      }
+    } catch (error) {
+      setError("Error fetching CV posts. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     fetchCompany();
-    fetchPosts(); // Fetch posts on component mount
+    fetchUserPackages();
+    fetchPosts();
+    fetchCvPostsIn7Days();
   }, []);
 
   const jobData = [];
@@ -196,7 +232,7 @@ const DashboardCompany = () => {
               <CardTitle className="text-lg">Available points</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-blue-700 font-semibold text-2xl">
@@ -214,11 +250,20 @@ const DashboardCompany = () => {
                     <p>Profile view package</p>
                   </CardContent>
                 </Card>
+                <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
+                  <CardContent className="mt-2 text-center">
+                    <p className="text-primary font-semibold text-2xl">
+                      {user?.point}
+                    </p>
+                    <p>Total Points Earned</p>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>
         </div>
 
+        {/* list of cv post */}
         <div>
           <Card className="h-full relative">
             <CardHeader>
@@ -226,9 +271,9 @@ const DashboardCompany = () => {
                 Total number of records in 7 days
               </CardTitle>
               <CardDescription className="text-black text-2xl font-semibold">
-                0
+                {cvPostCount}
               </CardDescription>
-              <div className="absolute top-4 right-4">
+              {/* <div className="absolute top-4 right-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">
@@ -253,17 +298,51 @@ const DashboardCompany = () => {
                     )}
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>
+              </div> */}
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center text-center">
-              <img
-                src="https://employer.vietnamworks.com/v2/dashboard/static/media/icon-empty-current-status.dc7c121ad253b15972a4bb894e7084fd.svg"
-                alt="No Data"
-                className="mb-2"
-              />
-              <p className="text-sm text-gray-500">
-                There is no data available for this report
-              </p>
+            <CardContent>
+              {cvPosts.length > 0 ? (
+                <Table>
+                  <TableCaption></TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name Post</TableHead>
+                      <TableHead>Name Employee</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Type</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {cvPosts.map((cvPost) => (
+                      <TableRow key={cvPost.id}>
+                        <TableCell>
+                          {cvPost.postCvData.postDetailData.name}
+                        </TableCell>
+
+                        <TableCell>{userNames[cvPost.userId]}</TableCell>
+                        <TableCell>{cvPost.description}</TableCell>
+                        <TableCell>
+                          {
+                            cvPost.postCvData.postDetailData.jobTypePostData
+                              .value
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center">
+                  <img
+                    src="https://employer.vietnamworks.com/v2/dashboard/static/media/icon-empty-current-status.dc7c121ad253b15972a4bb894e7084fd.svg"
+                    alt="No Data"
+                    className="mb-2"
+                  />
+                  <p className="text-sm text-gray-500">
+                    There is no data available for this report
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

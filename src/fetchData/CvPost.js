@@ -68,6 +68,15 @@ const handleApproveCvPost = (cvPostId) => {
   })
 }
 
+const getAllCvPostByCompanyId7Day = (companyId) => {
+  return axios.get(`/getAllCvPostByCompanyId7Day?companyId=${companyId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+
 export {
   handleApplyJob,
   getCvByUserId,
@@ -76,5 +85,6 @@ export {
   getAllCvPostByCompanyId,
   handleCreateInterviewSchedule,
   handleRejectCvPost,
-  handleApproveCvPost
+  handleApproveCvPost,
+  getAllCvPostByCompanyId7Day
 };
