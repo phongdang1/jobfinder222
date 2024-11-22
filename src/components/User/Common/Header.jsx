@@ -83,9 +83,11 @@ function Header() {
       console.error("Failed to fetch user:", error);
     }
   };
+  
   useEffect(() => {
     fetchUser(userId);
   }, [userId]);
+  
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -135,17 +137,6 @@ function Header() {
 
   // useEffect để xử lý socket io
   useEffect(() => {
-    // Lắng nghe sự kiện từ server (ví dụ: công ty đã được duyệt)
-    socket.on("companyApproved", (msg) => {
-      setNotificationCount((prevCount) => prevCount + 1);
-      console.log("Company Approved Event:", msg);
-    });
-
-    socket.on("companyReject", (msg) => {
-      setNotificationCount((prevCount) => prevCount + 1);
-      console.log("Company Approved Event:", msg);
-    });
-
     socket.on("cvPostInterView", (msg) => {
       setNotificationCount((prevCount) => prevCount + 1);
       console.log("Company Approved Event:", msg);

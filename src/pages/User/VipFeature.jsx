@@ -23,7 +23,7 @@ const VipFeature = () => {
     window.scrollTo(0, 0);
   }, []);
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log("userid:", user.data.isVip);
+  console.log("userid:", user?.data?.isVip);
   const handleUpdateVip = async () => {
     const res = await createPaymentVip(7);
     if (res.data.errCode == 0) {
@@ -61,10 +61,10 @@ const VipFeature = () => {
           </div>
           <Button
             onClick={handleUpdateVip}
-            disabled={user.isVip === 1 || user.status === false}
+            disabled={user?.isVip === 1 || user?.status === false}
             className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
           >
-            {user.status === false
+            {user?.status === false
               ? "You are not logged in !"
               : user?.isVip === 1
               ? "You are already VIP member !"
