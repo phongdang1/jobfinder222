@@ -20,8 +20,7 @@ const CompanyInfo = () => {
     file: "",
   });
 
-  const company = JSON.parse(localStorage.getItem("company"));
-  const companyId = company?.data.id;
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
 
   const fetchCompany = async () => {
     try {
@@ -90,7 +89,7 @@ const CompanyInfo = () => {
         companyData.thumbnail,
         companyData.file
       );
-      console.log("submit: ",response.data);
+      console.log("submit: ", response.data);
       if (response.data.errCode === 0) {
         fetchCompany();
         setIsEditable(false);

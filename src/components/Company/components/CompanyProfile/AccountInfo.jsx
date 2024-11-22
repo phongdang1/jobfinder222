@@ -18,8 +18,8 @@ import toast from "react-hot-toast";
 function AccountInfo() {
   const [companyData, setCompanyData] = useState({});
 
-  const company = JSON.parse(localStorage.getItem("company"));
-  const companyId = company?.data.id;
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
+
   const fetchCompany = async () => {
     try {
       const response = await getCompanyById(companyId);
@@ -269,10 +269,6 @@ function AccountInfo() {
                 </div>
               </form>
             </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2">
-            <AccordionTrigger>Change Your Email</AccordionTrigger>
-            <AccordionContent></AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>

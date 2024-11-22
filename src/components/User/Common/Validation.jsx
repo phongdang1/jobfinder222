@@ -6,7 +6,6 @@ function Validation(inputValue) {
     /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   const nameRegex = /^[\p{L}\s]+$/u;
   const amountEmployerRegex = /^\d+$/;
-  const descriptionRegex = /^.{10,500}$/;
 
   if (inputValue.name !== undefined) {
     if (inputValue.name === "") {
@@ -131,8 +130,11 @@ function Validation(inputValue) {
   if (inputValue.description !== undefined) {
     if (inputValue.description === "") {
       error.description = "Description is required!";
-    } else if (!descriptionRegex.test(inputValue.description)) {
-      error.description = "Description must be between 10 and 500 characters.";
+    } else {
+      const wordCount = inputValue.description.trim().split(/\s+/).length;
+      if (wordCount < 10) {
+        error.description = "Description must have more than 10 words.";
+      }
     }
   }
 

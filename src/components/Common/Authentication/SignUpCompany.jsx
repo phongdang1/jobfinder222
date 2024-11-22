@@ -26,8 +26,13 @@ function SignUpCompany() {
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrorMessage({ ...errorMessage, [e.target.name]: "" });
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    const errors = Validation({ ...formData, [name]: value });
+    setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
   };
 
   const userId = localStorage.getItem("user_id");
