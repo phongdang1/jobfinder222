@@ -279,9 +279,9 @@ const ManagePostAdmin = () => {
             {" "}
             <option value="ALL">All Status</option>
             <option value="PENDING">PENDING</option>
-            <option value="ACTIVE">APPROVED</option>
+            <option value="APPROVED">APPROVED</option>
             <option value="BANNED">BANNED</option>
-            <option value="INACTIVE">REJECTED</option>
+            <option value="REJECTED">REJECTED</option>
           </select>
         </div>
       </div>
@@ -476,30 +476,30 @@ const ManagePostAdmin = () => {
                         <>
                           <button
                             onClick={handleActive}
-                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
+                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
                           >
                             Approve
                           </button>
                           <button
                             onClick={() => {
                               setShowConfirm(true);
-                              setAction("inactive");
+                              setAction("reject");
                             }}
-                            className="p-3 text-white bg-gray-500 hover:bg-gray-700 rounded-md"
+                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
                           >
                             Reject
                           </button>
                         </>
                       )}
                       {currentPostDetail.statusCode.toUpperCase() ===
-                        "ACTIVE".toUpperCase() && (
+                        "APPROVED".toUpperCase() && (
                         <>
                           <button
                             onClick={() => {
                               setShowConfirm(true);
-                              setAction("inactive");
+                              setAction("reject");
                             }}
-                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
+                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
                           >
                             Reject
                           </button>
@@ -508,7 +508,7 @@ const ManagePostAdmin = () => {
                               setShowConfirm(true);
                               setAction("ban");
                             }}
-                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
+                            className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
                           >
                             Ban
                           </button>
@@ -580,7 +580,7 @@ const ManagePostAdmin = () => {
                                 }
                                 if (
                                   action.toUpperCase() ===
-                                  "inactive".toUpperCase()
+                                  "reject".toUpperCase()
                                 ) {
                                   handleInactive(note);
                                 }
