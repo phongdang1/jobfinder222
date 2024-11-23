@@ -37,10 +37,10 @@ export const chartConfig = {
 
 export function LineChartLabel() {
   return (
-    <Card className="flex flex-col h-[29.5rem] w-[25]">
+    <Card className="flex flex-col  w-[25]">
       <CardHeader>
         <CardTitle>Line Chart</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription></CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -76,7 +76,7 @@ export function LineChartLabel() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          {/* Trending up by 5.2% this month <TrendingUp className="h-4 w-4" /> */}
         </div>
         <div className="leading-none text-muted-foreground">
           Showing total visitors for the last 6 months

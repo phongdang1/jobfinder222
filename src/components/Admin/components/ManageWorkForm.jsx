@@ -57,7 +57,7 @@ const ManageWorkForm = () => {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); // Set the number of items per page
+  const itemsPerPage = 5; // Set the number of items per page
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
@@ -65,9 +65,16 @@ const ManageWorkForm = () => {
       try {
         const response = await getAllWorkType();
         if (Array.isArray(response.data.data)) {
-          setWorkTypes(response.data.data);
-          setTotalCount(response.data.data.length); // Set total count of work types
-          setFilteredWorkTypes(response.data.data);
+          // Sort work types in descending order based on `value`
+          const sortedWorkTypes = response.data.data.sort((a, b) => {
+            if (a.value < b.value) return 1;
+            if (a.value > b.value) return -1;
+            return 0;
+          });
+
+          setWorkTypes(sortedWorkTypes);
+          setTotalCount(sortedWorkTypes.length); // Set total count of work types
+          setFilteredWorkTypes(sortedWorkTypes); // Filtered work types should also be sorted
         } else {
           setError("Error fetching data. Please try again later.");
           setWorkTypes([]);
@@ -81,6 +88,7 @@ const ManageWorkForm = () => {
         setLoading(false);
       }
     };
+
     fetchWorkTypes();
   }, []);
 
@@ -167,19 +175,29 @@ const ManageWorkForm = () => {
       console.log("Create Response:", response);
 
       if (response.data && response.data.errCode === 0) {
-        setWorkTypes((prev) => [...prev, userData]);
+        // Insert the new work type at the top of the list (new work type at the beginning)
+        const updatedWorkTypes = [userData, ...workTypes];
+
+        // Sort the work types in descending order (as the work type list should always be sorted)
+        const sortedWorkTypes = updatedWorkTypes.sort((a, b) => {
+          if (a.value < b.value) return 1;
+          if (a.value > b.value) return -1;
+          return 0;
+        });
+
+        setWorkTypes(sortedWorkTypes); // Update the full list
         setTotalCount((prev) => prev + 1); // Update total count
-        setFilteredWorkTypes((prev) => [...prev, userData]);
+        setFilteredWorkTypes(sortedWorkTypes); // Keep filtered list in sync
       } else {
         console.error(
-          "Failed to create job type:",
+          "Failed to create work type:",
           response.data.message || "No message"
         );
       }
 
       handleCloseCreateModal();
     } catch (error) {
-      console.error("Error saving job type:", error);
+      console.error("Error saving work type:", error);
     }
   };
 
@@ -322,7 +340,7 @@ const ManageWorkForm = () => {
               className="cursor-pointer hover:bg-slate-300"
             >
               <TableCell className="text-center">
-                {index + 1 + (currentPage - 1) * itemsPerPage}
+                {index + 1 + indexOfFirstItem}
               </TableCell>
               <TableCell className="text-center">{workType.value}</TableCell>
               <TableCell className="text-center flex space-x-3 items-center justify-center">

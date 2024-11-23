@@ -67,8 +67,14 @@ const ManageLevel = () => {
         setLoading(true);
         const response = await getAllJobLevel();
         if (Array.isArray(response.data.data)) {
-          setJobLevels(response.data.data);
-          setFilteredJobLevels(response.data.data);
+          // Sort levels by `value` or another key in descending order
+          const sortedJobLevels = response.data.data.sort((a, b) => {
+            if (a.value < b.value) return 1;
+            if (a.value > b.value) return -1;
+            return 0;
+          });
+          setJobLevels(sortedJobLevels);
+          setFilteredJobLevels(sortedJobLevels);
         } else {
           setError("Error fetching data. Please try again later.");
           setJobLevels([]);
@@ -82,6 +88,7 @@ const ManageLevel = () => {
         setLoading(false);
       }
     };
+
     fetchJobLevels();
   }, []);
 
@@ -168,8 +175,18 @@ const ManageLevel = () => {
       console.log("Create Response:", response);
 
       if (response.data && response.data.errCode === 0) {
-        setJobLevels((prev) => [...prev, userData]);
-        setFilteredJobLevels((prev) => [...prev, userData]);
+        // Insert the new job level at the top of the list (new level at the beginning)
+        const updatedJobLevels = [userData, ...jobLevels];
+
+        // Sort the levels (if necessary, adjust this sorting condition based on your requirements)
+        const sortedJobLevels = updatedJobLevels.sort((a, b) => {
+          if (a.value < b.value) return 1;
+          if (a.value > b.value) return -1;
+          return 0;
+        });
+
+        setJobLevels(sortedJobLevels);
+        setFilteredJobLevels(sortedJobLevels); // Keep the filtered job levels in sync
       } else {
         console.error(
           "Failed to create job level:",

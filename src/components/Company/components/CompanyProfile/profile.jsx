@@ -30,10 +30,7 @@ const CompanyInfo = () => {
   });
   const [errors, setErrors] = useState({});
   const [skills, setSkills] = useState([]);
-  const company = JSON.parse(localStorage.getItem("company"));
-  const companyId = company?.data.id;
-
-
+  const companyId = JSON.parse(localStorage.getItem("companyId"));
   const fetchSkills = async () => {
     try {
       const response = await getAllSkill();

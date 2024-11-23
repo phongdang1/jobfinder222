@@ -23,16 +23,24 @@ function JobPage() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 9;
+  const date = new Date();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const response = await axios.get(URL);
-        if (Array.isArray(response.data.data)) {
+        if (
+          Array.isArray(response.data.data)
+          // &&
+          // date < new Date(response?.data?.data?.timeEnd)
+        ) {
           const activeJobs = response.data.data.filter(
-            (job) => job.statusCode.toUpperCase() === "active".toUpperCase()
+            (job) =>
+              job.statusCode.toUpperCase() === "approved".toUpperCase() &&
+              date < new Date(job?.timeEnd)
           );
+          console.log("date ne", activeJobs);
           // Sort jobs by isHot to display hot jobs first
           const sortedJobs = activeJobs.sort((a, b) => b.isHot - a.isHot);
           setJobs(sortedJobs);

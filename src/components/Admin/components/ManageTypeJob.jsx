@@ -69,8 +69,12 @@ const ManageTypeJob = () => {
         setLoading(true);
         const response = await getAllJobType();
         if (Array.isArray(response.data.data)) {
-          setJobTypes(response.data.data);
-          setFilteredJobTypes(response.data.data); // Set initial filtered job types
+          const sortedJobTypes = response.data.data.sort((a, b) => {
+            // Assuming you want to sort by `STT` or any field like `value` or `code`
+            return b.code.localeCompare(a.code); // Change `code` to the appropriate field if needed
+          });
+          setJobTypes(sortedJobTypes);
+          setFilteredJobTypes(sortedJobTypes); // Set initial filtered job types
         } else {
           setError("Error fetching data. Please try again later.");
           setJobTypes([]);

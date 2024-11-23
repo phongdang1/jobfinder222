@@ -16,19 +16,20 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-function JobCard({ data }) {
+function JobCard({ expand, data }) {
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     console.log(id);
     navigate(`job-detail/${id}`);
   };
+  const date = new Date()
 
   return (
     <>
       {data && data.length > 0 ? (
         data.map(
           (card, index) =>
-            card.isHot === 1 ? ( // Đặt điều kiện đúng cách
+            card.isHot === 1 && date < new Date(card.timeEnd) ? ( // Đặt điều kiện đúng cách
               <div key={index}>
                 <Card
                   className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary"
