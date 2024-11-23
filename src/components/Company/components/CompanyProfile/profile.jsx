@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { getCompanyById, updateCompany } from "@/fetchData/Company";
+import { getAllSkill } from "@/fetchData/Skill";
+import Validation from "@/components/User/Common/Validation";
+import Lottie from "lottie-react";
+import loadingAnimation from "../../../../assets/animation/loadingAnimation.json";
+
 
 const CompanyInfo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
+  const [initialData, setInitialData] = useState({});
   const [companyData, setCompanyData] = useState({
     id: "",
     name: "",
@@ -18,18 +24,40 @@ const CompanyInfo = () => {
     coverimage: "",
     thumbnail: "",
     file: "",
+    allowHotPost: "",
+    allowCv: "",
+    taxnumber: "",
   });
-
+  const [errors, setErrors] = useState({});
+  const [skills, setSkills] = useState([]);
   const company = JSON.parse(localStorage.getItem("company"));
   const companyId = company?.data.id;
+
+
+  const fetchSkills = async () => {
+    try {
+      const response = await getAllSkill();
+      if (response.status === 200) {
+        const uniqueSkills = response.data.data.filter(
+          (skill, index, self) =>
+            index === self.findIndex((s) => s.categoryJobCode === skill.categoryJobCode)
+        );
+        setSkills(uniqueSkills);
+      } else {
+        console.error("Failed to fetch skills");
+      }
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+    }
+  };
 
   const fetchCompany = async () => {
     try {
       setLoading(true);
       const response = await getCompanyById(companyId);
-      console.log(response.data.data);
       if (response.data.errCode === 0) {
         setCompanyData(response.data.data);
+        setInitialData(response.data.data);
       } else {
         setError("Error fetching data. Please try again later.");
       }
@@ -42,40 +70,39 @@ const CompanyInfo = () => {
 
   useEffect(() => {
     fetchCompany();
+    fetchSkills();
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCompanyData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+    setCompanyData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+      console.log("update: ", updatedData);
+      const validationErrors = Validation(updatedData);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: validationErrors[name] || "",
+      }));
+
+      return updatedData;
     });
   };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      getBase64(file)
-        .then((base64) => {
-          setCompanyData({
-            ...companyData,
-            [e.target.name]: base64,
-          });
-        })
-        .catch((error) => {
-          console.error("Error converting file to base64: ", error);
-        });
-    } else {
-      console.error("No file selected");
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setCompanyData((prevData) => ({
+          ...prevData,
+          [e.target.name]: base64String,
+        }));
+      };
+      reader.readAsDataURL(file);
     }
   };
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -88,9 +115,11 @@ const CompanyInfo = () => {
         companyData.amountEmployer,
         companyData.coverimage,
         companyData.thumbnail,
-        companyData.file
+        companyData.file,
+        companyData.taxnumber,
+        companyData.typeCompany,
+        companyData.website,
       );
-      console.log("submit: ",response.data);
       if (response.data.errCode === 0) {
         fetchCompany();
         setIsEditable(false);
@@ -105,18 +134,20 @@ const CompanyInfo = () => {
   };
 
   const toggleEdit = () => {
+    if (isEditable) {
+      setCompanyData(initialData);
+      setErrors({});
+    }
     setIsEditable((prev) => !prev);
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
 
+  if (error) return <p>{error}</p>;
+  console.log("companyData",companyData );
   return (
-    <div className="p-4 bg-gray-100 col-span-5 w-full">
+    <div className="p-4 col-span-5 w-full">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          Thông tin công ty
-        </h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Thông tin công ty</h1>
         <div className="col-span-10 flex justify-end py-4">
           {!isEditable ? (
             <Button
@@ -146,77 +177,84 @@ const CompanyInfo = () => {
         <form className="space-y-4">
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-7">
-              <label className="block text-sm font-medium text-gray-700">
-                Tên
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Tên</label>
               <input
                 type="text"
                 name="name"
                 value={companyData.name || ""}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
                 required
                 disabled={!isEditable}
-              />
+              />{errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
             </div>
             <div className="col-span-3">
-              <label className="block text-sm font-medium text-gray-700">
-                Điện thoại
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Điện thoại</label>
               <input
                 type="tel"
                 name="phonenumber"
                 value={companyData.phonenumber || ""}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
                 required
                 disabled={!isEditable}
               />
+              {errors.phonenumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.phonenumber}</p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-7">
-              <label className="block text-sm font-medium text-gray-700">
-                Địa chỉ
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
               <input
                 type="text"
                 name="address"
                 value={companyData.address || ""}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
                 required
                 disabled={!isEditable}
-              />
+              />{errors.address && (
+                <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+              )}
             </div>
             <div className="col-span-3">
-              <label className="block text-sm font-medium text-gray-700">
-                Mã số thuế
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Mã số thuế</label>
               <input
                 type="text"
                 name="taxnumber"
                 value={companyData.taxnumber || ""}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
                 required
                 disabled={!isEditable}
               />
+              {errors.taxnumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.taxnumber}</p>
+              )}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Lĩnh vực
-            </label>
-            <input
-              type="text"
+            <label className="block text-sm font-medium text-gray-700">Lĩnh vực</label>
+            <select
               name="typeCompany"
               value={companyData.typeCompany || ""}
               onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              required
+              className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
               disabled={!isEditable}
-            />
+            >
+              <option value="" disabled>
+                -- Chọn lĩnh vực --
+              </option>
+              {skills.map((skill) => (
+                <option key={skill.id} value={skill.categoryJobCode}>
+                  {skill.categoryJobCode}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-5">
@@ -226,10 +264,9 @@ const CompanyInfo = () => {
               <input
                 type="text"
                 name="allowHotPost"
-                value={companyData.allowHotPost || ""}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                disabled={!isEditable}
+                value={companyData.allowHotPost}
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
+                disabled
               />
             </div>
             <div className="col-span-5">
@@ -239,87 +276,94 @@ const CompanyInfo = () => {
               <input
                 type="text"
                 name="allowCv"
-                value={companyData.allowCv || ""}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                disabled={!isEditable}
+                value={companyData.allowCv}
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
+                disabled
               />
             </div>
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700">
-                Số lượng nhân viên
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Số lượng nhân viên</label>
               <input
                 type="text"
                 name="amountEmployer"
                 value={companyData.amountEmployer || ""}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
                 disabled={!isEditable}
               />
+              {errors.amountEmployer && (
+                <p className="text-red-500 text-sm mt-1">{errors.amountEmployer}</p>
+              )}
             </div>
             <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700">
-                Website
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Website</label>
               <input
                 type="text"
                 name="website"
                 value={companyData.website || ""}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
                 disabled={!isEditable}
-              />
+              />{errors.website && (
+                <p className="text-red-500 text-sm mt-1">{errors.website}</p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
-            <div className="col-span-10">
-              <label className="block text-sm font-medium text-gray-700">
-                Logo
-              </label>
-              <input
-                type="file"
-                name="thumbnail"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 h-32"
-                disabled={!isEditable}
-              />
-              <img src={companyData.thumbnail}></img>
+            <div className="col-span-5">
+              <label className="block text-sm font-medium text-gray-700 pb-1">Ảnh bìa</label>
+              <div className="col-span-5 border border-gray-300 rounded-lg p-4">
+                <input
+                  type="file"
+                  name="coverimage"
+                  onChange={handleFileChange}
+                  className={`py-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
+                  disabled={!isEditable}
+                />{companyData.coverimage && (
+                  <div className="mt-2 rounded-md overflow-hidden">
+                    <img
+                      src={companyData.coverimage}
+                      alt="Cover"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                )}
+
+              </div>
             </div>
-            <div className="col-span-10">
-              <label className="block text-sm font-medium text-gray-700">
-                Ảnh bìa
-              </label>
-              <input
-                type="file"
-                name="coverimage"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 h-16 "
-                disabled={!isEditable}
-              />
-              <img
-                className="w-full h-full max-h-[400px]"
-                src={companyData.coverimage}
-              ></img>
-            </div>
-            <div className="col-span-10">
-              <label className="block text-sm font-medium text-gray-700">
-                Video công ty
-              </label>
-              <input
-                type="file"
-                name="file"
-                onChange={handleFileChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 h-10"
-                disabled={!isEditable}
-              />
-              <img width={"100%"} height={"200px"} src={companyData.file}></img>
+            <div className="col-span-5">
+              <label className="block text-sm font-medium text-gray-700 pb-1">Ảnh đại diện</label>
+              <div className="col-span-5 border border-gray-300 rounded-lg p-4">
+                <input
+                  type="file"
+                  name="thumbnail"
+                  onChange={handleFileChange}
+                  className={`py-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
+                  disabled={!isEditable}
+                />{companyData.thumbnail && (
+                  <div className="mt-2 rounded-md overflow-hidden">
+                    <img
+                      src={companyData.thumbnail}
+                      alt="Cover"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                )}
+
+              </div>
             </div>
           </div>
+          {loading && (
+            <div className="fixed inset-0 flex justify-center items-center opacity-55 z-50">
+              <Lottie
+                className="w-[200px] h-[200px] sm:w-[300px] sm:h-[300px]"
+                animationData={loadingAnimation}
+                loop
+              />
+            </div>
+          )}
         </form>
       </div>
     </div>
