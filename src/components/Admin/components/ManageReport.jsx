@@ -46,7 +46,7 @@ const ManageReport = () => {
         Array.isArray(postsResponse.data.data)
       ) {
         const filteredReports = reportsResponse.data.data.filter(
-          (report) => report.isChecked === 1 // Filter by isChecked = 1
+          (report) => report.isChecked === 0 // Filter by isChecked = 1
         );
         setReports(filteredReports);
         setPosts(postsResponse.data.data);
@@ -121,17 +121,17 @@ const ManageReport = () => {
     setShowDialog(false);
   };
 
-  // Ban post if report count with isAdminChecked = 1 is 10
-  const postReportCounts = reports.reduce((acc, report) => {
-    if (report.isAdminChecked === 1) {
-      acc[report.postId] = (acc[report.postId] || 0) + 1;
-    }
-    return acc;
-  }, {});
+  // // Ban post if report count with isAdminChecked = 1 is 10
+  // const postReportCounts = reports.reduce((acc, report) => {
+  //   if (report.isAdminChecked === 1) {
+  //     acc[report.postId] = (acc[report.postId] || 0) + 1;
+  //   }
+  //   return acc;
+  // }, {});
 
-  const bannedPosts = Object.keys(postReportCounts).filter(
-    (postId) => postReportCounts[postId] >= 10
-  );
+  // const bannedPosts = Object.keys(postReportCounts).filter(
+  //   (postId) => postReportCounts[postId] >= 10
+  // );
 
   const getPostNameById = (postId) => {
     const post = posts.find((p) => p.id === postId);

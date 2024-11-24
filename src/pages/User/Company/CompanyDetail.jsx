@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { getCompanyById } from "@/fetchData/Company";
 import JobCard from "@/components/User/Homepage/Card";
+import illustration from "../../../assets/Home/Company-amico.png";
 
 function CompanyDetail() {
   const { id } = useParams();
@@ -150,7 +151,12 @@ function CompanyDetail() {
               </div>
             </div>
             <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white">
-              {companyDetail.description}
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: companyDetail.description,
+                }}
+              />
             </div>
           </div>
           {/* Job Recruitment Section */}
@@ -161,77 +167,87 @@ function CompanyDetail() {
               </div>
             </div>
           </div>
-          {/* Job Listings */}
           <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white space-y-4">
             <div>
-              <Card
-                className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer"
-                shadow=""
-              >
-                <CardBody>
-                  <div className="flex gap-8 items-center justify-start w-full ">
-                    <div
-                      onClick={() => handleNavigate(companyDetail.id)}
-                      className="relative bg-transparent shrink-0"
-                    >
-                      <Image
-                        alt="Album cover"
-                        className="object-cover rounded-lg"
-                        height={90}
-                        shadow="md"
-                        src="https://nextui.org/images/album-cover.png"
-                        width={90}
-                      />
-                    </div>
+              {companyDetail?.postData?.length > 0 ? (
+                <Card
+                  className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer"
+                  shadow=""
+                >
+                  <CardBody>
+                    <div className="flex gap-8 items-center justify-start w-full ">
+                      <div
+                        onClick={() => handleNavigate(companyDetail.id)}
+                        className="relative bg-transparent shrink-0"
+                      >
+                        <Image
+                          alt="Album cover"
+                          className="object-cover rounded-lg"
+                          height={90}
+                          shadow="md"
+                          src="https://nextui.org/images/album-cover.png"
+                          width={90}
+                        />
+                      </div>
 
-                    <div className="flex flex-col w-full">
-                      <TooltipProvider>
-                        <Tooltip className="">
-                          <TooltipTrigger className="text-start">
-                            <p
-                              onClick={() =>
-                                handleNavigate(companyDetail.postData[0]?.id)
-                              }
-                              className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
-                            >
-                              {companyDetail.postData[0]?.postDetailData?.name}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent side={"right"}>
-                            <TooltipBox id={companyDetail.postData[0]?.id} />
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="flex flex-col w-full">
+                        <TooltipProvider>
+                          <Tooltip className="">
+                            <TooltipTrigger className="text-start">
+                              <p
+                                onClick={() =>
+                                  handleNavigate(companyDetail.postData[0]?.id)
+                                }
+                                className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
+                              >
+                                {
+                                  companyDetail.postData[0]?.postDetailData
+                                    ?.name
+                                }
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent side={"right"}>
+                              <TooltipBox id={companyDetail.postData[0]?.id} />
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
 
-                      <p className="font-normal text-base text-gray-500">
-                        {companyDetail.name}
-                      </p>
-                      <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
-                        <Badge
-                          variant="outline"
-                          className="bg-white w-fit text-nowrap rounded-lg"
-                        >
-                          {
-                            companyDetail.postData[0]?.postDetailData
-                              ?.salaryTypePostData?.value
-                          }
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="bg-white w-fit text-nowrap rounded-lg"
-                        >
-                          {
-                            companyDetail.postData[0]?.postDetailData
-                              ?.provincePostData?.value
-                          }
-                        </Badge>
+                        <p className="font-normal text-base text-gray-500">
+                          {companyDetail.name}
+                        </p>
+                        <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                          <Badge
+                            variant="outline"
+                            className="bg-white w-fit text-nowrap rounded-lg"
+                          >
+                            {
+                              companyDetail.postData[0]?.postDetailData
+                                ?.salaryTypePostData?.value
+                            }
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="bg-white w-fit text-nowrap rounded-lg"
+                          >
+                            {
+                              companyDetail.postData[0]?.postDetailData
+                                ?.provincePostData?.value
+                            }
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
+                  </CardBody>
+                </Card>
+              ) : (
+                <p className="italic">
+                  {" "}
+                  This company has not posted any jobs yet
+                </p>
+              )}
             </div>
           </div>
+          {/* Job Listings */}
         </div>
 
         {/* Right */}
@@ -249,23 +265,11 @@ function CompanyDetail() {
             </div>
             <p className="text-sm">{companyDetail.address}</p>
             <Separator className="my-4 h-[2px]" />
-            <div>
-              <div className="flex gap-2 mb-4">
-                <MapSharpIcon className="text-primary" />
-                <p className="font-medium">Watch on Map</p>
-              </div>
-              <div className="pb-4 mx-auto md:w-full w-full">
-                <iframe
-                  src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.0463016466124!2d105.7802028750315!3d21.030833280619014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313454b355336d23%3A0xb337376aa7a9622f!2zVG_DoCBuaMOgIEZQVCBD4bqndSBHaeG6pXk!5e0!3m2!1svi!2s!4v1724638248739!5m2!1svi!2s`}
-                  width="100%"
-                  height="350"
-                  style={{ border: "0" }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
+            <div className="flex justify-center items-center">
+              <Image className="w-80 h-80" src={illustration}></Image>
             </div>
+
+            <div></div>
           </div>
         </div>
       </div>

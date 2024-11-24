@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AdminPagination from "./AdminPagination";
 import AdminValidationTypeJob from "../common/AdminValidationTypeJob";
+import toast from "react-hot-toast";
 
 const ManageTypeJob = () => {
   const [jobTypes, setJobTypes] = useState([]);
@@ -168,19 +169,24 @@ const ManageTypeJob = () => {
       const response = await handleCreateNewAllCode(userData);
       if (response.data && response.data.errCode === 0) {
         setJobTypes((prev) => [...prev, userData]);
-        setFilteredJobTypes((prev) => [...prev, userData]); // Add to filtered list as well
-      } else {
-        // Log the full response for debugging
-        console.error("Failed to create job type:", response.data);
-        alert(
-          `Failed to create job type. ${response.data.message || "No message"}`
-        );
-      }
 
+        setFilteredJobTypes((prev) => [...prev, userData]);
+        toast.success("Job type created successfully!");
+      } else {
+        console.error("Failed to create job type:", response.data);
+        toast.error(
+          `Failed to create job type: ${
+            response.data.message || "Unknown error"
+          }`
+        );
+        toast.success("Create Fail!");
+      }
       handleCloseCreateModal();
     } catch (error) {
       console.error("Error saving job type:", error);
-      alert("An error occurred while creating the job type. Please try again.");
+      toast.error(
+        "An error occurred while creating the job type. Please try again."
+      );
     }
   };
 
@@ -214,17 +220,22 @@ const ManageTypeJob = () => {
               ? { ...jobType, value: userData.value }
               : jobType
           )
-        ); // Update filtered job types
+        );
+        toast.success("Job type updated successfully!");
       } else {
-        console.error(
-          "Failed to update job type:",
-          response.data.message || "No message"
+        console.error("Failed to update job type:", response.data);
+        toast.error(
+          `Failed to update job type: ${
+            response.data.message || "Unknown error"
+          }`
         );
       }
-
       handleCloseUpdateModal();
     } catch (error) {
       console.error("Error updating job type:", error);
+      toast.error(
+        "An error occurred while updating the job type. Please try again."
+      );
     }
   };
 
@@ -241,18 +252,24 @@ const ManageTypeJob = () => {
         );
         setFilteredJobTypes((prev) =>
           prev.filter((jobType) => jobType.code !== jobTypeToDelete.code)
-        ); // Remove from filtered list as well
+        );
+        toast.success("Job type deleted successfully!");
       } else {
-        console.error(
-          "Failed to delete job type:",
-          response.data.errMessage || "No message"
+        console.error("Failed to delete job type:", response.data);
+        toast.error(
+          `Failed to delete job type: ${
+            response.data.errMessage || "Unknown error"
+          }`
         );
       }
     } catch (error) {
       console.error("Error deleting job type:", error);
+      toast.error(
+        "An error occurred while deleting the job type. Please try again."
+      );
     } finally {
-      setDeleteConfirmOpen(false); // Close the confirmation dialog
-      setJobTypeToDelete(null); // Clear the job type to be deleted
+      setDeleteConfirmOpen(false);
+      setJobTypeToDelete(null);
     }
   };
 

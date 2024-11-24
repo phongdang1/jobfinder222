@@ -20,9 +20,10 @@ function AdminValidationPackage(formData, isCreateModal) {
     if (formData.name !== undefined) {
       if (formData.name === "") {
         error.name = "Package name is required!";
-      } else if (!nameWithAlphanumericRegex.test(formData.name)) {
-        error.name = "Package name must include both letters and numbers!";
       }
+      // else if (!nameWithAlphanumericRegex.test(formData.name)) {
+      //   error.name = "Package name must include both letters and numbers!";
+      // }
     }
 
     if (formData.price !== undefined) {
@@ -35,9 +36,10 @@ function AdminValidationPackage(formData, isCreateModal) {
   if (formData.name !== undefined) {
     if (formData.name === "") {
       error.name = "Package name is required!";
-    } else if (!nameWithAlphanumericRegex.test(formData.name)) {
-      error.name = "Package name must include both letters and numbers!";
     }
+    // else if (!nameWithAlphanumericRegex.test(formData.name)) {
+    //   error.name = "Package name must include both letters and numbers!";
+    // }
   }
 
   if (formData.price !== undefined) {

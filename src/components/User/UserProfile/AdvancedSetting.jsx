@@ -84,7 +84,7 @@ function AdvancedSetting() {
           setIsTakeMail(response.data.data.UserDetailData.isTakeMail === 1);
         }
       } catch (error) {
-        console.error("Error fetching user data", error);
+        console.error("Error fetching user dat", error);
       }
     };
     fetchUserData();

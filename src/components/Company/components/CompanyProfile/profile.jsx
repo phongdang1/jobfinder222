@@ -59,7 +59,7 @@ const CompanyInfo = () => {
         setError("Error fetching data. Please try again later.");
       }
     } catch (error) {
-      setError("Error fetching data. Please try again later.");
+      setError("error fetch.");
     } finally {
       setLoading(false);
     }
@@ -117,14 +117,15 @@ const CompanyInfo = () => {
         companyData.typeCompany,
         companyData.website,
       );
+      console.log('res', response)
       if (response.data.errCode === 0) {
         fetchCompany();
         setIsEditable(false);
       } else {
-        setError("Error fetching data. Please try again later.");
+        setError("loi submit");
       }
     } catch (error) {
-      setError("Error fetching data. Please try again later.");
+      setError("loi submit catch");
     } finally {
       setLoading(false);
     }
