@@ -30,6 +30,7 @@ function CandidateCard({ candidates, view }) {
     try {
       const response = await checkViewCompany(companyId);
       const allowCv = response.data.allowCv;
+
       setViews(allowCv);
       console.log("view:", views);
       console.log(response.data.allowCv);
@@ -158,32 +159,60 @@ function CandidateCard({ candidates, view }) {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>
-                      <div className="flex items-center gap-2">
-                        You have {view} CV views. You will lost 1 view if seeing
-                        this profile
-                      </div>
+                      {view === 0 ? (
+                        <div className="flex items-center gap-2">
+                          You have {view} CV views. Buy views to see candidate's
+                          CV
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          You have {view} CV views. You will lost 1 view if
+                          seeing this profile
+                        </div>
+                      )}
                     </DialogTitle>
                     <DialogDescription>
-                      <div className="flex justify-center gap-4 mt-4 mx-4">
-                        <DialogClose asChild>
+                      {view === 0 ? (
+                        <div className="flex justify-center gap-4 mt-4 mx-4">
+                          <DialogClose asChild>
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              className="w-1/2 bg-primary text-white hover:bg-primary/70"
+                            >
+                              Cancel
+                            </Button>
+                          </DialogClose>
                           <Button
-                            type="button"
-                            variant="secondary"
-                            className="w-1/2 bg-primary text-white hover:bg-primary/70"
+                            variant="outline"
+                            className="text-primary border border-primary hover:bg-primary hover:text-white w-1/2"
+                            onClick={() => navigate("/company/product")}
                           >
-                            Cancel
+                            Buy Views
                           </Button>
-                        </DialogClose>
-                        <Button
-                          variant="outline"
-                          className="text-primary border border-primary hover:bg-primary hover:text-white w-1/2"
-                          onClick={() =>
-                            handleProceedClick(c.UserDetailData.id)
-                          }
-                        >
-                          Proceed ?
-                        </Button>
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-center gap-4 mt-4 mx-4">
+                          <DialogClose asChild>
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              className="w-1/2 bg-primary text-white hover:bg-primary/70"
+                            >
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <Button
+                            variant="outline"
+                            className="text-primary border border-primary hover:bg-primary hover:text-white w-1/2"
+                            onClick={() =>
+                              handleProceedClick(c.UserDetailData.id)
+                            }
+                          >
+                            Proceed ?
+                          </Button>
+                        </div>
+                      )}
                     </DialogDescription>
                   </DialogHeader>
                 </DialogContent>

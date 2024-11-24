@@ -219,18 +219,22 @@ function CandidateDetail() {
                     {candidateValues.address}
                   </TableCell>
                 </TableRow>
-                <TableRow className="border-none  hover:bg-transparent">
-                  <TableCell className="font-medium text-black">
+                <TableRow className="border-none hover:bg-transparent w-full">
+                  <TableCell className="font-medium text-black ">
                     Skills
                   </TableCell>
-                  <TableCell className="text-black font-normal flex gap-2">
+                  <TableCell className="text-black font-normal flex gap-2 ">
                     {candidate?.listSkill?.map((skill, index) => (
-                      <Badge
-                        key={index}
-                        className="bg-white text-primary border border-primary hover:bg-primary hover:text-white"
-                      >
-                        <div>{skill?.skillData?.name}</div>
-                      </Badge>
+                      <>
+                        <div className="flex-wrap">
+                          <Badge
+                            key={index}
+                            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white w-fit h-fit text-nowrap"
+                          >
+                            <div>{skill?.skillData?.name}</div>
+                          </Badge>
+                        </div>
+                      </>
                     ))}
                   </TableCell>
                 </TableRow>
