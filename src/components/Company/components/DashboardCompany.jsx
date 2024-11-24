@@ -169,7 +169,7 @@ const DashboardCompany = () => {
     fetchCompany();
     fetchUserPackages();
     fetchPosts();
-    fetchCvPostsIn7Days();
+    // fetchCvPostsIn7Days();
   }, []);
 
   const jobData = [];
