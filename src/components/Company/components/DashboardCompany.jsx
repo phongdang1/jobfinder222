@@ -96,7 +96,7 @@ const DashboardCompany = () => {
     console.log("post ne 123", posts);
     posts.forEach((post) => {
       if (post.userId === parseInt(userId)) {
-        if (post.statusCode === "ACTIVE") {
+        if (post.statusCode === "APPROVED") {
           if (post.timeEnd > currentTime) {
             counts.active++;
           } else {
@@ -104,7 +104,7 @@ const DashboardCompany = () => {
           }
         } else if (post.statusCode === "PENDING") {
           counts.pending++;
-        } else if (post.statusCode === "INACTIVE") {
+        } else if (post.statusCode === "REJECTED") {
           if (post.timeEnd > currentTime) {
             counts.inactive++;
           } else {
