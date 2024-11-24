@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Validation from "@/components/User/Common/Validation";
 import { useNavigate } from "react-router-dom";
 import { handleSetDataUserDetail } from "@/fetchData/User";
@@ -11,6 +11,9 @@ import { description } from "@/components/Admin/components/LineChart";
 import { createNewCompany } from "@/fetchData/Company";
 import UserProfileUpdateHeader from "@/components/User/UserProfileUpdate/Common/UserProfileUpdateHeader";
 import toast from "react-hot-toast";
+import { getAllSkill } from "@/fetchData/Skill";
+import { getAllCodeByType, getValueByCode } from "@/fetchData/AllCode";
+import ReactQuill from "react-quill";
 
 function SignUpCompany() {
   const [formData, setFormData] = useState({
@@ -24,6 +27,7 @@ function SignUpCompany() {
   });
   const [errorMessage, setErrorMessage] = useState({});
   const navigate = useNavigate();
+  const [skills, setSkills] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +35,14 @@ function SignUpCompany() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    const errors = Validation({ ...formData, [name]: value });
+    setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
+  };
+  const handleDescriptionChange = (value) => {
+    setFormData((prevForm) => ({
+      ...prevForm,
+      description: value,
+    }));
     const errors = Validation({ ...formData, [name]: value });
     setErrorMessage((prev) => ({ ...prev, [name]: errors[name] || "" }));
   };
@@ -55,7 +67,9 @@ function SignUpCompany() {
     } else {
       try {
         const response = await createNewCompany(dataSent);
-        if (response) {
+        console.log('res nee', response + '' + 'data ' + dataSent)
+        
+        if (response.data.errCode === 0) {
           console.log(response);
           localStorage.setItem("company", JSON.stringify(response.data));
           localStorage.setItem(
@@ -66,13 +80,65 @@ function SignUpCompany() {
           toast.success("Company profile updated !!!");
         } else {
           console.log("Profile update failed");
+          toast.error(response.data.errMessage)
         }
       } catch (error) {
         console.log(error);
       }
     }
   };
+  const fetchSkills = async () => {
+    try {
+      const response = await getAllCodeByType("JOBTYPE");
+      console.log("rss ne", response);
+      if (response.status === 200) {
+        const uniqueSkills = response.data.data.filter(
+          (skill, index, self) =>
+            index === self.findIndex((s) => s.value === skill.value)
+        );
+        setSkills(uniqueSkills);
+      } else {
+        console.error("Failed to fetch skills");
+      }
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+    }
+  };
+  useEffect(() => {
+    fetchSkills();
+  }, []);
+  const modules = {
+    toolbar: [
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image", "video"],
+      ["clean"],
+    ],
+  };
 
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+  ];
   return (
     <>
       <UserProfileUpdateHeader />
@@ -164,18 +230,23 @@ function SignUpCompany() {
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="typeCompany">Company Specialize</Label>
-                  <Input
-                    type="text"
-                    name="typeCompany"
-                    placeholder="Company Specialize"
-                    className={`${
-                      errorMessage.typeCompany
-                        ? "border-red-500"
-                        : "focus:border-primary"
-                    } rounded-lg`}
-                    onChange={handleInputChange}
-                    value={formData.typeCompany}
-                  />
+                  <div>
+                    <select
+                      name="typeCompany"
+                      value={formData.typeCompany || ""}
+                      onChange={handleInputChange}
+                      className={`mt-1 block w-full border border-gray-300 rounded-md p-2`}
+                    >
+                      <option value="" disabled>
+                        -- Choose Category --
+                      </option>
+                      {skills.map((skill) => (
+                        <option key={skill.id} value={skill.value}>
+                          {skill.value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   {errorMessage.typeCompany && (
                     <p className="text-red-500">{errorMessage.typeCompany}</p>
                   )}
@@ -185,20 +256,17 @@ function SignUpCompany() {
               <div className="w-full mt-8 items-center">
                 <div className="flex flex-col w-full gap-1.5">
                   <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    name="description"
-                    placeholder="Description"
+                  <ReactQuill
+                    type="text"
+                    name="requirement"
+                    placeholder="Requirement..."
+                    className={`h-[300px] lg:h-[400px] focus:border-primary
+                    rounded-lg`}
+                    modules={modules}
+                    formats={formats}
                     value={formData.description}
-                    onChange={handleInputChange}
-                    className={`h-[300px] lg:h-[400px] ${
-                      errorMessage.description
-                        ? "border-red-500"
-                        : "focus:border-primary"
-                    } rounded-lg`}
+                    onChange={handleDescriptionChange}
                   />
-                  {errorMessage.description && (
-                    <p className="text-red-500">{errorMessage.description}</p>
-                  )}
                 </div>
               </div>
             </div>

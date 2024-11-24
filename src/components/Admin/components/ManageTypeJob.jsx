@@ -169,6 +169,7 @@ const ManageTypeJob = () => {
       const response = await handleCreateNewAllCode(userData);
       if (response.data && response.data.errCode === 0) {
         setJobTypes((prev) => [...prev, userData]);
+
         setFilteredJobTypes((prev) => [...prev, userData]);
         toast.success("Job type created successfully!");
       } else {
@@ -178,6 +179,7 @@ const ManageTypeJob = () => {
             response.data.message || "Unknown error"
           }`
         );
+        toast.success("Create Fail!");
       }
       handleCloseCreateModal();
     } catch (error) {
