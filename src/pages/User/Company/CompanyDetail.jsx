@@ -37,7 +37,7 @@ function CompanyDetail() {
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     console.log(id);
-    navigate(`job-detail/${id}`);
+    navigate(`/job-detail/${id}`);
   };
 
   useEffect(() => {
