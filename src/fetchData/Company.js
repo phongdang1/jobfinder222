@@ -59,7 +59,10 @@ const updateCompany = (
   amountEmployer,
   coverimage,
   thumbnail,
-  file
+  file,
+  taxnumber,
+  typeCompany,
+  website
 ) => {
   return axios.post(
     `/updateCompany`,
@@ -73,6 +76,9 @@ const updateCompany = (
       coverimage: coverimage,
       thumbnail: thumbnail,
       file: file,
+      taxnumber: taxnumber,
+      typeCompany: typeCompany,
+      website: website,
     },
     {
       headers: {
