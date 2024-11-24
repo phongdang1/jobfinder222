@@ -207,7 +207,7 @@ const CompanyHeader = () => {
                 <Link
                   to="/company/dashboard"
                   className={`block font-semibold text-[15px] ${
-                    user?.data?.statusCode.toUpperCase() !== "ACTIVE"
+                    user?.data?.statusCode.toUpperCase() !== "APPROVED"
                       ? "text-gray-400 cursor-not-allowed pointer-events-none"
                       : "hover:text-primary text-third"
                   }`}
@@ -219,7 +219,7 @@ const CompanyHeader = () => {
                 <Link
                   to="/company/jobPost"
                   className={`block font-semibold text-[15px] ${
-                    user?.data?.statusCode.toUpperCase() !== "ACTIVE"
+                    user?.data?.statusCode.toUpperCase() !== "APPROVED"
                       ? "text-gray-400 cursor-not-allowed pointer-events-none"
                       : "hover:text-primary text-third"
                   }`}
@@ -231,7 +231,7 @@ const CompanyHeader = () => {
                 <Link
                   to="/company/candidate"
                   className={`block font-semibold text-[15px] ${
-                    user?.data?.statusCode.toUpperCase() !== "ACTIVE"
+                    user?.data?.statusCode.toUpperCase() !== "APPROVED"
                       ? "text-gray-400 cursor-not-allowed pointer-events-none"
                       : "hover:text-primary text-third"
                   }`}
@@ -243,7 +243,7 @@ const CompanyHeader = () => {
                 <Link
                   to="/company/product"
                   className={`block font-semibold text-[15px] ${
-                    user?.data?.statusCode.toUpperCase() !== "ACTIVE"
+                    user?.data?.statusCode.toUpperCase() !== "APPROVED"
                       ? "text-gray-400 cursor-not-allowed pointer-events-none"
                       : "hover:text-primary text-third"
                   }`}
@@ -255,13 +255,13 @@ const CompanyHeader = () => {
                 <Link
                   to="/company/createJobPost"
                   className={`block font-semibold text-[15px] ${
-                    user?.data?.statusCode.toUpperCase() !== "ACTIVE"
+                    user?.data?.statusCode.toUpperCase() !== "APPROVED"
                       ? "text-gray-400 cursor-not-allowed pointer-events-none"
                       : "hover:text-primary text-third"
                   }`}
                 >
                   <Button
-                    disabled={user?.data?.statusCode.toUpperCase() !== "ACTIVE"}
+                    disabled={user?.data?.statusCode.toUpperCase() !== "APPROVED"}
                     className="text-white flex gap-2"
                   >
                     <FaCirclePlus />

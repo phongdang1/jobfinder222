@@ -379,7 +379,7 @@ const ManageJobPost = () => {
                                                   className={`
                 px-2 py-1 rounded font-semibold
                 ${
-                  userCv.statusCode === "ACTIVE"
+                  userCv.statusCode === "APPROVED"
                     ? "bg-green-100 text-green-700"
                     : ""
                 }
@@ -1087,7 +1087,7 @@ const ManageJobPost = () => {
                                                   className={`
                 px-2 py-1 rounded font-semibold
                 ${
-                  userCv.statusCode === "ACTIVE"
+                  userCv.statusCode === "APPROVED"
                     ? "bg-green-100 text-green-700"
                     : ""
                 }
@@ -1431,7 +1431,7 @@ const ManageJobPost = () => {
                             className={`
                         px-2 py-1 rounded font-semibold uppercase
                         ${
-                          post.statusCode.toUpperCase() === "ACTIVE"
+                          post.statusCode.toUpperCase() === "APPROVED"
                             ? "bg-green-100 text-green-700"
                             : ""
                         }
