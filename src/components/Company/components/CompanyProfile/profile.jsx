@@ -5,7 +5,7 @@ import { getAllSkill } from "@/fetchData/Skill";
 import Validation from "@/components/User/Common/Validation";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../../../assets/animation/loadingAnimation.json";
-
+import toast from "react-hot-toast";
 
 const CompanyInfo = () => {
   const [loading, setLoading] = useState(true);
@@ -120,6 +120,7 @@ const CompanyInfo = () => {
       console.log('res', response)
       if (response.data.errCode === 0) {
         fetchCompany();
+        toast.success("Update company success!");
         setIsEditable(false);
       } else {
         setError("loi submit");

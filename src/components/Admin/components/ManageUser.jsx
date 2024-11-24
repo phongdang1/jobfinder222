@@ -258,7 +258,7 @@ const ManageUser = () => {
                 <span
                   className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${user.statusCode.toUpperCase() === "ACTIVE"
                     ? "bg-green-500 text-white"
-                    : "bg-red-500 text-white"
+                    : "bg-orange-500 text-white"
                     }`}
                 >
                   {user.statusCode.toUpperCase() === "ACTIVE"
