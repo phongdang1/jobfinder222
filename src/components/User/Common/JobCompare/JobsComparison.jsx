@@ -17,6 +17,7 @@ import { SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@nextui-org/card";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function JobsComparison() {
   const [job1, setJob1] = useState({});
@@ -96,7 +97,7 @@ function JobsComparison() {
               <div className="font-semibold">{job1.companyData?.name}</div>
             </TableCell>
 
-            <TableCell className="flex flex-col gap-2 text-large text-start items-start">
+            <TableCell className="flex flex-col gap-2 text-large text-start items-start ">
               {Object.keys(job2).length ? (
                 <div className="flex flex-col gap-3">
                   <div
@@ -134,12 +135,12 @@ function JobsComparison() {
                       <p className="font-medium">Add a Job</p>
                     </div>
                   </DialogTrigger>
-                  <DialogContent className="w-full max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Pick a company</DialogTitle>
-                      <DialogDescription>
-                        <div className="mt-4 w-full">
-                          <div className="flex">
+                  <DialogContent className="w-full max-w-2xl max-h-screen h-5/6">
+                    <ScrollArea className="h-4/5">
+                      <DialogHeader>
+                        <DialogTitle className="flex flex-col gap-4 ">
+                          <p>Pick a company</p>
+                          <div className="flex ">
                             <div className="relative flex flex-1 items-center">
                               <Input
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md rounded-r-none"
@@ -160,71 +161,74 @@ function JobsComparison() {
                               Search
                             </Button>
                           </div>
-
-                          <div className="w-full flex flex-col gap-4 py-10 px-4">
-                            <div className="space-y-2">
-                              {allJobs
-                                .filter((job) => job.id !== parseInt(id))
-                                .map((job, index) => (
-                                  <div
-                                    onClick={() => handleGetId(job.id)}
-                                    key={index}
-                                  >
-                                    <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
-                                      <CardBody>
-                                        <div className="flex gap-6 items-center">
-                                          <div className="relative bg-transparent shrink-0">
-                                            <Image
-                                              alt="Job cover"
-                                              className="object-cover rounded-lg"
-                                              height={90}
-                                              shadow="md"
-                                              src="https://nextui.org/images/album-cover.png" // Replace with actual image URL
-                                              width={90}
-                                            />
-                                          </div>
-                                          <div className="flex flex-col w-full">
-                                            <p className="text-base font-medium group-hover:text-primary">
-                                              {
-                                                job.userPostData.userCompanyData
-                                                  .name
-                                              }
-                                            </p>
-
-                                            <p className="font-normal text-base text-gray-500">
-                                              {job.postDetailData.name}
-                                            </p>
-                                            <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
-                                              <Badge
-                                                variant="outline"
-                                                className="bg-white w-fit text-nowrap rounded-lg"
-                                              >
+                        </DialogTitle>
+                        <DialogDescription>
+                          <div className="mt-4 w-full">
+                            <div className="w-full flex flex-col gap-4 py-10 px-4">
+                              <div className="space-y-2">
+                                {allJobs
+                                  .filter((job) => job.id !== parseInt(id))
+                                  .map((job, index) => (
+                                    <div
+                                      onClick={() => handleGetId(job.id)}
+                                      key={index}
+                                    >
+                                      <Card className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer">
+                                        <CardBody>
+                                          <div className="flex gap-6 items-center">
+                                            <div className="relative bg-transparent shrink-0">
+                                              <Image
+                                                alt="Job cover"
+                                                className="object-cover rounded-lg"
+                                                height={90}
+                                                shadow="md"
+                                                src="https://nextui.org/images/album-cover.png" // Replace with actual image URL
+                                                width={90}
+                                              />
+                                            </div>
+                                            <div className="flex flex-col w-full">
+                                              <p className="text-base font-medium group-hover:text-primary">
                                                 {
-                                                  job.postDetailData
-                                                    .salaryTypePostData.value
+                                                  job.userPostData
+                                                    .userCompanyData.name
                                                 }
-                                              </Badge>
-                                              <Badge
-                                                variant="outline"
-                                                className="bg-white w-fit text-nowrap rounded-lg"
-                                              >
-                                                {
-                                                  job.postDetailData
-                                                    .provincePostData.value
-                                                }
-                                              </Badge>
+                                              </p>
+
+                                              <p className="font-normal text-base text-gray-500">
+                                                {job.postDetailData.name}
+                                              </p>
+                                              <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                                                <Badge
+                                                  variant="outline"
+                                                  className="bg-white w-fit text-nowrap rounded-lg"
+                                                >
+                                                  {
+                                                    job.postDetailData
+                                                      .salaryTypePostData.value
+                                                  }
+                                                </Badge>
+                                                <Badge
+                                                  variant="outline"
+                                                  className="bg-white w-fit text-nowrap rounded-lg"
+                                                >
+                                                  {
+                                                    job.postDetailData
+                                                      .provincePostData.value
+                                                  }
+                                                </Badge>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </CardBody>
-                                    </Card>
-                                  </div>
-                                ))}
+                                        </CardBody>
+                                      </Card>
+                                    </div>
+                                  ))}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </DialogDescription>
-                    </DialogHeader>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </ScrollArea>
                   </DialogContent>
                 </Dialog>
               )}
