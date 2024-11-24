@@ -137,34 +137,40 @@ const DashboardCompany = () => {
     try {
       const response = await getAllCvPostByCompanyId7Day(companyId);
       if (response.data.errCode === 0) {
-        const posts = response.data.data;
+        const posts = response.data.data || [];
         setCvPostCount(posts.length);
         setCvPosts(posts);
 
-        // Fetch user names for each CV post userId
-        const userIdSet = new Set(posts.map((post) => post.userId)); // Get unique userIds
-        userIdSet.forEach(async (userId) => {
-          try {
-            const userResponse = await getUsersById(userId);
-            if (userResponse.data.errCode === 0) {
-              setUserNames((prevState) => ({
-                ...prevState,
-                [userId]: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
-              }));
+        // Fetch user names for each CV post userId if posts exist
+        if (posts.length > 0) {
+          const userIdSet = new Set(posts.map((post) => post.userId)); // Get unique userIds
+          userIdSet.forEach(async (userId) => {
+            try {
+              const userResponse = await getUsersById(userId);
+              if (userResponse.data.errCode === 0) {
+                setUserNames((prevState) => ({
+                  ...prevState,
+                  [userId]: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
+                }));
+              }
+            } catch (error) {
+              console.error(`Error fetching user with ID ${userId}:`, error);
             }
-          } catch (error) {
-            console.error(`Error fetching user with ID ${userId}:`, error);
-          }
-        });
+          });
+        }
       } else {
-        setError("Error fetching CV posts. Please try again later.");
+        console.warn("No CV posts found for the company.");
+        setCvPostCount(0); // Ensure count is zero for new companies
+        setCvPosts([]); // Set empty array for CV posts
       }
     } catch (error) {
+      console.error("Error fetching CV posts:", error);
       setError("Error fetching CV posts. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchCompany();
     fetchUserPackages();
