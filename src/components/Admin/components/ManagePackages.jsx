@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
 import AdminValidationPackage from "../common/AdminValidationPackage";
+import toast from "react-hot-toast";
 
 const ManagePackages = () => {
   const [packages, setPackages] = useState([]);
@@ -184,10 +185,13 @@ const ManagePackages = () => {
           price: "",
           statusCode: "active",
         });
+        toast.success("Package created successfully!");
       } else {
-        console.error(
-          "Failed to create package:",
-          response.data.message || "No message"
+        console.error("Failed to create package:", response.data);
+        toast.error(
+          `Failed to create package: ${
+            response.data.message || "Unknown error"
+          }`
         );
       }
       setCreateModalOpen(false);
@@ -219,11 +223,17 @@ const ManagePackages = () => {
           price: updatePackage.price,
           statusCode: "active",
         });
+        toast.success("Package updated successfully!");
       } else {
         console.error(
           "Failed to update package:",
-          response.data.message || "No message",
+          response.data,
           response.data // Log the entire response to understand the issue better
+        );
+        toast.error(
+          `Failed to update package: ${
+            response.data.message || "Unknown error"
+          }`
         );
       }
       handleCloseUpdateModal();

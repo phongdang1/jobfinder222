@@ -263,13 +263,13 @@ const ManageJobPost = () => {
       <Tabs defaultValue="post" className="w-full">
         <TabsList>
           <TabsTrigger
-            className="data-[state=APPROVED]:bg-primary/50 data-[state=APPROVED]:text-white transition-colors"
+            className="data-[state=active]:bg-primary/50 data-[state=active]:text-white transition-colors"
             value="post"
           >
             Post
           </TabsTrigger>
           <TabsTrigger
-            className="data-[state=APPROVED]:bg-primary/50 data-[state=APPROVED]:text-white transition-colors"
+            className="data-[state=active]:bg-primary/50 data-[state=active]:text-white transition-colors"
             value="closed"
           >
             Closed
@@ -379,7 +379,7 @@ const ManageJobPost = () => {
                                                   className={`
                 px-2 py-1 rounded font-semibold
                 ${
-                  userCv.statusCode === "APPROVED"
+                  userCv.statusCode === "ACTIVE"
                     ? "bg-green-100 text-green-700"
                     : ""
                 }
@@ -1087,7 +1087,7 @@ const ManageJobPost = () => {
                                                   className={`
                 px-2 py-1 rounded font-semibold
                 ${
-                  userCv.statusCode === "APPROVED"
+                  userCv.statusCode === "ACTIVE"
                     ? "bg-green-100 text-green-700"
                     : ""
                 }
@@ -1431,7 +1431,7 @@ const ManageJobPost = () => {
                             className={`
                         px-2 py-1 rounded font-semibold uppercase
                         ${
-                          post.statusCode.toUpperCase() === "APPROVED"
+                          post.statusCode.toUpperCase() === "ACTIVE"
                             ? "bg-green-100 text-green-700"
                             : ""
                         }
@@ -1441,7 +1441,7 @@ const ManageJobPost = () => {
                             : ""
                         }
                         ${
-                          post.statusCode.toUpperCase() === "REJECTED"
+                          post.statusCode.toUpperCase() === "BANNED"
                             ? "bg-red-100 text-red-700"
                             : ""
                         }
