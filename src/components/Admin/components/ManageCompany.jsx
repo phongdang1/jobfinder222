@@ -312,7 +312,12 @@ const ManageCompanyAdmin = () => {
                       Description
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {currentCompanyDetail.description}
+                      <div
+                        className="ml-8"
+                        dangerouslySetInnerHTML={{
+                          __html: currentCompanyDetail.description,
+                        }}
+                      />
                     </dd>
                   </div>
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -461,7 +466,7 @@ const ManageCompanyAdmin = () => {
                               onClick={handleBan}
                               className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2"
                             >
-                              Yes, I'm sure
+                              Yes, I am sure
                             </button>
                             <button
                               onClick={() => setShowConfirm(false)}
