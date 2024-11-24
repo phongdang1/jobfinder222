@@ -4,10 +4,17 @@ import {
   getAllCompaniesInHomePage,
   getCompanyById,
 } from "@/fetchData/Company";
-import image from "../../../assets/Home/Company/fpt1.png";
+import image from "../../../assets/Home/Company-rafiki.png";
 import { Link } from "react-router-dom";
 import "aos/dist/aos.css";
 import AOS from "aos";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const FeaturedCompanies = () => {
   const [companies, setCompanies] = useState([]);
@@ -40,8 +47,11 @@ const FeaturedCompanies = () => {
           })
         );
 
+        // Sắp xếp công ty theo số lượng công việc giảm dần
+        const sortedCompanies = companiesWithJobCounts.sort((a, b) => b.totalJobs - a.totalJobs);
+
         // Lưu trữ kết quả vào state
-        setCompanies(companiesWithJobCounts);
+        setCompanies(sortedCompanies);
       } catch (error) {
         console.log("error", error);
       }
@@ -56,16 +66,20 @@ const FeaturedCompanies = () => {
         Featured
         <span className="text-primary"> Companies</span>
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {Array.isArray(companies) && companies.length > 0 ? (
-          companies.map((company, index) => (
+          companies.slice(0, 8).map((company, index) => (
             <Link to={`/companydetail/${company.id}`} key={index}>
-              <Card className="relative cursor-pointer hover:bg-[#E6E6FA]/50 hover:outline-2 hover:outline-primary">
+              <Card className="relative cursor-pointer hover:bg-[#E6E6FA]/50 hover:outline-2 hover:outline-primary h-[230px] max-h-[500px]">
                 <CardHeader className="flex items-center justify-center flex-col">
-                  <img alt={company.name} className="w-24 h-24" src={image} />
+                  {company.thumbnail ? ( <img alt={company.name} className="w-28 h-28" src={company.thumbnail} />) : (
+                     <img alt={company.name} className="w-32 h-28" src={image} />
+                  )}
+                 
                 </CardHeader>
                 <CardBody className="text-center">
-                  <h4 className="text-third font-semibold text-lg text-center">
+                  <h4 className="text-third font-semibold text-lg text-center truncate">
                     {company.name}
                   </h4>
                   <p className=" my-2">

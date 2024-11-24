@@ -208,7 +208,7 @@ const DashboardCompany = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Here's some information to get you started:</p>
+                <p>Here are some information to get you started:</p>
               </CardContent>
               <CardFooter></CardFooter>
               <CardFooter>
