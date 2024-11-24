@@ -290,7 +290,6 @@ const ManagePostAdmin = () => {
           <TableRow>
             <TableHead className="w-[100px] text-center">STT</TableHead>
             <TableHead className="text-center">Post Name</TableHead>
-            <TableHead className="text-center">Full Name User</TableHead>
             <TableHead className="text-center">Mail User</TableHead>
             <TableHead className="text-center">Phone User</TableHead>
             <TableHead className="text-center">Is Hot</TableHead>
@@ -309,9 +308,6 @@ const ManagePostAdmin = () => {
               </TableCell>
               <TableCell className="text-center">
                 {post.postDetailData.name}
-              </TableCell>
-              <TableCell className="text-center">
-                {post.userPostData.lastName + " " + post.userPostData.firstName}
               </TableCell>
               <TableCell className="text-center">
                 {post.userPostData.email}
