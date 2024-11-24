@@ -339,9 +339,7 @@ function Header() {
           {userId === null ||
           userId === undefined ||
           token === null ||
-          token === undefined ||
-          company ||
-          adminId ? (
+          token === undefined  ? (
             <>
               <li>
                 <Button
