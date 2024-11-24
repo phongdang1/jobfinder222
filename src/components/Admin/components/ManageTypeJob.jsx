@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AdminPagination from "./AdminPagination";
 import AdminValidationTypeJob from "../common/AdminValidationTypeJob";
+import toast from "react-hot-toast";
 
 const ManageTypeJob = () => {
   const [jobTypes, setJobTypes] = useState([]);
@@ -169,12 +170,14 @@ const ManageTypeJob = () => {
       if (response.data && response.data.errCode === 0) {
         setJobTypes((prev) => [...prev, userData]);
         setFilteredJobTypes((prev) => [...prev, userData]); // Add to filtered list as well
+        toast.success("Create Successfully!");
       } else {
         // Log the full response for debugging
         console.error("Failed to create job type:", response.data);
         alert(
           `Failed to create job type. ${response.data.message || "No message"}`
         );
+        toast.success("Create Fail!");
       }
 
       handleCloseCreateModal();
