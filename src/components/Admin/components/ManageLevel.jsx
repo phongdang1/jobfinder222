@@ -30,6 +30,7 @@ import AdminPagination from "./AdminPagination"; // Import the pagination compon
 import DeleteIcon from "@mui/icons-material/Delete";
 import { SiLevelsdotfyi } from "react-icons/si";
 import AdminValidationLevel from "../common/AdminValidationLevel";
+import toast from "react-hot-toast";
 
 const ManageLevel = () => {
   const [jobLevels, setJobLevels] = useState([]);
@@ -187,10 +188,11 @@ const ManageLevel = () => {
 
         setJobLevels(sortedJobLevels);
         setFilteredJobLevels(sortedJobLevels); // Keep the filtered job levels in sync
+        toast.success("Level created successfully!");
       } else {
-        console.error(
-          "Failed to create job level:",
-          response.data.message || "No message"
+        console.error("Failed to create job level:", response.data);
+        toast.error(
+          `Failed to create level: ${response.data.message || "Unknown error"}`
         );
       }
 
@@ -235,10 +237,11 @@ const ManageLevel = () => {
               : jobLevel
           )
         );
+        toast.success("Level updated successfully!");
       } else {
-        console.error(
-          "Failed to update job level:",
-          response.data.message || "No message"
+        console.error("Failed to update job level:", response.data);
+        toast.error(
+          `Failed to update level: ${response.data.message || "Unknown error"}`
         );
       }
 
@@ -292,10 +295,13 @@ const ManageLevel = () => {
           setFilteredJobLevels((prev) =>
             prev.filter((jobLevel) => jobLevel.code !== jobLevelToDelete.code)
           );
+          toast.success("Level deleted successfully!");
         } else {
-          console.error(
-            "Failed to delete job level:",
-            response.data.errMessage || "No message"
+          console.error("Failed to delete job level:", response.data);
+          toast.error(
+            `Failed to delete level: ${
+              response.data.errMessage || "Unknown error"
+            }`
           );
         }
       } catch (error) {

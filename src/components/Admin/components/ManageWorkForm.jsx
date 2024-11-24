@@ -29,6 +29,7 @@ import {
 import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import AdminValidationWorkForm from "../common/AdminValidationWorkForm";
+import toast from "react-hot-toast";
 
 const ManageWorkForm = () => {
   const [workTypes, setWorkTypes] = useState([]);
@@ -188,10 +189,13 @@ const ManageWorkForm = () => {
         setWorkTypes(sortedWorkTypes); // Update the full list
         setTotalCount((prev) => prev + 1); // Update total count
         setFilteredWorkTypes(sortedWorkTypes); // Keep filtered list in sync
+        toast.success("Working form created successfully!");
       } else {
-        console.error(
-          "Failed to create work type:",
-          response.data.message || "No message"
+        console.error("Failed to create work type:", response.data);
+        toast.error(
+          `Failed to create Working form: ${
+            response.data.message || "Unknown error"
+          }`
         );
       }
 
@@ -235,10 +239,11 @@ const ManageWorkForm = () => {
               : workType
           )
         );
+        toast.success("Working form updated successfully!");
       } else {
-        console.error(
-          "Failed to update job type:",
-          response.data.message || "No message"
+        console.error("Failed to update job type:", response.data);
+        toast.error(
+          "An error occurred while updating the Working form . Please try again."
         );
       }
 
@@ -261,10 +266,13 @@ const ManageWorkForm = () => {
           prev.filter((workType) => workType.code !== deleteItem.code)
         );
         setTotalCount((prev) => prev - 1);
+        toast.success("Working form deleted successfully!");
       } else {
-        console.error(
-          "Failed to delete job type:",
-          response.data.errMessage || "No message"
+        console.error("Failed to delete job type:", response.data);
+        toast.error(
+          `Failed to delete Working form: ${
+            response.data.errMessage || "Unknown error"
+          }`
         );
       }
       setDeleteConfirmOpen(false); // Close the confirmation dialog after deletion

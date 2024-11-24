@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
 import AdminValidationSkill from "../common/AdminValidationSkill";
+import toast from "react-hot-toast";
 
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
@@ -157,10 +158,11 @@ const ManageSkill = () => {
       if (response.data && response.data.errCode === 0) {
         setSkills((prev) => [...prev, newSkill]);
         fetchSkills([]);
+        toast.success("Skill created successfully!");
       } else {
-        console.error(
-          "Failed to create skill:",
-          response.data.message || "No message"
+        console.error("Failed to create skill:", response.data);
+        toast.error(
+          `Failed to create skill: ${response.data.message || "Unknown error"}`
         );
       }
       handleCloseCreateModal();
@@ -192,10 +194,11 @@ const ManageSkill = () => {
               : skill
           )
         );
+        toast.success("Skill updated successfully!");
       } else {
-        console.error(
-          "Failed to update skill:",
-          response.data.message || "No message"
+        console.error("Failed to update skill:", response.data);
+        toast.error(
+          `Failed to update skill: ${response.data.message || "Unknown error"}`
         );
       }
       handleCloseUpdateModal();
@@ -221,8 +224,14 @@ const ManageSkill = () => {
 
       if (response.data && response.data.errCode === 0) {
         fetchSkills();
+        toast.success("Skill deleted successfully!");
       } else {
         console.error("Failed to delete skill:", response.data);
+        toast.error(
+          `Failed to delete skill: ${
+            response.data.errMessage || "Unknown error"
+          }`
+        );
       }
     } catch (error) {
       console.error("Error deleting skill:", error);
