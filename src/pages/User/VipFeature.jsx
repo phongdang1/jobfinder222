@@ -57,7 +57,7 @@ const VipFeature = () => {
             to regular users.
           </p>
           <div className="text-3xl font-bold  bg-gradient-to-r from-[#4a3d8d]/80 to-primary/90 bg-clip-text text-transparent p-2 rounded-lg">
-            1000$
+            30$
           </div>
           <Button
             onClick={handleUpdateVip}
