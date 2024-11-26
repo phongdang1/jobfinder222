@@ -31,18 +31,17 @@ import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
 import AdminValidationSkill from "../common/AdminValidationSkill";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [errorMessage, setErrorMessage] = useState({});
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
-
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // Trạng thái cho modal xóa
   const [skillToDelete, setSkillToDelete] = useState(null); // Kỹ năng sẽ xóa
-
   const [newSkill, setNewSkill] = useState({ name: "", categoryJobCode: "" });
   const [updateSkill, setUpdateSkill] = useState({
     id: "",
@@ -96,6 +95,10 @@ const ManageSkill = () => {
   useEffect(() => {
     fetchSkills(searchTerm, selectedCategory); // Trigger search whenever `searchTerm` or `selectedCategory` changes
   }, [searchTerm, currentPage, selectedCategory]);
+
+  const removeDiacritics = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
 
   const handleSearchInputChange = (e) => setSearchTerm(e.target.value);
 
@@ -153,6 +156,8 @@ const ManageSkill = () => {
       return;
     }
 
+    setIsSubmiting(true);
+
     try {
       const response = await handleCreateNewSkill(newSkill);
       if (response.data && response.data.errCode === 0) {
@@ -168,6 +173,8 @@ const ManageSkill = () => {
       handleCloseCreateModal();
     } catch (error) {
       console.error("Error saving skill:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -179,6 +186,8 @@ const ManageSkill = () => {
       setErrorMessage(validationErrors);
       return;
     }
+
+    setIsSubmiting(true);
 
     try {
       const response = await handleUpdateSkill(updateSkill);
@@ -204,10 +213,14 @@ const ManageSkill = () => {
       handleCloseUpdateModal();
     } catch (error) {
       console.error("Error updating skill:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
   const handleDeleteSkill = async (skillId) => {
+    setIsSubmiting(true);
+
     try {
       const token = localStorage.getItem("token"); // Adjust if token is stored elsewhere
       const response = await axios.post(
@@ -235,11 +248,15 @@ const ManageSkill = () => {
       }
     } catch (error) {
       console.error("Error deleting skill:", error);
+    } finally {
+      setIsSubmiting(false);
     }
   };
 
   const filteredSkills = skills.filter((skill) =>
-    skill.name.toLowerCase().includes(searchTerm.toLowerCase())
+    removeDiacritics(skill.name.toLowerCase()).includes(
+      removeDiacritics(searchTerm.toLowerCase())
+    )
   );
 
   const handleOpenDeleteModal = (skillId) => {
@@ -430,6 +447,7 @@ const ManageSkill = () => {
               Create
             </Button>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -482,6 +500,7 @@ const ManageSkill = () => {
               Update Skill
             </Button>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -510,6 +529,7 @@ const ManageSkill = () => {
             >
               Confirm
             </Button>
+            <GlobalLoading isSubmiting={isSubmiting} />
           </div>
         </DialogContent>
       </Dialog>

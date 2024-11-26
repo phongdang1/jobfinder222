@@ -28,6 +28,7 @@ import {
 } from "@/fetchData/Company";
 import AdminPagination from "./AdminPagination";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageCompanyAdmin = () => {
   const [companies, setCompanies] = useState([]);
@@ -48,6 +49,7 @@ const ManageCompanyAdmin = () => {
     indexOfFirstCompany,
     indexOfLastCompany
   );
+  const [isSubmiting, setIsSubmiting] = useState(false);
 
   const totalPages = Math.ceil(filteredCompanies.length / companiesPerPage);
   const [selectedStatus, setSelectedStatus] = useState("ALL");
@@ -119,6 +121,7 @@ const ManageCompanyAdmin = () => {
   const handleSearch = () => {
     setSearch(searchTerm);
     fetchCompanies(search);
+    setIsSubmiting(true);
   };
   const handleInactive = async () => {
     try {

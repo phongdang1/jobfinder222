@@ -124,7 +124,7 @@ function Chart() {
     },
     {
       category: "Education",
-      posts: jobTypeCount.giaoDuc,
+      posts: jobTypeCount.giaoVien,
       fill: "var(--color-education)",
     },
     {

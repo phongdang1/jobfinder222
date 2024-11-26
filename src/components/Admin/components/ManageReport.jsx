@@ -15,6 +15,14 @@ import { getAllReport, handleCheckReport } from "../../../fetchData/Report";
 import { getAllPost } from "../../../fetchData/Post";
 import AdminPagination from "./AdminPagination";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageReport = () => {
   const [reports, setReports] = useState([]);
@@ -24,6 +32,7 @@ const ManageReport = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all"); // New state for filter
+  const [isSubmiting, setIsSubmiting] = useState(false);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,13 +54,10 @@ const ManageReport = () => {
         Array.isArray(reportsResponse.data.data) &&
         Array.isArray(postsResponse.data.data)
       ) {
-        const filteredReports = reportsResponse.data.data.filter(
-          (report) => report.isChecked === 0 // Filter by isChecked = 1
-        );
-        setReports(filteredReports);
+        setReports(reportsResponse.data.data);
+        setFilteredReports(reportsResponse.data.data); // Set all reports initially
         setPosts(postsResponse.data.data);
-        setTotalCount(filteredReports.length);
-        setFilteredReports(filteredReports); // Set filtered reports initially
+        setTotalCount(reportsResponse.length);
       } else {
         setError("Error fetching data. Please try again later.");
         console.log(
@@ -71,14 +77,20 @@ const ManageReport = () => {
     fetchData();
   }, []);
 
+  const normalizeString = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
+
   const handleSearchInputChange = (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
 
-    // Filter job types based on the input
+    // Normalize search term and filter reports
     const filtered = reports.filter((report) => {
       const postName = getPostNameById(report.postId);
-      return postName.toLowerCase().includes(searchTerm.toLowerCase());
+      return normalizeString(postName.toLowerCase()).includes(
+        normalizeString(searchTerm.toLowerCase())
+      );
     });
     setFilteredReports(filtered);
   };
@@ -99,6 +111,8 @@ const ManageReport = () => {
   };
 
   const handleConfirmToggle = async () => {
+    setIsSubmiting(true);
+
     if (selectedReport) {
       try {
         await handleCheckReport({ reportId: selectedReport.id });
@@ -113,6 +127,8 @@ const ManageReport = () => {
         setShowDialog(false);
       } catch (error) {
         console.error("Error checking report", error);
+      } finally {
+        setIsSubmiting(false); // Hide Lottie animation
       }
     }
   };
@@ -278,7 +294,7 @@ const ManageReport = () => {
         </TableFooter>
       </Table>
 
-      {showDialog && (
+      {/* {showDialog && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl mb-4">
@@ -297,10 +313,37 @@ const ManageReport = () => {
               >
                 Yes
               </Button>
+              <GlobalLoading isSubmiting={isSubmiting} />
             </div>
           </div>
         </div>
-      )}
+      )} */}
+
+      <Dialog open={showDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to approve this report?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-4 mt-4">
+            <Button
+              onClick={handleCancelToggle}
+              className="bg-third hover:text-white text-white rounded-md mt-4"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmToggle}
+              className="bg-third hover:text-white text-white rounded-md mt-4"
+            >
+              Yes
+            </Button>
+            <GlobalLoading isSubmiting={isSubmiting} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

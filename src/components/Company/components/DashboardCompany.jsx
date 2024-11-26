@@ -175,7 +175,7 @@ const DashboardCompany = () => {
     fetchCompany();
     fetchUserPackages();
     fetchPosts();
-    // fetchCvPostsIn7Days();
+    fetchCvPostsIn7Days();
   }, []);
 
   const jobData = [];
@@ -242,7 +242,7 @@ const DashboardCompany = () => {
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-blue-700 font-semibold text-2xl">
-                      {companyData?.allowHotPost}
+                      {companyData?.allowHotPost ?? 0}
                     </p>
                     <p>Job posting package</p>
                   </CardContent>
@@ -251,7 +251,7 @@ const DashboardCompany = () => {
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-green-500 font-semibold text-2xl">
-                      {companyData?.allowCv}
+                      {companyData?.allowCv ?? 0}
                     </p>
                     <p>Profile view package</p>
                   </CardContent>
@@ -259,7 +259,7 @@ const DashboardCompany = () => {
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-primary font-semibold text-2xl">
-                      {user?.point}
+                      {user?.point ?? 0}
                     </p>
                     <p>Total Points Earned</p>
                   </CardContent>
