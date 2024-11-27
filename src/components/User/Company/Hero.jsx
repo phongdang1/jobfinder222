@@ -3,16 +3,23 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import image from "../../../assets/illustration/home/blueberry-business-person-developing-strategy-and-planning.png";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 function Hero({ handleSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const handleSearchSubmit = () => {
+    setIsLoading(true); // Start loading
     handleSearch(searchTerm);
+    setTimeout(() => {
+      // Simulating search delay
+      setIsLoading(false); // Stop loading after the search completes (can be adjusted to your actual search logic)
+    }, 2000); // 2 seconds delay for demo
   };
 
   const handleKeyDown = (e) => {
@@ -23,6 +30,9 @@ function Hero({ handleSearch }) {
 
   return (
     <div>
+      {/* GlobalLoading component */}
+      {/* <GlobalLoading isSubmiting={isLoading} /> */}
+
       {/* Search Section */}
       <div className="flex flex-col justify-center w-full text-center md:text-left px-60 py-16">
         <div className="flex justify-between text-black text-3xl sm:text-4xl md:text-5xl pb-4 sm:pb-6 md:pb-8">
@@ -64,7 +74,6 @@ function Hero({ handleSearch }) {
             </div>
           </div>
           {/* image */}
-
           <img src={image} className="" />
         </div>
       </div>

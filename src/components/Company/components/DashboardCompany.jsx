@@ -144,19 +144,31 @@ const DashboardCompany = () => {
         // Fetch user names for each CV post userId if posts exist
         if (posts.length > 0) {
           const userIdSet = new Set(posts.map((post) => post.userId)); // Get unique userIds
-          userIdSet.forEach(async (userId) => {
+          const userPromises = Array.from(userIdSet).map(async (userId) => {
             try {
               const userResponse = await getUsersById(userId);
               if (userResponse.data.errCode === 0) {
-                setUserNames((prevState) => ({
-                  ...prevState,
-                  [userId]: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
-                }));
+                return {
+                  userId,
+                  name: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
+                };
               }
             } catch (error) {
               console.error(`Error fetching user with ID ${userId}:`, error);
+              return null; // Return null in case of error
             }
           });
+
+          // Wait for all user data to be fetched
+          const userData = await Promise.all(userPromises);
+          const validUserData = userData.filter((user) => user !== null); // Filter out null values
+          const userNamesMap = validUserData.reduce((acc, { userId, name }) => {
+            acc[userId] = name;
+            return acc;
+          }, {});
+
+          // Set the user names in state
+          setUserNames(userNamesMap);
         }
       } else {
         console.warn("No CV posts found for the company.");
@@ -324,7 +336,6 @@ const DashboardCompany = () => {
                         <TableCell>
                           {cvPost.postCvData.postDetailData.name}
                         </TableCell>
-
                         <TableCell>{userNames[cvPost.userId]}</TableCell>
                         <TableCell>{cvPost.description}</TableCell>
                         <TableCell>

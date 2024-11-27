@@ -49,6 +49,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const Head = ({ job }) => {
   const navigate = useNavigate();
@@ -63,9 +64,11 @@ const Head = ({ job }) => {
   const jobId = job.data.id;
   const deadline = new Date(job.data.timeEnd).getTime();
   const currentTime = new Date();
+  const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
+
   useEffect(() => {
     fetchUserData();
-    console.log('job ne', job)
+    console.log("job ne", job);
   }, [userId, jobId]);
   const handleBackClick = () => {
     if (prevLocation) {
@@ -129,7 +132,7 @@ const Head = ({ job }) => {
   };
 
   const applyJobSubmit = async () => {
-    // const jobId = job.data.id;
+    setIsSubmitting(true); // Set loading to true
     try {
       const response = await handleApplyJob(userId, jobId, description);
       if (response.data.errCode === 0) {
@@ -142,6 +145,8 @@ const Head = ({ job }) => {
       }
     } catch (error) {
       console.error("Error applying job:", error);
+    } finally {
+      setIsSubmitting(false); // Set loading to false
     }
   };
 
@@ -159,6 +164,8 @@ const Head = ({ job }) => {
 
   return (
     <div className="flex flex-col mx-4 lg:mx-36">
+      <GlobalLoading isSubmiting={isSubmitting} />
+
       {/* button back to job list */}
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
@@ -299,7 +306,7 @@ const Head = ({ job }) => {
                     ) : (
                       <Button
                         className="w-fit text-white bg-primary hover:bg-primary-dark"
-                        onClick={() => setIsOpen(true)}
+                        onClick={handleApplyStatus}
                       >
                         Apply
                       </Button>
@@ -350,7 +357,7 @@ const Head = ({ job }) => {
                           <Button
                             onClick={() => {
                               setIsOpen(false);
-                              setDescription("")
+                              setDescription("");
                             }}
                             className="bg-white border border-primary text-primary hover:text-white"
                           >
@@ -371,7 +378,7 @@ const Head = ({ job }) => {
                     className="w-full flex gap-2 py-4 mr-3  lg:w-auto px-6 text-center bg-white text-primary hover:bg-primary hover:text-white border-primary text-base font-medium"
                     variant="outline"
                     onClick={() => {
-                      navigate("/userProfile/viewApplication")
+                      navigate("/userProfile/viewApplication");
                     }}
                   >
                     <MdOutlineDoubleArrow />
