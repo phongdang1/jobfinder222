@@ -144,19 +144,31 @@ const DashboardCompany = () => {
         // Fetch user names for each CV post userId if posts exist
         if (posts.length > 0) {
           const userIdSet = new Set(posts.map((post) => post.userId)); // Get unique userIds
-          userIdSet.forEach(async (userId) => {
+          const userPromises = Array.from(userIdSet).map(async (userId) => {
             try {
               const userResponse = await getUsersById(userId);
               if (userResponse.data.errCode === 0) {
-                setUserNames((prevState) => ({
-                  ...prevState,
-                  [userId]: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
-                }));
+                return {
+                  userId,
+                  name: `${userResponse.data.data.firstName} ${userResponse.data.data.lastName}`,
+                };
               }
             } catch (error) {
               console.error(`Error fetching user with ID ${userId}:`, error);
+              return null; // Return null in case of error
             }
           });
+
+          // Wait for all user data to be fetched
+          const userData = await Promise.all(userPromises);
+          const validUserData = userData.filter((user) => user !== null); // Filter out null values
+          const userNamesMap = validUserData.reduce((acc, { userId, name }) => {
+            acc[userId] = name;
+            return acc;
+          }, {});
+
+          // Set the user names in state
+          setUserNames(userNamesMap);
         }
       } else {
         console.warn("No CV posts found for the company.");
@@ -175,7 +187,7 @@ const DashboardCompany = () => {
     fetchCompany();
     fetchUserPackages();
     fetchPosts();
-    // fetchCvPostsIn7Days();
+    fetchCvPostsIn7Days();
   }, []);
 
   const jobData = [];
@@ -242,7 +254,7 @@ const DashboardCompany = () => {
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-blue-700 font-semibold text-2xl">
-                      {companyData?.allowHotPost}
+                      {companyData?.allowHotPost ?? 0}
                     </p>
                     <p>Job posting package</p>
                   </CardContent>
@@ -251,7 +263,7 @@ const DashboardCompany = () => {
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-green-500 font-semibold text-2xl">
-                      {companyData?.allowCv}
+                      {companyData?.allowCv ?? 0}
                     </p>
                     <p>Profile view package</p>
                   </CardContent>
@@ -259,7 +271,7 @@ const DashboardCompany = () => {
                 <Card className="bg-gray-100 hover:bg-primary-50 hover:border-primary">
                   <CardContent className="mt-2 text-center">
                     <p className="text-primary font-semibold text-2xl">
-                      {user?.point}
+                      {user?.point ?? 0}
                     </p>
                     <p>Total Points Earned</p>
                   </CardContent>
@@ -324,7 +336,6 @@ const DashboardCompany = () => {
                         <TableCell>
                           {cvPost.postCvData.postDetailData.name}
                         </TableCell>
-
                         <TableCell>{userNames[cvPost.userId]}</TableCell>
                         <TableCell>{cvPost.description}</TableCell>
                         <TableCell>

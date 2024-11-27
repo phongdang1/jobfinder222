@@ -31,13 +31,14 @@ import AdminPagination from "./AdminPagination";
 import axios from "../../../fetchData/axios";
 import AdminValidationPackage from "../common/AdminValidationPackage";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManagePackages = () => {
   const [packages, setPackages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [errorMessage, setErrorMessage] = useState({});
-
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [newPackage, setNewPackage] = useState({
@@ -174,6 +175,8 @@ const ManagePackages = () => {
       return; // Exit function early if there are validation errors
     }
 
+    setIsSubmiting(true);
+
     try {
       const response = await handleCreateNewPackage(newPackage);
       if (response.data && response.data.errCode === 0) {
@@ -197,6 +200,8 @@ const ManagePackages = () => {
       setCreateModalOpen(false);
     } catch (error) {
       console.error("Error creating package:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -210,6 +215,8 @@ const ManagePackages = () => {
     if (Object.keys(errors).length > 0) {
       return; // Exit function early if there are validation errors
     }
+
+    setIsSubmiting(true);
 
     try {
       console.log("Updating package with data: ", updatePackage);
@@ -242,6 +249,8 @@ const ManagePackages = () => {
       alert(
         "Error occurred while updating the package. Please check the console for details."
       );
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -265,11 +274,20 @@ const ManagePackages = () => {
     }
   };
 
-  const filteredPackages = packages.filter(
-    (pkg) =>
-      pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedType === "all" || pkg.type === selectedType)
-  );
+  const filteredPackages = packages.filter((pkg) => {
+    const searchTermLower = searchTerm.toLowerCase().trim(); // Normalize the search term
+    const packageNameLower = pkg.name.toLowerCase(); // Normalize the package name
+
+    // Split the search term by space and check if all parts exist in the package name
+    const searchParts = searchTermLower.split(" ");
+    const matchesAllParts = searchParts.every((part) =>
+      packageNameLower.includes(part)
+    );
+
+    return (
+      matchesAllParts && (selectedType === "all" || pkg.type === selectedType)
+    );
+  });
 
   // Pagination logic
   const totalPages = Math.ceil(filteredPackages.length / packagesPerPage);
@@ -435,6 +453,7 @@ const ManagePackages = () => {
               </Button>
             </div>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -493,6 +512,7 @@ const ManagePackages = () => {
               </Button>
             </div>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
     </div>

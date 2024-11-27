@@ -14,10 +14,12 @@ import {
 import TooltipBox from "../Homepage/Common/TooltipBox";
 import { Link } from "react-router-dom";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
   const date = new Date();
 
   const handleSearchInputChange = (e) => {
@@ -28,8 +30,16 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
     setLocationTerm(e.target.value);
   };
 
-  const handleSearchSubmit = () => {
-    handleSearch({ searchTerm, locationTerm });
+  const handleSearchSubmit = async () => {
+    setIsSubmitting(true); // Start loading when search is submitted
+
+    try {
+      await handleSearch({ searchTerm, locationTerm });
+    } catch (error) {
+      console.error("Search failed:", error);
+    } finally {
+      setIsSubmitting(false); // Stop loading after the search is complete
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -40,13 +50,15 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
+      <GlobalLoading isSubmiting={isSubmitting} />{" "}
+      {/* Display loading animation */}
       <div className="flex flex-col justify-start text-right mb-4">
         <div className="flex w-full max-w-7xl items-center gap-0">
           <div className="relative flex flex-1 items-center">
             <Input
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md rounded-r-none"
               type="text"
-              placeholder="What position are you looking for?"
+              placeholder="Search by post name..."
               value={searchTerm}
               onChange={handleSearchInputChange}
               onKeyDown={handleKeyDown}
@@ -137,14 +149,6 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                           >
                             {job.postDetailData.provincePostData.value}
                           </Badge>
-                          {/* <div className="flex gap-2 items-center ml-auto absolute -right-1">
-                        <Button
-                          className="bg-secondary border-1 h-9 rounded-md border-primary text-primary hover:bg-primary hover:text-secondary "
-                          variant="outline"
-                        >
-                          Apply
-                        </Button>
-                      </div> */}
                         </div>
                       </div>
                     </Link>

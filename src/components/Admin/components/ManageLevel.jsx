@@ -31,6 +31,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SiLevelsdotfyi } from "react-icons/si";
 import AdminValidationLevel from "../common/AdminValidationLevel";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageLevel = () => {
   const [jobLevels, setJobLevels] = useState([]);
@@ -41,7 +42,7 @@ const ManageLevel = () => {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // State for delete confirmation modal
   const [jobLevelToDelete, setJobLevelToDelete] = useState(null); // State to store job level to be deleted
-
+  const [isSubmiting, setIsSubmiting] = useState(false);
   // form data for new create joblevel
   const [newJobLevel, setNewJobLevel] = useState({
     code: "",
@@ -93,14 +94,25 @@ const ManageLevel = () => {
     fetchJobLevels();
   }, []);
 
+  const removeAccents = (str) => {
+    return str
+      .normalize("NFD") // Chuẩn hóa chuỗi
+      .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu
+      .replace(/đ/g, "d") // Thay đổi ký tự "đ"
+      .replace(/Đ/g, "D"); // Thay đổi ký tự "Đ"
+  };
+
   const handleSearchInputChange = (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
 
-    // Filter job types based on the input
-    const filtered = jobLevels.filter((jobLevel) =>
-      jobLevel.value.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Chuyển đổi chuỗi nhập vào và dữ liệu sang không dấu để so sánh
+    const normalizedSearchTerm = removeAccents(searchTerm.toLowerCase());
+
+    const filtered = jobLevels.filter((jobLevel) => {
+      const normalizedValue = removeAccents(jobLevel.value.toLowerCase());
+      return normalizedValue.includes(normalizedSearchTerm);
+    });
 
     setFilteredJobLevels(filtered); // Update the filtered job types in real-time
   };
@@ -165,6 +177,8 @@ const ManageLevel = () => {
       return;
     }
 
+    setIsSubmiting(true);
+
     const userData = {
       type: "JOBLEVEL",
       value: newJobLevel.value,
@@ -199,6 +213,8 @@ const ManageLevel = () => {
       handleCloseCreateModal();
     } catch (error) {
       console.error("Error saving job level:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -210,6 +226,8 @@ const ManageLevel = () => {
       setErrorMessage(validationErrors);
       return;
     }
+
+    setIsSubmiting(true);
 
     const userData = {
       type: updateJobLevel.type,
@@ -248,6 +266,8 @@ const ManageLevel = () => {
       handleCloseUpdateModal();
     } catch (error) {
       console.error("Error updating job level:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -283,6 +303,7 @@ const ManageLevel = () => {
   };
 
   const handleConfirmDelete = async () => {
+    setIsSubmiting(true);
     if (jobLevelToDelete) {
       try {
         const response = await handleDeleteAllCode({
@@ -307,6 +328,7 @@ const ManageLevel = () => {
       } catch (error) {
         console.error("Error deleting job level:", error);
       } finally {
+        setIsSubmiting(false);
         handleCloseDeleteModal(); // Close the modal after the action
       }
     }
@@ -456,6 +478,7 @@ const ManageLevel = () => {
               </Button>
             </div>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -506,6 +529,7 @@ const ManageLevel = () => {
               </Button>
             </div>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -531,6 +555,7 @@ const ManageLevel = () => {
             >
               Confirm
             </Button>
+            <GlobalLoading isSubmiting={isSubmiting} />
           </div>
         </DialogContent>
       </Dialog>

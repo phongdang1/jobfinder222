@@ -3,25 +3,41 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 import { RadioGroup, Radio } from "@nextui-org/radio";
 import { Button } from "@/components/ui/button";
 
 function JobFilter({ filter, handleFilterChange, handleResetAll }) {
   const [isOpen, setIsOpen] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
 
   const toggleFilter = () => {
     setIsOpen(!isOpen);
   };
 
-  // Generalized function to handle radio button changes
   const handleRadioChange = (e, name) => {
     const { value } = e.target;
-    handleFilterChange({ [name]: value }); // Update the respective filter with the selected value
+    setIsSubmitting(true); // Show loading
+    setTimeout(() => {
+      handleFilterChange({ [name]: value }); // Update the filter
+      setIsSubmitting(false); // Hide loading after update
+    }, 1000); // Simulate delay (optional, replace with real async process if needed)
+  };
+
+  const handleResetAllWithLoading = () => {
+    setIsSubmitting(true); // Show loading
+    setTimeout(() => {
+      handleResetAll(); // Reset all filters
+      setIsSubmitting(false); // Hide loading
+    }, 1000); // Simulate delay (optional)
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200 ease-in-out duration-300 transition-all">
+    <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200 ease-in-out duration-300 transition-all relative">
+      {/* Global Loading */}
+      <GlobalLoading isSubmiting={isSubmitting} />
+
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center space-x-2">
           <FilterListIcon />
@@ -91,7 +107,7 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
         </div>
 
         <Button
-          onClick={handleResetAll}
+          onClick={handleResetAllWithLoading}
           className="bg-secondary text-primary hover:bg-primary hover:text-secondary border-primary items-center gap-1 w-full"
           variant="outline"
         >

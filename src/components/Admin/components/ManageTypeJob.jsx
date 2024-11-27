@@ -30,6 +30,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AdminPagination from "./AdminPagination";
 import AdminValidationTypeJob from "../common/AdminValidationTypeJob";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageTypeJob = () => {
   const [jobTypes, setJobTypes] = useState([]);
@@ -40,7 +41,7 @@ const ManageTypeJob = () => {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [jobTypeToDelete, setJobTypeToDelete] = useState(null);
   const [errorMessage, setErrorMessage] = useState({});
-
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [newJobType, setNewJobType] = useState({
     code: "",
     type: "JOBTYPE",
@@ -92,16 +93,26 @@ const ManageTypeJob = () => {
     fetchJobTypes();
   }, []);
 
+  const removeAccents = (str) => {
+    return str
+      .normalize("NFD") // Chuẩn hóa chuỗi
+      .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu
+      .replace(/đ/g, "d") // Thay đổi ký tự "đ"
+      .replace(/Đ/g, "D"); // Thay đổi ký tự "Đ"
+  };
+
   const handleSearchInputChange = (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
 
-    // Filter job types based on the input
-    const filtered = jobTypes.filter((jobType) =>
-      jobType.value.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Chuyển đổi chuỗi nhập vào và dữ liệu sang không dấu để so sánh
+    const normalizedSearchTerm = removeAccents(searchTerm.toLowerCase());
+    const filtered = jobTypes.filter((jobType) => {
+      const normalizedValue = removeAccents(jobType.value.toLowerCase());
+      return normalizedValue.includes(normalizedSearchTerm);
+    });
 
-    setFilteredJobTypes(filtered); // Update the filtered job types in real-time
+    setFilteredJobTypes(filtered); // Cập nhật danh sách công việc đã lọc theo thời gian thực
   };
 
   const handleOpenCreateModal = () => {
@@ -159,6 +170,8 @@ const ManageTypeJob = () => {
       return;
     }
 
+    setIsSubmiting(true);
+
     const userData = {
       type: "JOBTYPE",
       value: newJobType.value,
@@ -179,7 +192,6 @@ const ManageTypeJob = () => {
             response.data.message || "Unknown error"
           }`
         );
-        toast.success("Create Fail!");
       }
       handleCloseCreateModal();
     } catch (error) {
@@ -187,6 +199,8 @@ const ManageTypeJob = () => {
       toast.error(
         "An error occurred while creating the job type. Please try again."
       );
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -197,6 +211,8 @@ const ManageTypeJob = () => {
       setErrorMessage(validationErrors);
       return;
     }
+
+    setIsSubmiting(true);
 
     const userData = {
       type: updateJobType.type,
@@ -236,11 +252,15 @@ const ManageTypeJob = () => {
       toast.error(
         "An error occurred while updating the job type. Please try again."
       );
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
   const handleDeleteJobType = async () => {
     if (!jobTypeToDelete) return;
+
+    setIsSubmiting(true);
 
     try {
       const response = await handleDeleteAllCode({
@@ -270,6 +290,7 @@ const ManageTypeJob = () => {
     } finally {
       setDeleteConfirmOpen(false);
       setJobTypeToDelete(null);
+      setIsSubmiting(false);
     }
   };
 
@@ -405,6 +426,8 @@ const ManageTypeJob = () => {
               Create
             </Button>
           </form>
+          {/* Lottie Animation */}
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -453,6 +476,8 @@ const ManageTypeJob = () => {
               Update
             </Button>
           </form>
+          {/* Lottie Animation */}
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -479,6 +504,7 @@ const ManageTypeJob = () => {
             >
               Delete
             </Button>
+            <GlobalLoading isSubmiting={isSubmiting} />
           </div>
         </DialogContent>
       </Dialog>

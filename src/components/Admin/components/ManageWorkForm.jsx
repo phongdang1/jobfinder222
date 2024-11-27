@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import AdminPagination from "./AdminPagination";
 import AdminValidationWorkForm from "../common/AdminValidationWorkForm";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageWorkForm = () => {
   const [workTypes, setWorkTypes] = useState([]);
@@ -40,7 +41,7 @@ const ManageWorkForm = () => {
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false); // New state for delete confirmation
   const [deleteItem, setDeleteItem] = useState(null); // State to store the item being deleted
-
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [newWorkType, setNewWorkType] = useState({
     code: "",
     type: "WORKTYPE",
@@ -93,14 +94,24 @@ const ManageWorkForm = () => {
     fetchWorkTypes();
   }, []);
 
+  const removeAccents = (str) => {
+    return str
+      .normalize("NFD") // Chuẩn hóa chuỗi
+      .replace(/[\u0300-\u036f]/g, "") // Loại bỏ các dấu
+      .replace(/đ/g, "d") // Thay đổi ký tự "đ"
+      .replace(/Đ/g, "D"); // Thay đổi ký tự "Đ"
+  };
+
   const handleSearchInputChange = (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
 
-    // Filter job types based on the input
-    const filtered = workTypes.filter((workType) =>
-      workType.value.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Chuyển đổi chuỗi nhập vào và dữ liệu sang không dấu để so sánh
+    const normalizedSearchTerm = removeAccents(searchTerm.toLowerCase());
+    const filtered = workTypes.filter((workType) => {
+      const normalizedValue = removeAccents(workType.value.toLowerCase());
+      return normalizedValue.includes(normalizedSearchTerm);
+    });
 
     setFilteredWorkTypes(filtered); // Update the filtered job types in real-time
   };
@@ -165,6 +176,8 @@ const ManageWorkForm = () => {
       return;
     }
 
+    setIsSubmiting(true);
+
     const userData = {
       type: "WORKTYPE",
       value: newWorkType.value,
@@ -202,6 +215,8 @@ const ManageWorkForm = () => {
       handleCloseCreateModal();
     } catch (error) {
       console.error("Error saving work type:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
@@ -213,6 +228,8 @@ const ManageWorkForm = () => {
       setErrorMessage(validationErrors);
       return;
     }
+
+    setIsSubmiting(true);
 
     const userData = {
       type: updateWorkType.type,
@@ -250,10 +267,14 @@ const ManageWorkForm = () => {
       handleCloseUpdateModal();
     } catch (error) {
       console.error("Error updating job type:", error);
+    } finally {
+      setIsSubmiting(false); // Hide Lottie animation
     }
   };
 
   const handleDelete = async () => {
+    setIsSubmiting(true);
+
     try {
       if (!deleteItem) return;
 
@@ -278,6 +299,8 @@ const ManageWorkForm = () => {
       setDeleteConfirmOpen(false); // Close the confirmation dialog after deletion
     } catch (error) {
       console.error("Error deleting job type:", error);
+    } finally {
+      setIsSubmiting(false);
     }
   };
 
@@ -437,6 +460,7 @@ const ManageWorkForm = () => {
               </Button>
             </div>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -488,6 +512,7 @@ const ManageWorkForm = () => {
               </Button>
             </div>
           </form>
+          <GlobalLoading isSubmiting={isSubmiting} />
         </DialogContent>
       </Dialog>
 
@@ -516,6 +541,7 @@ const ManageWorkForm = () => {
             >
               Confirm
             </Button>
+            <GlobalLoading isSubmiting={isSubmiting} />
           </div>
         </DialogContent>
       </Dialog>

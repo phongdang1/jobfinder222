@@ -140,68 +140,67 @@ function ProductPage() {
   return (
     <div className="mb-5">
       <div className="flex flex-col  bg-opacity-80 rounded-2xl mb-6">
-        <ProductHero />  
+        <ProductHero />
       </div>
-    
+
       {/* Post Package Card */}
       <div
         data-aos="fade-right"
         className="flex justify-center items-center mx-auto max-w-6xl mb-8"
       >
         <div className="flex flex-col justify-between bg-transparent p-8 rounded-lg w-full">
-        <Link 
-      to="/company/exchangePoint"
-      className="flex">
-        <Button
-          variant="outline"
-          className="border border-primary mx-4 mb-14 bg-white flex  items-center gap-2 hover:text-primary"
-        >
-          <FaGift /> Exchange your point
-        </Button>
-      </Link>
+          <Link to="/company/exchangePoint" className="flex">
+            <Button
+              variant="outline"
+              className="border border-primary mx-4 mb-14 bg-white flex  items-center gap-2 hover:text-primary"
+            >
+              <FaGift /> Exchange your point
+            </Button>
+          </Link>
           <div className="flex items-center justify-between">
             {/* Left - Image */}
-             <div className="w-1/2 p-4">
-            <img
-              src={postcard}
-              alt="Post Package Illustration"
-              className="w-full rounded-md"
-            />
-          </div>
-          
-          {/* Right - Details */}
-          <div className="w-1/2 p-4">
-            <h2 className="text-3xl font-semibold mb-5 text-center ">
-              <span className=" text-primary">Post </span>Packages
-            </h2>
-            <p className="mb-2">
-              • Chọn gói đăng bài phù hợp với nhu cầu của bạn.
-            </p>
-            <p className="mb-4">
-              • Tận hưởng nhiều lợi ích từ gói đăng bài này.
-            </p>
-            <select
-              className="w-full mb-4 p-2 border border-gray-400 rounded"
-              onChange={(e) => handlePlanChange(e, "Post")}
-            >
-              {postPlans.map((plan) => (
-                <option key={plan.id} value={plan.name}>
-                  {plan.name}
-                </option>
-              ))}
-            </select>
-            <div className="mb-4 p-2 border border-gray-400 rounded-md flex justify-center items-center bg-gray-100">
-              <p className="text-xl font-semibold">{`$${postPrice}`}</p>
+            <div className="w-1/2 p-4">
+              <img
+                src={postcard}
+                alt="Post Package Illustration"
+                className="w-full rounded-md"
+              />
             </div>
-            <Button
-              onClick={handleCreatePaymentHotPost}
-              className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center"
-            >
-              <FaShoppingCart className="mr-2" /> Buy Now
-            </Button>
+
+            {/* Right - Details */}
+            <div className="w-1/2 p-4">
+              <h2 className="text-3xl font-semibold mb-5 text-center ">
+                <span className=" text-primary">Post </span>Packages
+              </h2>
+              <div className="mb-4 flex gap-2 items-center">
+                <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
+                Choose the posting package that suits your needs.
+              </div>
+              <div className="mb-4 flex gap-2 items-center">
+                <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
+                Enjoy many benefits from this posting package.
+              </div>
+              <select
+                className="w-full mb-4 p-2 border border-gray-400 rounded"
+                onChange={(e) => handlePlanChange(e, "Post")}
+              >
+                {postPlans.map((plan) => (
+                  <option key={plan.id} value={plan.name}>
+                    {plan.name}
+                  </option>
+                ))}
+              </select>
+              <div className="mb-4 p-2 flex justify-center items-center bg-gray-100">
+                <p className="text-xl font-semibold">{`$${postPrice}`}</p>
+              </div>
+              <Button
+                onClick={handleCreatePaymentHotPost}
+                className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center"
+              >
+                <FaShoppingCart className="mr-2" /> Buy Now
+              </Button>
+            </div>
           </div>
-          </div>
-         
         </div>
       </div>
 
