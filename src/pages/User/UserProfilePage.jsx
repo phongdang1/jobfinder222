@@ -22,6 +22,7 @@ import {
 import { RiVipCrownFill } from "react-icons/ri";
 import loadingAnimation from "../../assets/animation/loadingAnimation.json";
 import Lottie from "lottie-react";
+import axios from "axios";
 
 function UserProfilePage() {
   const [image, setImage] = useState(null);
@@ -75,14 +76,21 @@ function UserProfilePage() {
     }
   };
 
-  const [data, setData] = useState();
+  const [data, setData] = useState(localStorage.getItem("user").data);
   const fetchUserData = async () => {
     try {
-      const response = await getUsersById(userId);
+      const response = await axios.get(
+        `http://localhost:5000/getUserById?id=${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const user = response.data.data;
       setData(user);
-      setImage(user.image);
-      console.log(user);
+      setImage(user?.image);
+      console.log('user ne con cho',userId);
     } catch (error) {
       console.error("Error fetching user data: ", error);
     }
@@ -90,7 +98,7 @@ function UserProfilePage() {
 
   useEffect(() => {
     fetchUserData();
-  }, [userId, selectedItem]);
+  }, []);
 
   useEffect(() => {
     if (saveAvatar) {
