@@ -23,7 +23,7 @@ function JobPage() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingFilter, setLoadingFilter] = useState(false); // To manage filter loading
-  const jobsPerPage = 4;
+  const jobsPerPage = 6;
   const date = new Date();
 
   useEffect(() => {
@@ -157,12 +157,15 @@ function JobPage() {
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="flex flex-col space-y-4 items-start"
+                  className="flex space-y-4 items-start"
                 >
-                  <Skeleton className="w-20 h-20 rounded-md" />
-                  <Skeleton className="w-full h-6 sm:h-8 lg:h-10 rounded-md" />
+                  <Skeleton className="w-20 h-20 rounded-md mt-4" />
+                  <div className="w-full flex flex-col gap-2 mx-5">
+                    <Skeleton className="w-full h-6 sm:h-8 lg:h-10 rounded-md" />
                   <Skeleton className="w-3/4 h-4 sm:h-6 lg:h-8 rounded-md" />
                   <Skeleton className="w-1/2 h-4 sm:h-5 lg:h-6 rounded-md" />
+                  </div>
+                  
                 </div>
               ))}
             </div>

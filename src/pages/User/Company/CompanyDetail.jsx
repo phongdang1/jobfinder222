@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { getCompanyById } from "@/fetchData/Company";
 import JobCard from "@/components/User/Homepage/Card";
 import illustration from "../../../assets/Home/Company-amico.png";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 
 function CompanyDetail() {
   const { id } = useParams();
@@ -167,81 +168,83 @@ function CompanyDetail() {
               </div>
             </div>
           </div>
-          <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white space-y-4">
-            <div>
+          <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white space-y-10">
+            <div className="flex flex-col gap-4">
               {companyDetail?.postData?.length > 0 ? (
-                <Card
-                  className="border-none bg-white w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer"
-                  shadow=""
-                >
-                  <CardBody>
-                    <div className="flex gap-8 items-center justify-start w-full ">
-                      <div
-                        onClick={() => handleNavigate(companyDetail.id)}
-                        className="relative bg-transparent shrink-0"
-                      >
-                        <Image
-                          alt="Album cover"
-                          className="object-cover rounded-lg"
-                          height={90}
-                          shadow="md"
-                          src="https://nextui.org/images/album-cover.png"
-                          width={90}
-                        />
-                      </div>
+                companyDetail.postData.map((post, index) => (
+                  <Card
+                    key={index}
+                    className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
+                      post?.isHot  === 1
+                        ? "bg-primary/20 hover:bg-violet-200"
+                        : "bg-white"
+                    }`}
+                    shadow=""
+                  >
+                     {post?.isHot === 1 && (
+                    <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
+                      <WhatshotIcon className="text-[#ffdd85] mr-2" />
+                      SUPER HOT
+                      <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 translate-x-1 translate-y-1"></span>
+                    </span>
+                  )}
+                    <CardBody>
+                      <div className="flex gap-8 items-center justify-start w-full">
+                        <div
+                          onClick={() => handleNavigate(companyDetail.id)}
+                          className="relative bg-transparent shrink-0"
+                        >
+                          <Image
+                            alt="Album cover"
+                            className="object-cover rounded-lg"
+                            height={90}
+                            shadow="md"
+                            src="https://nextui.org/images/album-cover.png"
+                            width={90}
+                          />
+                        </div>
 
-                      <div className="flex flex-col w-full">
-                        <TooltipProvider>
-                          <Tooltip className="">
-                            <TooltipTrigger className="text-start">
-                              <p
-                                onClick={() =>
-                                  handleNavigate(companyDetail.postData[0]?.id)
-                                }
-                                className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
-                              >
-                                {
-                                  companyDetail.postData[0]?.postDetailData
-                                    ?.name
-                                }
-                              </p>
-                            </TooltipTrigger>
-                            <TooltipContent side={"right"}>
-                              <TooltipBox id={companyDetail.postData[0]?.id} />
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <div className="flex flex-col w-full">
+                          <TooltipProvider>
+                            <Tooltip className="">
+                              <TooltipTrigger className="text-start">
+                                <p
+                                  onClick={() => handleNavigate(post?.id)}
+                                  className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
+                                >
+                                  {post?.postDetailData?.name}
+                                </p>
+                              </TooltipTrigger>
+                              <TooltipContent side={"right"}>
+                                <TooltipBox id={post?.id} />
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
 
-                        <p className="font-normal text-base text-gray-500">
-                          {companyDetail.name}
-                        </p>
-                        <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
-                          <Badge
-                            variant="outline"
-                            className="bg-white w-fit text-nowrap rounded-lg"
-                          >
-                            {
-                              companyDetail.postData[0]?.postDetailData
-                                ?.salaryTypePostData?.value
-                            }
-                          </Badge>
-                          <Badge
-                            variant="outline"
-                            className="bg-white w-fit text-nowrap rounded-lg"
-                          >
-                            {
-                              companyDetail.postData[0]?.postDetailData
-                                ?.provincePostData?.value
-                            }
-                          </Badge>
+                          <p className="font-normal text-base text-gray-500">
+                            {companyDetail.name}
+                          </p>
+                          <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                            <Badge
+                              variant="outline"
+                              className="bg-white w-fit text-nowrap rounded-lg"
+                            >
+                              {post?.postDetailData?.salaryTypePostData?.value}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className="bg-white w-fit text-nowrap rounded-lg"
+                            >
+                              {post?.postDetailData?.provincePostData?.value}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardBody>
-                </Card>
+                    </CardBody>
+                  </Card>
+                ))
               ) : (
                 <p className="italic">
-                  {" "}
                   This company has not posted any jobs yet
                 </p>
               )}
