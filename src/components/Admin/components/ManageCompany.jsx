@@ -28,7 +28,6 @@ import {
 } from "@/fetchData/Company";
 import AdminPagination from "./AdminPagination";
 import toast from "react-hot-toast";
-import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageCompanyAdmin = () => {
   const [companies, setCompanies] = useState([]);
@@ -49,7 +48,8 @@ const ManageCompanyAdmin = () => {
     indexOfFirstCompany,
     indexOfLastCompany
   );
-  const [isSubmiting, setIsSubmiting] = useState(false);
+  const [action, setAction] = useState("");
+  const [note, setNote] = useState("");
 
   const totalPages = Math.ceil(filteredCompanies.length / companiesPerPage);
   const [selectedStatus, setSelectedStatus] = useState("ALL");
@@ -121,7 +121,6 @@ const ManageCompanyAdmin = () => {
   const handleSearch = () => {
     setSearch(searchTerm);
     fetchCompanies(search);
-    setIsSubmiting(true);
   };
   const handleInactive = async () => {
     try {
@@ -176,7 +175,7 @@ const ManageCompanyAdmin = () => {
   };
   const handleBan = async () => {
     try {
-      const res = await banCompany(currentCompanyDetail.id);
+      const res = await banCompany(currentCompanyDetail.id, note);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
         fetchCompanies();
@@ -265,23 +264,22 @@ const ManageCompanyAdmin = () => {
               <TableCell className="text-center">{company.taxnumber}</TableCell>
               <TableCell className="text-center">
                 <span
-                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${
-                    company.statusCode.toUpperCase() === "APPROVED"
-                      ? "bg-green-500 text-white"
-                      : company.statusCode.toUpperCase() === "PENDING"
+                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${company.statusCode.toUpperCase() === "APPROVED"
+                    ? "bg-green-500 text-white"
+                    : company.statusCode.toUpperCase() === "PENDING"
                       ? "bg-gray-500 text-white"
                       : company.statusCode.toUpperCase() === "BANNED"
-                      ? "bg-orange-500 text-white"
-                      : "bg-red-500 text-white"
-                  }`}
+                        ? "bg-orange-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
                 >
                   {company.statusCode.toUpperCase() === "APPROVED"
                     ? "APPROVED"
                     : company.statusCode.toUpperCase() === "PENDING"
-                    ? "PENDING"
-                    : company.statusCode.toUpperCase() === "BANNED"
-                    ? "BANNED"
-                    : "REJECTED"}
+                      ? "PENDING"
+                      : company.statusCode.toUpperCase() === "BANNED"
+                        ? "BANNED"
+                        : "REJECTED"}
                 </span>
               </TableCell>
             </TableRow>
@@ -398,58 +396,68 @@ const ManageCompanyAdmin = () => {
                     <div className="flex justify-end">
                       {currentCompanyDetail.statusCode.toUpperCase() ===
                         "PENDING".toUpperCase() && (
-                        <>
+                          <>
+                            <button
+                              onClick={handleActive}
+                              className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => {
+                                setShowConfirm(true);
+                                setAction("reject");
+                              }}
+                              className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                      {currentCompanyDetail.statusCode.toUpperCase() ===
+                        "APPROVED".toUpperCase() && (
+                          <>
+                            <button
+                              onClick={() => {
+                                setShowConfirm(true);
+                                setAction("reject");
+                              }}
+                              className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
+                            >
+                              Reject
+                            </button>
+                            <button
+                              onClick={() => {
+                                setShowConfirm(true);
+                                setAction("ban");
+                              }}
+                              className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
+                            >
+                              Ban
+                            </button>
+                          </>
+                        )}
+                      {currentCompanyDetail.statusCode.toUpperCase() ===
+                        "REJECTED".toUpperCase() && (
                           <button
                             onClick={handleActive}
-                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
+                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
                           >
                             Approve
                           </button>
-                          <button
-                            onClick={handleInactive}
-                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
+                        )}
                       {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "APPROVED".toUpperCase() && (
-                        <>
-                          <button
-                            onClick={handleInactive}
-                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
-                          >
-                            Reject
-                          </button>
+                        "BANNED".toUpperCase() && (
                           <button
                             onClick={() => {
                               setShowConfirm(true);
+                              setAction("unban");
                             }}
-                            className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
+                            className="p-3 text-white bg-blue-500 hover:bg-blue-700 rounded-md"
                           >
-                            Ban
+                            Unban
                           </button>
-                        </>
-                      )}
-                      {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "REJECTED".toUpperCase() && (
-                        <button
-                          onClick={handleActive}
-                          className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
-                        >
-                          Approve
-                        </button>
-                      )}
-                      {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "BANNED".toUpperCase() && (
-                        <button
-                          onClick={handleUnban}
-                          className="p-3 text-white bg-blue-500 hover:bg-blue-700 rounded-md"
-                        >
-                          Unban
-                        </button>
-                      )}
+                        )}
                     </div>
 
                     {showConfirm === true && (
@@ -459,14 +467,43 @@ const ManageCompanyAdmin = () => {
                             <DialogTitle>Confirm Action</DialogTitle>
                           </DialogHeader>
                           <DialogDescription>
-                            Are you sure you want to delete this user?
+                            Are you sure {action}?
                           </DialogDescription>
                           <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">
                             Warning: This action cannot be undone.
                           </h3>
+                          {action === "ban" && (
+                            <div className="mt-4">
+                              <label
+                                htmlFor="banReason"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Reason for {action}:
+                              </label>
+                              <Input
+                                id="banReason"
+                                type="text"
+                                className="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                                placeholder="Enter the reason for banning this user"
+                              />
+                            </div>
+                          )}
                           <div className="flex justify-center mt-4">
                             <button
-                              onClick={handleBan}
+                              onClick={() => {
+                                if (action.toUpperCase() === "ban".toUpperCase()) {
+                                  handleBan(note);
+                                }
+                                if (action.toUpperCase() === "reject".toUpperCase()) {
+                                  handleInactive();
+                                }
+                                if (action.toUpperCase() === "unban".toUpperCase()) {
+                                  handleUnban();
+                                }
+                                setNote("");
+                              }}
                               className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2"
                             >
                               Yes, I am sure
@@ -487,8 +524,8 @@ const ManageCompanyAdmin = () => {
             </>
           )}
         </DialogContent>
-      </Dialog>
-    </div>
+      </Dialog >
+    </div >
   );
 };
 

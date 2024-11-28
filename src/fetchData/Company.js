@@ -24,11 +24,12 @@ const getCompanyById = (companyId) => {
     },
   });
 };
-const banCompany = (companyId) => {
+const banCompany = (companyId, reason) => {
   return axios.post(
     `/banCompany`,
     {
       companyId: companyId,
+      reason: reason,
     },
     {
       headers: {

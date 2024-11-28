@@ -26,6 +26,7 @@ const VipFeature = () => {
   console.log("userid:", user?.data?.isVip);
   const handleUpdateVip = async () => {
     const res = await createPaymentVip(7);
+    console.log("vip:", res);
     if (res.data.errCode == 0) {
       let data = {
         packageId: 7,
