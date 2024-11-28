@@ -14,32 +14,32 @@ import {
 import TooltipBox from "../Homepage/Common/TooltipBox";
 import { Link } from "react-router-dom";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
-import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+// import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
+  // const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
   const date = new Date();
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleLocationInputChange = (e) => {
-    setLocationTerm(e.target.value);
-  };
+  // const handleLocationInputChange = (e) => {
+  //   setLocationTerm(e.target.value);
+  // };
 
   const handleSearchSubmit = async () => {
-    setIsSubmitting(true); // Start loading when search is submitted
-
-    try {
-      await handleSearch({ searchTerm, locationTerm });
-    } catch (error) {
-      console.error("Search failed:", error);
-    } finally {
-      setIsSubmitting(false); // Stop loading after the search is complete
-    }
+    // setIsSubmitting(true); // Start loading when search is submitted
+    handleSearch({ searchTerm, locationTerm });
+    // try {
+    //   await handleSearch({ searchTerm, locationTerm });
+    // } catch (error) {
+    //   console.error("Search failed:", error);
+    // } finally {
+    //   setIsSubmitting(false); // Stop loading after the search is complete
+    // }
   };
 
   const handleKeyDown = (e) => {
@@ -50,7 +50,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
-      <GlobalLoading isSubmiting={isSubmitting} />{" "}
+      {/* <GlobalLoading isSubmiting={isSubmitting} />{" "} */}
       {/* Display loading animation */}
       <div className="flex flex-col justify-start text-right mb-4">
         <div className="flex w-full max-w-7xl items-center gap-0">

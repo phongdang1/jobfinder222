@@ -164,8 +164,6 @@ const Head = ({ job }) => {
 
   return (
     <div className="flex flex-col mx-4 lg:mx-36">
-      <GlobalLoading isSubmiting={isSubmitting} />
-
       {/* button back to job list */}
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
@@ -369,6 +367,7 @@ const Head = ({ job }) => {
                           >
                             Apply
                           </Button>
+                          <GlobalLoading isSubmiting={isSubmitting} />
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>

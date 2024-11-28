@@ -25,6 +25,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { createNewReport } from "@/fetchData/Report";
 import toast from "react-hot-toast";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 function Report({ data }) {
   const plugin = React.useRef(
@@ -34,6 +35,7 @@ function Report({ data }) {
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [description, setDescription] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
 
   const handleCheckboxChange = (values) => {
     setSelectedReasons(values);
@@ -51,20 +53,29 @@ function Report({ data }) {
       description: description,
     };
 
+    setIsSubmitting(true); // Show loading
+
     if (!reportData.userId) {
       toast.error("Please login before reporting!");
+      setIsSubmitting(false); // Hide loading if no user is logged in
     } else {
-      const report = await createNewReport(reportData);
-      if (report.data.errorCode === -1) {
-        console.log("rp data", report);
-        toast.error(report.data.errMessage);
-        setSelectedReasons([]);
-        setDescription("");
-      } else {
-        toast.success("Report successfully!");
-        setSelectedReasons([]);
-        setDescription("");
-        setIsDialogOpen(false);
+      try {
+        const report = await createNewReport(reportData);
+        if (report.data.errorCode === -1) {
+          console.log("rp data", report);
+          toast.error(report.data.errMessage);
+          setSelectedReasons([]);
+          setDescription("");
+        } else {
+          toast.success("Report successfully!");
+          setSelectedReasons([]);
+          setDescription("");
+          setIsDialogOpen(false);
+        }
+      } catch (error) {
+        toast.error("An error occurred while submitting the report.");
+      } finally {
+        setIsSubmitting(false); // Hide loading after report is submitted
       }
     }
   };
@@ -213,6 +224,7 @@ function Report({ data }) {
                     >
                       Send Report
                     </Button>
+                    <GlobalLoading isSubmiting={isSubmitting} />
                   </div>
                 </div>
               </form>

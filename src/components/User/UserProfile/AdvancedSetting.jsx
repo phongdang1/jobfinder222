@@ -24,7 +24,7 @@ import { getUsersById, handleSetDataUserDetail } from "@/fetchData/User";
 import { getAllCodeByType, getValueByCode } from "@/fetchData/AllCode";
 import { getAllSkillByCategory } from "@/fetchData/Skill";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 import toast from "react-hot-toast";
 import Validation from "../Common/Validation";
 import { Separator } from "@/components/ui/separator";
@@ -60,6 +60,7 @@ function AdvancedSetting() {
   const [salaryJobCode, setSalaryJobCode] = useState([]);
   const [workTypeCode, setWorkTypeCode] = useState([]);
   const [code, setCode] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
 
   const [dreamJob, setDreamJob] = useState({
     province: "",
@@ -308,17 +309,25 @@ function AdvancedSetting() {
         isFindJob: 1,
       },
     };
-    const res = await handleSetDataUserDetail(userData);
-    if (res.data.errCode === 0) {
-      toast.success("Job Seeker mode has been enabled");
-      console.log(res);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 500);
-      setIsFindJob(true);
-      // fetchUserSkill();
-    } else {
-      console.log("loi turn on");
+
+    setIsSubmitting(true); // Set submitting to true before the API call
+
+    try {
+      const res = await handleSetDataUserDetail(userData);
+
+      if (res.data.errCode === 0) {
+        toast.success("Job Seeker mode has been enabled");
+        console.log(res);
+        setIsFindJob(true);
+        // fetchUserSkill();
+      } else {
+        console.log("Error enabling Job Seeker mode");
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+      // You can also handle any errors here, such as displaying a toast error message
+    } finally {
+      setIsSubmitting(false); // Ensure submitting is turned off regardless of success or failure
     }
   };
 
@@ -329,16 +338,24 @@ function AdvancedSetting() {
         isFindJob: "0",
       },
     };
-    const res = await handleSetDataUserDetail(userData);
-    if (res.data.errCode === 0) {
-      toast.error("Disabled Job Seeker mode");
-      console.log(res);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 500);
-      setIsFindJob(false);
-    } else {
-      console.log("loi turn off");
+
+    setIsSubmitting(true); // Set submitting to true before the API call
+
+    try {
+      const res = await handleSetDataUserDetail(userData);
+
+      if (res.data.errCode === 0) {
+        toast.error("Disabled Job Seeker mode");
+        console.log(res);
+        setIsFindJob(false);
+      } else {
+        console.log("Error disabling Job Seeker mode");
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+      // Handle any API call errors here if needed
+    } finally {
+      setIsSubmitting(false); // Ensure submitting is turned off regardless of success or failure
     }
   };
 
@@ -349,13 +366,23 @@ function AdvancedSetting() {
         isTakeMail: 1,
       },
     };
-    const res = await handleSetDataUserDetail(userData);
-    if (res.data.errCode === 0) {
-      toast.success("Job Suggestion has been enabled");
-      console.log(res);
-      setIsTakeMail(true);
-    } else {
-      console.log("loi turn on");
+
+    setIsSubmitting(true); // Set submitting to true before the API call
+
+    try {
+      const res = await handleSetDataUserDetail(userData);
+
+      if (res.data.errCode === 0) {
+        toast.success("Job Suggestion has been enabled");
+        console.log(res);
+        setIsTakeMail(true);
+      } else {
+        console.log("Error enabling Job Suggestion");
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+    } finally {
+      setIsSubmitting(false); // Ensure submitting is turned off regardless of success or failure
     }
   };
 
@@ -366,13 +393,23 @@ function AdvancedSetting() {
         isTakeMail: "0",
       },
     };
-    const res = await handleSetDataUserDetail(userData);
-    if (res.data.errCode === 0) {
-      toast.error("Disabled Job Suggestion");
-      console.log(res);
-      setIsTakeMail(false)
-    } else {
-      console.log("loi turn off");
+
+    setIsSubmitting(true); // Set submitting to true before the API call
+
+    try {
+      const res = await handleSetDataUserDetail(userData);
+
+      if (res.data.errCode === 0) {
+        toast.error("Disabled Job Suggestion");
+        console.log(res);
+        setIsTakeMail(false);
+      } else {
+        console.log("Error disabling Job Suggestion");
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+    } finally {
+      setIsSubmitting(false); // Ensure submitting is turned off regardless of success or failure
     }
   };
 
@@ -818,6 +855,7 @@ function AdvancedSetting() {
                     }
                   }}
                 />
+                <GlobalLoadingMain isSubmiting={isSubmitting} />
               </div>
 
               {/* Job Suggestion */}
@@ -849,6 +887,7 @@ function AdvancedSetting() {
                     }
                   }}
                 />
+                <GlobalLoadingMain isSubmiting={isSubmitting} />
               </div>
             </div>
           </div>

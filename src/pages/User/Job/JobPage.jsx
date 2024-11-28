@@ -4,13 +4,13 @@ import JobHero from "@/components/User/Jobpage/JobHero";
 import JobFilter from "@/components/User/Jobpage/JobFilter";
 import JobList from "@/components/User/Jobpage/JobList";
 import JobPagination from "@/components/User/Jobpage/JobPagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const URL = "/getAllPost";
 
 function JobPage() {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
-
   const [filter, setFilter] = useState({
     jobName: "",
     location: "",
@@ -22,7 +22,8 @@ function JobPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 9;
+  const [loadingFilter, setLoadingFilter] = useState(false); // To manage filter loading
+  const jobsPerPage = 4;
   const date = new Date();
 
   useEffect(() => {
@@ -30,18 +31,12 @@ function JobPage() {
       try {
         setLoading(true);
         const response = await axios.get(URL);
-        if (
-          Array.isArray(response.data.data)
-          // &&
-          // date < new Date(response?.data?.data?.timeEnd)
-        ) {
+        if (Array.isArray(response.data.data)) {
           const activeJobs = response.data.data.filter(
             (job) =>
               job.statusCode.toUpperCase() === "approved".toUpperCase() &&
               date < new Date(job?.timeEnd)
           );
-          console.log("date ne", activeJobs);
-          // Sort jobs by isHot to display hot jobs first
           const sortedJobs = activeJobs.sort((a, b) => b.isHot - a.isHot);
           setJobs(sortedJobs);
           setFilteredJobs(sortedJobs);
@@ -97,7 +92,11 @@ function JobPage() {
       );
     });
 
-    setFilteredJobs(filtered);
+    setLoadingFilter(true); // Show filter loading skeleton
+    setTimeout(() => {
+      setFilteredJobs(filtered);
+      setLoadingFilter(false); // Hide filter loading skeleton after filtering
+    }, 1000); // Simulate delay
   }, [filter, jobs]);
 
   const handleFilterChange = (newFilter) => {
@@ -120,10 +119,10 @@ function JobPage() {
     setFilter({
       jobName: "",
       location: "",
-      levels: "", // Set as a string for single value selection in RadioGroup
-      typeWorks: "", // Reset to an empty string
-      expJobs: "", // Reset to an empty string
-      postedOn: "All", // Reset to default value
+      levels: "",
+      typeWorks: "",
+      expJobs: "",
+      postedOn: "All",
     });
   };
 
@@ -153,29 +152,33 @@ function JobPage() {
           />
         </div>
         <div className="w-full md:w-3/4 pl-0 md:pl-4">
-          {loading ? (
-            <p>Loading...</p>
+          {loading || loadingFilter ? (
+            <div className="grid grid-cols-1 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col space-y-4 items-start"
+                >
+                  <Skeleton className="w-20 h-20 rounded-md" />
+                  <Skeleton className="w-full h-6 sm:h-8 lg:h-10 rounded-md" />
+                  <Skeleton className="w-3/4 h-4 sm:h-6 lg:h-8 rounded-md" />
+                  <Skeleton className="w-1/2 h-4 sm:h-5 lg:h-6 rounded-md" />
+                </div>
+              ))}
+            </div>
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <>
-              <div className="flex flex-col h-full">
-                <div className="flex-grow">
-                  <JobList
-                    currentJobs={currentJobs}
-                    totalJobs={filteredJobs.length}
-                    currentPage={currentPage}
-                    handleSearch={handleSearch}
-                  />
-                </div>
-              </div>
-            </>
+            <JobList
+              currentJobs={currentJobs}
+              totalJobs={filteredJobs.length}
+              currentPage={currentPage}
+              handleSearch={handleSearch}
+            />
           )}
         </div>
       </div>
       <div className="flex justify-center ml-4">
-        {" "}
-        {/* Add this wrapper for indentation */}
         <JobPagination
           currentPage={currentPage}
           totalPages={totalPages}

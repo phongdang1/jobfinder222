@@ -3,7 +3,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+// import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 import { RadioGroup, Radio } from "@nextui-org/radio";
 import { Button } from "@/components/ui/button";
@@ -18,25 +18,29 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
 
   const handleRadioChange = (e, name) => {
     const { value } = e.target;
-    setIsSubmitting(true); // Show loading
-    setTimeout(() => {
-      handleFilterChange({ [name]: value }); // Update the filter
-      setIsSubmitting(false); // Hide loading after update
-    }, 1000); // Simulate delay (optional, replace with real async process if needed)
+    // setIsSubmitting(true); // Show loading
+    // setTimeout(() => {
+    //   handleFilterChange({ [name]: value }); // Update the filter
+    //   setIsSubmitting(false); // Hide loading after update
+    // }, 1000); // Simulate delay (optional, replace with real async process if needed)
+
+    handleFilterChange({ [name]: value }); // Update the filter
   };
 
   const handleResetAllWithLoading = () => {
-    setIsSubmitting(true); // Show loading
-    setTimeout(() => {
-      handleResetAll(); // Reset all filters
-      setIsSubmitting(false); // Hide loading
-    }, 1000); // Simulate delay (optional)
+    // setIsSubmitting(true); // Show loading
+    // setTimeout(() => {
+    //   handleResetAll(); // Reset all filters
+    //   setIsSubmitting(false); // Hide loading
+    // }, 1000); // Simulate delay (optional)
+
+    handleResetAll(); // Reset all filters
   };
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200 ease-in-out duration-300 transition-all relative">
       {/* Global Loading */}
-      <GlobalLoading isSubmiting={isSubmitting} />
+      {/* <GlobalLoading isSubmiting={isSubmitting} /> */}
 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center space-x-2">

@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { resetPassword } from "../../../fetchData/User";
 import toast from "react-hot-toast";
-
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 const ChangePassword = () => {
   const userId = localStorage.getItem("user_id");
   // const token = localStorage.getItem("token");
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
+
   const [form, setForm] = useState({
     oldPassword: "",
     newPassword: "",
@@ -98,6 +100,8 @@ const ChangePassword = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     if (!errors.newPassword && !errors.retypePassword) {
       try {
         const response = await resetPassword(
@@ -117,6 +121,8 @@ const ChangePassword = () => {
         }
       } catch (error) {
         console.error("Error:", error);
+      } finally {
+        setIsSubmitting(false); // Stop loading after the search is complete
       }
     }
   };
@@ -208,6 +214,7 @@ const ChangePassword = () => {
             Save
           </Button>
         </div>
+        <GlobalLoadingMain isSubmiting={isSubmitting} />
       </form>
     </div>
   );

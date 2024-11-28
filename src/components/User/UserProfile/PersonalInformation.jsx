@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { sendOtp, verifyOtp } from "../../../fetchData/OTP";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 import { useState, useEffect, useRef } from "react";
 import Validation from "@/components/User/Common/Validation";
@@ -67,6 +68,7 @@ function PersonalInformation() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dialogRef = useRef(null);
   const token = localStorage.getItem("token");
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
 
   const fetchUserData = async () => {
     setLoading(true);
@@ -93,12 +95,8 @@ function PersonalInformation() {
           file: response.data.data.UserDetailData.file || "",
         });
         setOriginalUserData(response.data.data);
-
-        // verify
         const verifiedData = response.data.data;
         setVerify(verifiedData.isVerify);
-        console.log("data ne", verifiedData);
-
         if (response.data.data.dob) {
           setDate(new Date(response.data.data.dob));
         }
@@ -121,6 +119,7 @@ function PersonalInformation() {
     e.preventDefault();
     const validationErrors = Validation(inputValue);
     setErrorMessage(validationErrors);
+    setIsSubmitting(true);
 
     if (Object.keys(validationErrors).length === 0) {
       try {
@@ -159,6 +158,8 @@ function PersonalInformation() {
       } catch (error) {
         console.error("Error updating user data:", error);
         setError("Error updating data. Please try again later.");
+      } finally {
+        setIsSubmitting(false); // Stop loading after the search is complete
       }
     }
   };
@@ -251,7 +252,6 @@ function PersonalInformation() {
     console.log(res);
     console.log("email: " + email + " otp: " + otp.length);
     if (res.data.errCode === 0) {
-
       toast.success("OTP verified successfully!");
       setTimeout(async () => {
         window.location.reload();
@@ -261,7 +261,6 @@ function PersonalInformation() {
         setIsDialogOpen(false);
       }, 200);
     } else if (res.data.errCode === -1) {
-
       console.log("abc sai roi");
       setOtp("");
       toast.error("Invalid OTP");
@@ -297,7 +296,7 @@ function PersonalInformation() {
         <Separator />
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <GlobalLoadingMain isSubmiting={loading} />
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
@@ -584,6 +583,7 @@ function PersonalInformation() {
               </div>
             )}
           </div>
+          <GlobalLoadingMain isSubmiting={loading} />
         </form>
       )}
     </div>

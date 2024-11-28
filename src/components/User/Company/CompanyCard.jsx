@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getCompanyById } from '@/fetchData/Company';
-import { FmdGoodOutlined } from '@mui/icons-material';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getCompanyById } from "@/fetchData/Company";
+import { FmdGoodOutlined } from "@mui/icons-material";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CompanyCard = ({ company }) => {
   const [companyData, setCompanyData] = useState(null);
@@ -14,23 +15,29 @@ const CompanyCard = ({ company }) => {
           setCompanyData(response.data.data);
         }
       } catch (error) {
-        console.error('Error fetching the company data:', error);
+        console.error("Error fetching the company data:", error);
       }
     };
 
     fetchCompanyData();
-  }, []);
+  }, [company.id]);
 
   if (!companyData) {
     return (
-      <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-        <p>Loading company data...</p>
+      <div className="w-full bg-white shadow rounded-lg overflow-hidden">
+        <Skeleton className="w-full h-40 object-cover" />
+        <div className="p-4">
+          <Skeleton className="w-16 h-16 rounded-full mb-4" />
+          <Skeleton className="h-6 w-3/4 mb-2" />
+          <Skeleton className="h-4 w-1/2 mb-4" />
+          <Skeleton className="h-4 w-full" />
+        </div>
       </div>
     );
   }
 
   return (
-    <Link to={`/companydetail/${company.id}`} className="block" target='_blank'>
+    <Link to={`/companydetail/${company.id}`} className="block" target="_blank">
       <div className="relative">
         {companyData.coverimage ? (
           <img
@@ -62,13 +69,24 @@ const CompanyCard = ({ company }) => {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">{companyData.name}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {companyData.name}
+            </h3>
             <div className="flex items-center mt-2 text-sm text-gray-700">
-              <FmdGoodOutlined className="text-gray-600 mr-1" fontSize="small" />
-              <p className="text-sm text-gray-700 mt-2 line-clamp-2">Head Office: {companyData.address}</p>
+              <FmdGoodOutlined
+                className="text-gray-600 mr-1"
+                fontSize="small"
+              />
+              <p className="text-sm text-gray-700 mt-2 line-clamp-2">
+                Head Office: {companyData.address}
+              </p>
             </div>
-            <p className="text-sm text-gray-700 mt-2 line-clamp-2">{companyData.description}</p>
-            <p className="text-sm text-gray-700 mt-2 font-medium">Total Job Recruitment: {companyData.totalJobs || 0}</p>
+            <p className="text-sm text-gray-700 mt-2 line-clamp-2">
+              {companyData.description}
+            </p>
+            <p className="text-sm text-gray-700 mt-2 font-medium">
+              Total Job Recruitment: {companyData.totalJobs || 0}
+            </p>
           </div>
         </div>
       </div>
@@ -77,4 +95,3 @@ const CompanyCard = ({ company }) => {
 };
 
 export default CompanyCard;
-
