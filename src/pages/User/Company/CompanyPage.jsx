@@ -4,6 +4,7 @@ import PaginationComponent from "@/components/User/Company/PaginationComponent";
 import CompanyCard from "@/components/User/Company/CompanyCard";
 import { useSearchParams } from "react-router-dom";
 import { getAllCompaniesUser } from "@/fetchData/Company";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function CompanyPage() {
   const [filteredCompanies, setFilteredCompanies] = useState([]);
@@ -113,7 +114,17 @@ function CompanyPage() {
         </div>
         <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto px-2 sm:px-4">
           {loading ? (
-            <p className="text-center text-gray-600">Loading...</p>
+            // <p className="text-center text-gray-600">Loading...</p>
+            <div className="w-full grid grid-cols-3 gap-4 p-4">
+            {Array(9).fill().map((_, index) => (
+              <div key={index} className="flex flex-col gap-3 items-center">
+                <Skeleton className="w-full h-[150px] mb-4" />
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/2 mb-4" />
+                <Skeleton className="h-4 w-full" />
+              </div>
+            ))}
+          </div>
           ) : error ? (
             <p className="text-center text-red-500">{error}</p>
           ) : filteredCompanies.length === 0 ? (
