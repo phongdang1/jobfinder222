@@ -30,6 +30,7 @@ import {
   getAllPostsInactive,
   getAllPostWithLimit,
 } from "@/fetchData/Post";
+import JobPagination from "../Jobpage/JobPagination";
 
 function BestJob() {
   const [sort, setSort] = useState([]);
@@ -45,6 +46,7 @@ function BestJob() {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     const fetchSort = async () => {
       try {
@@ -81,20 +83,58 @@ function BestJob() {
   ];
   const uniqueTypes = [...new Set(sort.map((item) => item.type))];
 
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [totalPages, setTotalPages] = useState(0); // Total pages
+  const [currentJobs, setCurrentJobs] = useState([]);
+  const itemsPerPage = 6;
+  const indexOfLastJob = currentPage * itemsPerPage;
+  const indexOfFirstJob = indexOfLastJob - itemsPerPage;
   const [data, setData] = useState([]);
-  useEffect(() => {
-    const fetchAllPosts = async () => {
-      try {
-        const response = await getAllPostWithLimit(9, 0);
-        setData(response.data.data);
-        console.log('jpb',response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    fetchAllPosts();
-  }, []);
+  const fetchAllPosts = async (page) => {
+    const date = new Date();
+    try {
+      const response = await getAllPost();
+      const fetchedData = response.data.data;
+      const allHotJobs = fetchedData.filter(
+        (all) => all.isHot === 1 && date < new Date(all.timeEnd)
+      );
+      console.log("data 123", allHotJobs.length);
+
+      if (allHotJobs) {
+        setData(allHotJobs);
+        console.log("index", indexOfFirstJob, indexOfLastJob);
+
+        const currentJob = allHotJobs.slice(indexOfFirstJob, indexOfLastJob);
+
+        // const isHotJobs = currentJob.filter(
+        //   (job) => job.isHot === 1 && date < new Date(job.timeEnd)
+        // );
+        setCurrentJobs(currentJob);
+
+        console.log("current", allHotJobs);
+        setTotalPages(Math.ceil(allHotJobs.length / itemsPerPage)); // Set total pages
+        console.log("total", totalPages);
+      } else {
+        console.error("No data received for current page:", page);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Fetch posts on page change
+  useEffect(() => {
+    setIsLoading(true);
+    fetchAllPosts(currentPage);
+  }, [currentPage]);
 
   const handleSortByValue = async (code, index) => {
     try {
@@ -166,20 +206,20 @@ function BestJob() {
       {/* Job cards */}
       <div className="w-full grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 py-10 px-4">
         {isLoading ? (
-         Array.from({ length: 6 }).map((_, index) => (
-          <div
-            key={index}
-            className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 items-center md:items-start"
-          >
-            <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 shrink-0" />
-            <div className="space-y-2 w-full">
-              <Skeleton className="h-4 w-3/4 sm:w-[250px] lg:w-[300px]" />
-              <Skeleton className="h-4 w-1/2 sm:w-[200px] lg:w-[250px]" />
+          Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 items-center md:items-start"
+            >
+              <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 shrink-0" />
+              <div className="space-y-2 w-full">
+                <Skeleton className="h-4 w-3/4 sm:w-[250px] lg:w-[300px]" />
+                <Skeleton className="h-4 w-1/2 sm:w-[200px] lg:w-[250px]" />
+              </div>
             </div>
-          </div>
-        ))
-        ) : data && data.length > 0 ? (
-          <JobCard expand="" data={data} />
+          ))
+        ) : currentJobs && currentJobs.length > 0 ? (
+          <JobCard expand="" data={currentJobs} />
         ) : (
           <>
             <div></div>
@@ -189,6 +229,12 @@ function BestJob() {
           </>
         )}
       </div>
+      {/* Pagination */}
+      <JobPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
