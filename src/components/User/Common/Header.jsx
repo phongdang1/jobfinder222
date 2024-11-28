@@ -64,7 +64,26 @@ function Header() {
     localStorage.removeItem("roleCode");
     navigate("/");
   };
-
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      token: params.get("token"),
+      userId: params.get("userId"),
+    };
+  }
+  useEffect(() => {
+    const { token, userId } = getQueryParams();
+  
+    if (token && userId) {
+      // Lưu thông tin vào localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user_id", userId);
+      localStorage.setItem("roleCode", "USER"); 
+  
+      // Điều hướng đến trang chính
+      navigate("/");
+    }
+  }, []);
   const fetchUser = async (userId) => {
     try {
       const response = await axios.get(`/getUserById?id=${userId}`, {
@@ -72,6 +91,7 @@ function Header() {
           Authorization: `Bearer ${token}`, // Include token in headers
         },
       });
+     
       console.log("Response from /getUserById:", response);
 
       if (response.data) {

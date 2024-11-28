@@ -167,7 +167,7 @@ const Login = () => {
           Authorization: `Bearer ${token}`, // Include token in headers
         },
       });
-
+      
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
@@ -179,11 +179,37 @@ const Login = () => {
       console.error("Failed to fetch user:", error);
     }
   };
+  const fetchGoogle = async() => {
+    const responseGoogle = await axios.get(
+      "http://localhost:5000/auth/google/callback",
+      {
+        withCredentials: true, // Để gửi cookie session
+      }
+    );
+    console.log("response google ne", responseGoogle);
+    if (responseGoogle.status === 200) {
+      // window.location.href = "/";
+      // const userData = response.data.user;
+      // dispatch(setUser(userData));
+
+      // // Lưu user vào localStorage
+      localStorage.setItem("user_id", JSON.stringify(responseGoogle.userId));
+      localStorage.setItem("token", JSON.stringify(responseGoogle.token));
+      // Chuyển hướng về trang Home
+      navigate("/");
+    } else {
+      console.error("Authentication failed");
+    }
+  }
+
+  useEffect(() => {
+    fetchGoogle();
+  },[navigate])
 
   // Function to handle Google login using the googleLogin thunk
   const handleGoogleLogin = async () => {
     // Dispatch Google login action
-    window.location.href = "http://localhost:5000/auth/google";
+    window.open("http://localhost:5000/auth/google", "_self");
   };
 
   //Validation
