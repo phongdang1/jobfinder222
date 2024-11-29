@@ -93,26 +93,27 @@ const DashboardCompany = () => {
       expired: 0,
     };
     const currentTime = new Date().toISOString(); // Get current time
-    console.log("post ne 123", posts);
+    if (posts.userId === parseInt(userId)) {
+      posts.forEach((post) => {
+        console.log("post ne 123", post);
+      });
+    }
+
     posts.forEach((post) => {
       if (post.userId === parseInt(userId)) {
         if (post.statusCode === "APPROVED") {
-          if (post.timeEnd > currentTime) {
-            counts.active++;
-          } else {
-            counts.expired++;
-          }
+          counts.active++;
         } else if (post.statusCode === "PENDING") {
           counts.pending++;
         } else if (post.statusCode === "REJECTED") {
-          if (post.timeEnd > currentTime) {
-            counts.inactive++;
-          } else {
-            counts.expired++;
-          }
+          counts.inactive++;
+          console.log('post', post)
+        } else {
+          counts.expired++;
         }
       }
     });
+    console.log("count ne", counts);
 
     setPostCounts(counts);
   };
