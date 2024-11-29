@@ -270,6 +270,30 @@ const ManageJobPost = () => {
       console.log("error close", error);
     }
   };
+  const handleUpdateTime = (value, type) => {
+    if (!scheduleForm.interviewDate) {
+      toast.error("Please pick a date first!");
+      return;
+    }
+
+    // Tạo một đối tượng Date từ interviewDate
+    const date = new Date(scheduleForm.interviewDate);
+
+    // Cộng giờ hoặc phút tùy thuộc vào type
+    if (type === "hour") {
+      date.setHours(value); // Cập nhật giờ
+    } else if (type === "minute") {
+      date.setMinutes(value); // Cập nhật phút
+    }
+
+    // Chuyển datetime thành chuỗi định dạng và cập nhật lại vào scheduleForm
+    const updatedDateTime = format(date, "yyyy-MM-dd HH:mm:ss");
+
+    setScheduleForm({
+      ...scheduleForm,
+      interviewDate: updatedDateTime, // Cập nhật interviewDate
+    });
+  };
 
   return (
     <div className="mt-8 my-60">
@@ -300,6 +324,7 @@ const ManageJobPost = () => {
               <TableRow>
                 <TableHead className="w-[300px]">Name</TableHead>
                 <TableHead>Description</TableHead>
+                <TableHead>Requirement</TableHead>
                 <TableHead>Action</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead className="text-right">Status</TableHead>
@@ -316,6 +341,9 @@ const ManageJobPost = () => {
                       </TableCell>
                       <TableCell className="w-2/5 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                         {post.postDetailData.description}
+                      </TableCell>
+                      <TableCell className="w-2/5 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                        {post.postDetailData.skillRequirement}
                       </TableCell>
                       <TableCell className="text-right flex items-end justify-start">
                         {/* mở cái dialog user  */}
@@ -407,7 +435,7 @@ const ManageJobPost = () => {
                     : ""
                 }
                 ${
-                  userCv.statusCode === "BANNED"
+                  userCv.statusCode === "REJECTED"
                     ? "bg-red-100 text-red-700"
                     : ""
                 }
@@ -590,6 +618,47 @@ const ManageJobPost = () => {
                                                         </PopoverContent>
                                                       </Popover>
                                                     </div>
+                                                    {/* Input giờ và phút */}
+                                                    <div className="flex items-center gap-2">
+                                                      <Label>Time</Label>
+                                                      <input
+                                                        type="number"
+                                                        placeholder="HH"
+                                                        min="0"
+                                                        max="23"
+                                                        className="w-[60px] p-2 border rounded-md"
+                                                        onChange={(e) => {
+                                                          const hour =
+                                                            parseInt(
+                                                              e.target.value,
+                                                              10
+                                                            ) || 0;
+                                                          handleUpdateTime(
+                                                            hour,
+                                                            "hour"
+                                                          );
+                                                        }}
+                                                      />
+                                                      :
+                                                      <input
+                                                        type="number"
+                                                        placeholder="MM"
+                                                        min="0"
+                                                        max="59"
+                                                        className="w-[60px] p-2 border rounded-md"
+                                                        onChange={(e) => {
+                                                          const minute =
+                                                            parseInt(
+                                                              e.target.value,
+                                                              10
+                                                            ) || 0;
+                                                          handleUpdateTime(
+                                                            minute,
+                                                            "minute"
+                                                          );
+                                                        }}
+                                                      />
+                                                    </div>
                                                     <div>
                                                       <Label>
                                                         Interview Location
@@ -642,9 +711,7 @@ const ManageJobPost = () => {
                                                         Close
                                                       </Button>
                                                       <Button
-                                                        onClick={
-                                                          handleSubmitForm
-                                                        }
+                                                        onClick={handleSubmitForm}
                                                         className="bg-white border border-primary hover:text-white"
                                                       >
                                                         Set Schedule
@@ -1474,7 +1541,7 @@ const ManageJobPost = () => {
                             : ""
                         }
                         ${
-                          post.statusCode.toUpperCase() === "BANNED"
+                          post.statusCode.toUpperCase() === "REJECTED"
                             ? "bg-red-100 text-red-700"
                             : ""
                         }
