@@ -55,6 +55,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { handleClosePost } from "@/fetchData/Post";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 const ManageJobPost = () => {
   const [company, setCompany] = useState([]);
   const [post, setPost] = useState([]);
@@ -73,6 +75,7 @@ const ManageJobPost = () => {
   const [rejectDialog, setRejectDialog] = useState(false);
   const [approveDialog, setApproveDialog] = useState(false);
   const [closeDialog, setCloseDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setScheduleForm((prevForm) => ({
@@ -84,6 +87,7 @@ const ManageJobPost = () => {
   const date = new Date();
   const fetchCompanyData = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get(`/getCompanyById?id=${companyId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -153,6 +157,7 @@ const ManageJobPost = () => {
         setUserCVs(userCvData);
         setUserDetails(userDetailsData);
         setSchedule(scheduleData);
+        setIsLoading(false);
         console.log("Final User CVs by Post ID:", userCvData);
         console.log("Final User Details:", userDetailsData);
       } else {
@@ -257,6 +262,8 @@ const ManageJobPost = () => {
 
   return (
     <div className="mt-8 my-60">
+      <GlobalLoadingMain isSubmiting={isLoading} />
+
       <h1 className="text-3xl font-semibold my-4">
         Total Post ({post.length})
       </h1>
@@ -1410,7 +1417,7 @@ const ManageJobPost = () => {
                                     </DialogHeader>
                                     <DialogFooter>
                                       <Button
-                                      className="bg-white border border-primary hover:bg-primary hover:text-white"
+                                        className="bg-white border border-primary hover:bg-primary hover:text-white"
                                         onClick={() => closePost(post.id)}
                                       >
                                         Confirm
@@ -1484,7 +1491,9 @@ const ManageJobPost = () => {
                         {post.postDetailData.description}
                       </TableCell>
                       <TableCell className="text-right">
-                        <span className="bg-red-600 text-red-200 p-2 rounded-sm">{post.statusCode}</span>
+                        <span className="bg-red-600 text-red-200 p-2 rounded-sm">
+                          {post.statusCode}
+                        </span>
                       </TableCell>
                     </TableRow>
                   )

@@ -261,7 +261,7 @@ function CompanyDetail() {
               <p>Contact Information</p>
             </div>
           </div>
-          <div className="px-6 py-6 h-full shadow-xl rounded-b-lg bg-white">
+          <div className="px-6 py-6 h-full shadow-xl rounded-b-lg bg-white max-h-[500px]">
             <div className="mb-2 font-medium flex gap-2">
               <PlaceIcon className="text-primary" />
               Address
