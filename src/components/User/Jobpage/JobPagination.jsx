@@ -24,7 +24,12 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                onClick={() => handlePageChange(currentPage - 1)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage > 1) {
+                    handlePageChange(currentPage - 1);
+                  }
+                }}
                 disabled={currentPage === 1}
                 className={`px-3 py-1 rounded-md ${
                   currentPage === 1
@@ -38,7 +43,10 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
               <PaginationItem key={index}>
                 <PaginationLink
                   href="#"
-                  onClick={() => handlePageChange(index + 1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(index + 1);
+                  }}
                   className={`px-3 py-1 rounded-md transition-colors duration-200
                     ${
                       currentPage === index + 1
@@ -61,7 +69,12 @@ const JobPagination = ({ currentPage, totalPages, onPageChange }) => {
             <PaginationItem>
               <PaginationNext
                 href="#"
-                onClick={() => handlePageChange(currentPage + 1)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage < totalPages) {
+                    handlePageChange(currentPage + 1);
+                  }
+                }}
                 disabled={currentPage === totalPages}
                 className={`px-3 py-1 rounded-md ${
                   currentPage === totalPages

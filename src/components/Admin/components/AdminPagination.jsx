@@ -11,15 +11,13 @@ import {
 const AdminPagination = ({ currentPage, totalPages, onPageChange }) => {
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisiblePages = 5; 
-    
-    if (totalPages <= maxVisiblePages) {
+    const maxVisiblePages = 5;
 
+    if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
-
       pageNumbers.push(1);
       if (currentPage > 3) {
         pageNumbers.push("...");
@@ -65,9 +63,11 @@ const AdminPagination = ({ currentPage, totalPages, onPageChange }) => {
                     onClick={() => onPageChange(page)}
                     isActive={currentPage === page}
                     className={`px-3 py-1 rounded-md transition-colors duration-200
-                      ${currentPage === page
-                        ? "bg-purple-600 text-white border border-purple-600"
-                        : "hover:bg-gray-200 text-gray-700"}
+                      ${
+                        currentPage === page
+                          ? "bg-purple-600 text-white border border-purple-600"
+                          : "hover:bg-gray-200 text-gray-700"
+                      }
                     `}
                   >
                     {page}

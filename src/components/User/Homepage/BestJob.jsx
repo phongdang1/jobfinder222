@@ -30,7 +30,6 @@ import {
   getAllPostsInactive,
   getAllPostWithLimit,
 } from "@/fetchData/Post";
-import JobPagination from "../Jobpage/JobPagination";
 
 function BestJob() {
   const [sort, setSort] = useState([]);
@@ -46,7 +45,6 @@ function BestJob() {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     const fetchSort = async () => {
       try {
@@ -83,58 +81,20 @@ function BestJob() {
   ];
   const uniqueTypes = [...new Set(sort.map((item) => item.type))];
 
-  const [currentPage, setCurrentPage] = useState(1); // Current page
-  const [totalPages, setTotalPages] = useState(0); // Total pages
-  const [currentJobs, setCurrentJobs] = useState([]);
-  const itemsPerPage = 6;
-  const indexOfLastJob = currentPage * itemsPerPage;
-  const indexOfFirstJob = indexOfLastJob - itemsPerPage;
   const [data, setData] = useState([]);
-
-  const fetchAllPosts = async (page) => {
-    const date = new Date();
-    try {
-      const response = await getAllPost();
-      const fetchedData = response.data.data;
-      const allHotJobs = fetchedData.filter(
-        (all) => all.isHot === 1 && date < new Date(all.timeEnd)
-      );
-      console.log("data 123", allHotJobs.length);
-
-      if (allHotJobs) {
-        setData(allHotJobs);
-        console.log("index", indexOfFirstJob, indexOfLastJob);
-
-        const currentJob = allHotJobs.slice(indexOfFirstJob, indexOfLastJob);
-
-        // const isHotJobs = currentJob.filter(
-        //   (job) => job.isHot === 1 && date < new Date(job.timeEnd)
-        // );
-        setCurrentJobs(currentJob);
-
-        console.log("current", allHotJobs);
-        setTotalPages(Math.ceil(allHotJobs.length / itemsPerPage)); // Set total pages
-        console.log("total", totalPages);
-      } else {
-        console.error("No data received for current page:", page);
-      }
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle page change
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  // Fetch posts on page change
   useEffect(() => {
-    setIsLoading(true);
-    fetchAllPosts(currentPage);
-  }, [currentPage]);
+    const fetchAllPosts = async () => {
+      try {
+        const response = await getAllPostWithLimit(9, 0);
+        setData(response.data.data);
+        console.log("jpb", response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAllPosts();
+  }, []);
 
   const handleSortByValue = async (code, index) => {
     try {
@@ -218,8 +178,8 @@ function BestJob() {
               </div>
             </div>
           ))
-        ) : currentJobs && currentJobs.length > 0 ? (
-          <JobCard expand="" data={currentJobs} />
+        ) : data && data.length > 0 ? (
+          <JobCard expand="" data={data} />
         ) : (
           <>
             <div></div>
@@ -229,12 +189,6 @@ function BestJob() {
           </>
         )}
       </div>
-      {/* Pagination */}
-      <JobPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
     </div>
   );
 }

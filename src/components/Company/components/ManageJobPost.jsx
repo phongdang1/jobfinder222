@@ -169,6 +169,7 @@ const ManageJobPost = () => {
   };
   const handleSubmitForm = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.post(
         `/createInterviewSchedule`,
         {
@@ -200,11 +201,16 @@ const ManageJobPost = () => {
       }
     } catch (error) {
       console.log("error j j day", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleReject = async (id) => {
+    setIsLoading(true);
+
     try {
+      setIsLoading(true);
       const res = await handleRejectCvPost(id);
       if (res.data.errCode === 0) {
         console.log("CV Rejected !!!", res);
@@ -223,10 +229,13 @@ const ManageJobPost = () => {
       }
     } catch (error) {
       console.log("error reject", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleApprove = async (id) => {
     try {
+      setIsLoading(true);
       const res = await handleApproveCvPost(id);
       if (res.data.errCode === 0) {
         console.log("CV Approved!!!", res);
@@ -238,6 +247,8 @@ const ManageJobPost = () => {
       }
     } catch (error) {
       console.log("error approve", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -638,6 +649,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Set Schedule
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </PopoverContent>
                                                 </Popover>
@@ -695,6 +709,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Reject
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </DialogContent>
                                                 </Dialog>
@@ -953,6 +970,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Approve
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </DialogContent>
                                                 </Dialog>
@@ -1010,6 +1030,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Reject
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </DialogContent>
                                                 </Dialog>
@@ -1422,6 +1445,9 @@ const ManageJobPost = () => {
                                       >
                                         Confirm
                                       </Button>
+                                      <GlobalLoadingMain
+                                        isSubmiting={isLoading}
+                                      />
                                     </DialogFooter>
                                   </DialogContent>
                                 </Dialog>

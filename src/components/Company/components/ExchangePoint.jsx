@@ -24,6 +24,7 @@ import {
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 const giftPackages = [
   { id: 1, name: "10 Featured Posts", points: 500, value: 10, plan: "post" },
   { id: 2, name: "25 Featured Posts", points: 900, value: 25, plan: "post" },
@@ -35,6 +36,7 @@ const giftPackages = [
 
 const companyId = localStorage.getItem("companyId");
 const userId = localStorage.getItem("user_id");
+
 const ExchangePoint = () => {
   useEffect(() => {
     AOS.init({
@@ -42,6 +44,7 @@ const ExchangePoint = () => {
       once: false,
     });
   }, []);
+  const [isSubmiting, setIsSubmiting] = useState(false);
 
   const [hoveredButtonId, setHoveredButtonId] = useState(null);
   const [company, setCompany] = useState();
@@ -63,39 +66,59 @@ const ExchangePoint = () => {
     fetchCompany();
   }, []);
   const handleExchangePointToView = async () => {
-    const res = await exchangePointToView({
-      userId: userId,
-      point: selectedPackage.points,
-      value: selectedPackage.value,
-    });
-    if (res.data.errCode === 0) {
-      toast.success("Exchange successfully !");
-      fetchCompany();
-      setIsOpen(false);
-    } else {
-      toast.error(res.data.errMessage);
+    setIsSubmiting(true); // Bắt đầu loading
+    try {
+      const res = await exchangePointToView({
+        userId: userId,
+        point: selectedPackage.points,
+        value: selectedPackage.value,
+      });
+      if (res.data.errCode === 0) {
+        toast.success("Exchange successfully!");
+        fetchCompany();
+        setIsOpen(false);
+      } else {
+        toast.error(res.data.errMessage);
+      }
+    } catch (error) {
+      console.error("Error exchanging points for view:", error);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsSubmiting(false); // Kết thúc loading
     }
   };
 
   const handleExchangePointToPost = async () => {
-    const res = await exchangePointToPost({
-      userId: userId,
-      point: selectedPackage.points,
-      value: selectedPackage.value,
-    });
-    if (res.data.errCode === 0) {
-      toast.success("Exchange successfully !");
-      fetchCompany();
-      setIsOpen(false);
-    } else {
-      toast.error(res.data.errMessage);
+    setIsSubmiting(true); // Bắt đầu hiển thị GlobalLoading
+    try {
+      const res = await exchangePointToPost({
+        userId: userId,
+        point: selectedPackage.points,
+        value: selectedPackage.value,
+      });
+      if (res.data.errCode === 0) {
+        toast.success("Exchange successfully!");
+        fetchCompany();
+        setIsOpen(false);
+      } else {
+        toast.error(res.data.errMessage);
+      }
+    } catch (error) {
+      console.error("Error exchanging points:", error);
+      toast.error("An error occurred. Please try again later.");
+    } finally {
+      setIsSubmiting(false); // Tắt GlobalLoading sau khi xử lý
     }
   };
+
   return (
     <div className="my-20 px-4 sm:px-6 lg:px-8 relative">
-      <Link to="/company/product" className="z-50 absolute -top-14 flex items-center justify-center gap-1 font-semibold hover:text-primary transition">
-      <IoIosArrowBack/>
-      Return to Product page
+      <Link
+        to="/company/product"
+        className="z-50 absolute -top-14 flex items-center justify-center gap-1 font-semibold hover:text-primary transition"
+      >
+        <IoIosArrowBack />
+        Return to Product page
       </Link>
       {/* Title */}
       <div data-aos="fade-up" className="text-center flex flex-col gap-3">
@@ -181,7 +204,8 @@ const ExchangePoint = () => {
                   <DialogHeader>
                     <DialogTitle>Exchange {selectedPackage?.name}</DialogTitle>
                     <DialogDescription>
-                      Are you sure using {selectedPackage?.points} points to exchange this package ?
+                      Are you sure using {selectedPackage?.points} points to
+                      exchange this package ?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
@@ -197,6 +221,7 @@ const ExchangePoint = () => {
                     >
                       Exchange
                     </Button>
+                    <GlobalLoadingMain isSubmiting={isSubmiting} />
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
