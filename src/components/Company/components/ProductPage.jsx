@@ -185,25 +185,33 @@ function ProductPage() {
 
             {/* Right - Details */}
             <div className="w-1/2 p-4">
-              <h2 className="text-3xl font-semibold mb-5 text-center ">
-                <span className=" text-primary">Post </span>Packages
+              <h2 className="text-3xl font-semibold mb-5 text-center">
+                <span className="text-primary">Post </span>Packages
               </h2>
               <div className="mb-4 flex gap-2 items-center">
                 <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
-                Choose the posting package that suits your needs.
+                Post with featured status.
+              </div>
+              <div className="mb-4 flex gap-2 items-center">
+                <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
+                Show at the top of the list.
               </div>
               <div className="mb-4 flex gap-2 items-center">
                 <IoIosCheckmarkCircle className="text-green-500 w-5 h-5" />
                 Enjoy many benefits from this posting package.
               </div>
               <select
-                className="w-full mb-4 p-2 border border-gray-400 rounded"
+                className="w-full mb-4 p-2 border border-gray-400 rounded text-gray-700"
                 onChange={(e) => handlePlanChange(e, "Post")}
+                defaultValue=""
               >
+                <option value="" disabled>
+                  Select a package...
+                </option>
                 {postPlans
                   .filter(
                     (plan) => plan.statusCode.toLowerCase() !== "inactive"
-                  ) // Lọc các plan có statusCode không phải "Inactive"
+                  )
                   .map((plan) => (
                     <option key={plan.id} value={plan.name}>
                       {plan.name}
@@ -211,16 +219,17 @@ function ProductPage() {
                   ))}
               </select>
 
-              <div className=" flex justify-center items-center bg-gray-100">
-                <p className="text-xl font-semibold">
-                  Price: {`$${postPrice}`}
-                </p>
+              <div className="mb-4 p-1 flex justify-center items-center">
+                <div className="mr-2 p-1 w-1/2 flex justify-center items-center bg-primary text-white rounded-md">
+                  <p className="text-xl font-semibold">{`$${postPrice}`}</p>
+                </div>
+
+                <div className="gap-1 p-1 w-1/2 flex justify-center items-center bg-primary text-white rounded-md">
+                  <p className="mr-2 text-xl font-semibold ml-4">{`${postPoints}`}</p>
+                  <FaGift className="text-xl" />
+                </div>
               </div>
-              <div className="mb-4 p-2 flex justify-center items-center bg-gray-100">
-                <p className="text-xl font-semibold ml-4">
-                  Point: {` ${postPoints}`}
-                </p>{" "}
-              </div>
+
               <Button
                 onClick={handleCreatePaymentHotPost}
                 className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center"
@@ -256,9 +265,13 @@ function ProductPage() {
               View the matching percentage of all candidates.
             </div>
             <select
-              className="w-full mb-4 p-2 border border-gray-400 rounded"
+              className="w-full mb-4 p-2 border border-gray-400 rounded text-gray-700"
               onChange={(e) => handlePlanChange(e, "View")}
+              defaultValue=""
             >
+              <option value="" disabled>
+                Select a package...
+              </option>
               {viewPlans
                 .filter((plan) => plan.statusCode.toLowerCase() !== "inactive") // Lọc các plan có statusCode không phải "Inactive"
                 .map((plan) => (
@@ -268,14 +281,26 @@ function ProductPage() {
                 ))}
             </select>
 
-            <div className=" flex justify-center items-center bg-gray-100">
+            {/* <div className=" flex justify-center items-center bg-gray-100">
               <p className="text-xl font-semibold">Price: {`$${viewPrice}`}</p>
             </div>
             <div className="mb-4 p-2 flex justify-center items-center bg-gray-100">
               <p className="text-xl font-semibold ml-4">
                 Points:{` ${viewPoints}`}
               </p>{" "}
+            </div> */}
+
+            <div className="mb-4 p-1 flex justify-center items-center">
+              <div className="mr-2 p-1 w-1/2 flex justify-center items-center bg-primary text-white rounded-md">
+                <p className="text-xl font-semibold">{`$${viewPrice}`}</p>
+              </div>
+
+              <div className="gap-1 p-1 w-1/2 flex justify-center items-center bg-primary text-white rounded-md">
+                <p className=" mr-2 text-xl font-semibold ml-4">{` ${viewPoints}`}</p>{" "}
+                <FaGift className="text-xl" />
+              </div>
             </div>
+
             <Button
               onClick={handleCreatePaymentViewCv}
               className="w-full bg-white border border-primary text-primary py-2 rounded-md hover:bg-primary hover:text-white flex items-center justify-center"
