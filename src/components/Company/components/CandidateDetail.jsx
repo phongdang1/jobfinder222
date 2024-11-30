@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { getValueByCode } from "@/fetchData/AllCode";
 import { getUsersById } from "@/fetchData/User";
 import {
+  AddCircleOutline,
   AttachMoneyRounded,
   CasesRounded,
   LocationOnRounded,
@@ -20,6 +21,30 @@ import {
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Card, CardBody, Image } from "@nextui-org/react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "lucide-react";
+import { getAllPostsInactive, getDetailPostById } from "@/fetchData/Post";
+import { getCompanyById } from "@/fetchData/Company";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import TooltipBox from "@/components/User/Homepage/Common/TooltipBox";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { handleInviteApplyJob } from "@/fetchData/CvPost";
+import toast from "react-hot-toast";
 
 function CandidateDetail() {
   const [candidate, setCandidate] = useState({});
@@ -80,12 +105,43 @@ function CandidateDetail() {
     fetchCandidateAndValues();
   }, [userId]);
 
+  const [allJobs, setAllJobs] = useState([]);
+  const companyId = localStorage.getItem("companyId");
+
+  const fetchAllPost = async () => {
+    const response = await getCompanyById(companyId);
+    setAllJobs(response.data.data);
+    console.log("All Jobs", response);
+  };
+
+  useEffect(() => {
+    fetchAllPost();
+  }, []);
+
+  const [closeDialog, setCloseDialog] = useState(false);
+  const handleInvite = async (postId) => {
+    const data = { userId: userId, companyId: companyId, postId: postId };
+    const response = await handleInviteApplyJob(data);
+    if (response.data.errCode === 0) {
+      toast.success("Invitation sent!");
+      setCloseDialog(false);
+    }
+    console.log("invite", response.data);
+  };
+
   return (
     <>
       <div className="mx-10 flex flex-col gap-4 my-6">
         <div className="grid grid-cols-7 bg-white gap-4 px-2 py-8 items-center border border-gray-200 rounded-lg">
-          <div className="bg-gray-100  h-32 w-32 mx-auto col-span-1 rounded-full cursor-pointer items-center">
-            <img src="" />
+          <div className="flex justify-center">
+            <Image
+              alt="logo"
+              className="object-cover rounded-lg col-span-1"
+              height={120}
+              shadow="md"
+              src={candidate?.image}
+              width={120}
+            />
           </div>
           <div className="space-y-3 col-span-5">
             <div className="flex gap-2 items-center">
@@ -124,12 +180,109 @@ function CandidateDetail() {
             <p className="text-primary font-medium">
               You have {allowCv} CV views left
             </p>
-            <Button
-              variant="outline"
-              className="border border-primary text-primary hover:text-white hover:bg-primary"
-            >
-              Send Invitation
-            </Button>
+            <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  className="border border-primary text-primary hover:text-white hover:bg-primary"
+                  onClick={() => {
+                    setCloseDialog(true);
+                  }}
+                >
+                  Send Invitation
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-full max-w-2xl max-h-screen h-5/6">
+                <ScrollArea className="h-4/5">
+                  <DialogHeader>
+                    <DialogTitle className="flex flex-col gap-4 ">
+                      <p>Pick the post you want to invite this candidate</p>
+                    </DialogTitle>
+                    <DialogDescription>
+                      <div className="px-6 pt-4 shadow-xl rounded-b-lg pb-4 overflow-y-auto bg-white space-y-10">
+                        <div className="flex flex-col gap-4">
+                          {allJobs?.postData?.length > 0 ? (
+                            allJobs.postData.map((post, index) => (
+                              <Card
+                                key={index}
+                                className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
+                                  post?.isHot === 1
+                                    ? "bg-primary/20 hover:bg-violet-200"
+                                    : "bg-white"
+                                }`}
+                                shadow=""
+                              >
+                                {post?.isHot === 1 && (
+                                  <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
+                                    <WhatshotIcon className="text-[#ffdd85] mr-2" />
+                                    SUPER HOT
+                                    <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 translate-x-1 translate-y-1"></span>
+                                  </span>
+                                )}
+                                <CardBody>
+                                  <div className="flex gap-8 items-center justify-start w-full">
+                                    <div
+                                      // onClick={() => handleNavigate(allJobs.id)}
+                                      className="relative bg-transparent shrink-0"
+                                    >
+                                      <Image
+                                        alt="Album cover"
+                                        className="object-cover rounded-lg"
+                                        height={90}
+                                        shadow="md"
+                                        src="https://nextui.org/images/album-cover.png"
+                                        width={90}
+                                      />
+                                    </div>
+
+                                    <div className="flex flex-col w-full">
+                                      <p
+                                        onClick={() => handleInvite(post.id)}
+                                        className="text-base font-medium group-hover:text-primary w-fit hover:underline hover:underline-offset-2"
+                                      >
+                                        {post?.postDetailData?.name}
+                                      </p>
+
+                                      <p className="font-normal text-base text-gray-500">
+                                        {allJobs.name}
+                                      </p>
+                                      <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-white w-fit text-nowrap rounded-lg"
+                                        >
+                                          {
+                                            post?.postDetailData
+                                              ?.salaryTypePostData?.value
+                                          }
+                                        </Badge>
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-white w-fit text-nowrap rounded-lg"
+                                        >
+                                          {
+                                            post?.postDetailData
+                                              ?.provincePostData?.value
+                                          }
+                                        </Badge>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </CardBody>
+                              </Card>
+                            ))
+                          ) : (
+                            <p className="italic">
+                              This company has not posted any jobs yet
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </DialogDescription>
+                  </DialogHeader>
+                </ScrollArea>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
         {/* cv */}

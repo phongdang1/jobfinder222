@@ -18,7 +18,12 @@ import {
 import { Pagination, Button } from "@nextui-org/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import {
+  Cached,
+  NavigateBefore,
+  NavigateNext,
+  Replay,
+} from "@mui/icons-material";
 import {
   getAllCode,
   getAllCodeByType,
@@ -30,6 +35,7 @@ import {
   getAllPostsInactive,
   getAllPostWithLimit,
 } from "@/fetchData/Post";
+import JobPagination from "../Jobpage/JobPagination";
 
 function BestJob() {
   const [sort, setSort] = useState([]);
@@ -45,24 +51,25 @@ function BestJob() {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    const fetchSort = async () => {
-      try {
-        const response = await getAllCode();
-        const jobData = response.data.data;
-        setSort(jobData);
-        console.log("Job data", jobData);
 
-        if (selectedType) {
-          const response2 = await getAllCodeByType(selectedType);
-          setSortValue(response2.data.data);
-          console.log(response2.data.data);
-        }
-      } catch (error) {
-        console.log(error);
+  const fetchSort = async () => {
+    try {
+      const response = await getAllCode();
+      const jobData = response.data.data;
+      setSort(jobData);
+      console.log("Job data", jobData);
+
+      if (selectedType) {
+        const response2 = await getAllCodeByType(selectedType);
+        setSortValue(response2.data.data);
+        console.log(response2.data.data);
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     if (!isLoading) {
       fetchSort();
@@ -81,32 +88,92 @@ function BestJob() {
   ];
   const uniqueTypes = [...new Set(sort.map((item) => item.type))];
 
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [totalPages, setTotalPages] = useState(0); // Total pages
+  const [currentJobs, setCurrentJobs] = useState([]);
+  const itemsPerPage = 9;
+  const indexOfLastJob = currentPage * itemsPerPage;
+  const indexOfFirstJob = indexOfLastJob - itemsPerPage;
   const [data, setData] = useState([]);
-  useEffect(() => {
-    const fetchAllPosts = async () => {
-      try {
-        const response = await getAllPostWithLimit(9, 0);
-        setData(response.data.data);
-        console.log("jpb", response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const [sortedData, setSortedData] = useState([]);
 
+  const fetchAllPosts = async () => {
+    const date = new Date();
+    try {
+      const response = await getAllPost();
+      const fetchedData = response.data.data;
+      const allHotJobs = fetchedData.filter(
+        (all) => all.isHot === 1 && date < new Date(all.timeEnd)
+      );
+
+      if (allHotJobs) {
+        setData(allHotJobs);
+        setTotalPages(Math.ceil(allHotJobs.length / itemsPerPage));
+        setCurrentJobs(allHotJobs.slice(0, itemsPerPage)); // Default to first page
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAllPosts();
   }, []);
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+
+    const jobsToPaginate = sortedData.length > 0 ? sortedData : data; // Determine data source
+    const indexOfLastJob = page * itemsPerPage;
+    const indexOfFirstJob = indexOfLastJob - itemsPerPage;
+
+    setCurrentJobs(jobsToPaginate.slice(indexOfFirstJob, indexOfLastJob));
+  };
+
+  useEffect(() => {
+    const jobsToPaginate = sortedData.length > 0 ? sortedData : data;
+    const indexOfLastJob = currentPage * itemsPerPage;
+    const indexOfFirstJob = indexOfLastJob - itemsPerPage;
+
+    setCurrentJobs(jobsToPaginate.slice(indexOfFirstJob, indexOfLastJob));
+  }, [currentPage, sortedData, data]);
+
   const handleSortByValue = async (code, index) => {
+    const date = new Date();
     try {
       const response = await getAllPostsInactive(code);
-      setData(response.data.data);
+      const fetchedData = response.data.data;
 
-      setSelect(index);
+      const allHotJobs = fetchedData.filter(
+        (all) => all.isHot === 1 && date < new Date(all.timeEnd)
+      );
 
-      console.log(response.data.data);
+      if (allHotJobs.length > 0) {
+        setSortedData(allHotJobs); // Update sorted data
+        setSelect(index);
+        setCurrentPage(1); // Reset to the first page of sorted data
+        setTotalPages(Math.ceil(allHotJobs.length / itemsPerPage));
+        setCurrentJobs(allHotJobs.slice(0, itemsPerPage)); // Show the first page
+      } else {
+        setSortedData([]);
+        setSelect(index);
+        setCurrentJobs([]);
+        setTotalPages(0);
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching sorted jobs:", error);
     }
+  };
+
+  const handleReset = () => {
+    setSortedData([]);
+    setCurrentJobs([]);
+    setTotalPages(0);
+    setCurrentPage(1);
+    setSelect("");
+    fetchAllPosts();
   };
 
   return (
@@ -140,13 +207,24 @@ function BestJob() {
           </SelectContent>
         </Select>
 
+        <Button
+          variant="outline"
+          className="bg-white text-primary border border-primary hover:bg-primary hover:text-white right-36 group"
+          onClick={() => handleReset()}
+        >
+          <Cached className="group-hover:animate-spin" />
+          <p>Reset</p>
+        </Button>
+
         <div className="w-[95%] basis-1/2 px-20 flex-shrink">
           <Carousel className="w-[96%] xl:w-[600px]">
             <CarouselContent className="flex">
               {sortValue.map((value, index) => (
                 <CarouselItem key={index} className="basis-1/3 items-center">
                   <Card
-                    onClick={() => handleSortByValue(value.code, index)}
+                    onClick={() =>
+                      handleSortByValue(value.code, index, currentPage)
+                    }
                     className={`h-10 text-center text-black rounded-3xl cursor-pointer hover:bg-primary hover:text-white flex justify-center ${
                       select === index ? "bg-primary text-white" : ""
                     } `}
@@ -178,17 +256,27 @@ function BestJob() {
               </div>
             </div>
           ))
-        ) : data && data.length > 0 ? (
-          <JobCard expand="" data={data} />
+        ) : currentJobs && currentJobs.length > 0 && totalPages > 0 ? (
+          <JobCard expand="" data={currentJobs} />
         ) : (
           <>
             <div></div>
-            <div className="w-full flex justify-center items-center text-gray-500">
+            <div className="w-full flex justify-center items-center text-center text-gray-500">
               <p>No jobs available</p>
             </div>
           </>
         )}
       </div>
+      {/* Pagination */}
+      {totalPages > 0 ? (
+        <JobPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
