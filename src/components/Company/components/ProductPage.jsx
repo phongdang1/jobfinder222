@@ -200,12 +200,17 @@ function ProductPage() {
                 className="w-full mb-4 p-2 border border-gray-400 rounded"
                 onChange={(e) => handlePlanChange(e, "Post")}
               >
-                {postPlans.map((plan) => (
-                  <option key={plan.id} value={plan.name}>
-                    {plan.name}
-                  </option>
-                ))}
+                {postPlans
+                  .filter(
+                    (plan) => plan.statusCode.toLowerCase() !== "inactive"
+                  ) // Lọc các plan có statusCode không phải "Inactive"
+                  .map((plan) => (
+                    <option key={plan.id} value={plan.name}>
+                      {plan.name}
+                    </option>
+                  ))}
               </select>
+
               <div className=" flex justify-center items-center bg-gray-100">
                 <p className="text-xl font-semibold">
                   Price: {`$${postPrice}`}
@@ -251,15 +256,18 @@ function ProductPage() {
               View the matching percentage of all candidates.
             </div>
             <select
-              className="w-full mb-4 p-2 border border-gray-400 rounded focus:border-primary focus:ring-1 ring-primary"
+              className="w-full mb-4 p-2 border border-gray-400 rounded"
               onChange={(e) => handlePlanChange(e, "View")}
             >
-              {viewPlans.map((plan) => (
-                <option key={plan.id} value={plan.name}>
-                  {plan.name}
-                </option>
-              ))}
+              {viewPlans
+                .filter((plan) => plan.statusCode.toLowerCase() !== "inactive") // Lọc các plan có statusCode không phải "Inactive"
+                .map((plan) => (
+                  <option key={plan.id} value={plan.name}>
+                    {plan.name}
+                  </option>
+                ))}
             </select>
+
             <div className=" flex justify-center items-center bg-gray-100">
               <p className="text-xl font-semibold">Price: {`$${viewPrice}`}</p>
             </div>

@@ -41,6 +41,8 @@ const ManagePackages = () => {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPackage, setNewPackage] = useState({
     id: "",
     name: "",
@@ -137,6 +139,11 @@ const ManagePackages = () => {
     setErrorMessage({});
   };
 
+  const handleCancelDelete = () => {
+    setDeleteConfirmOpen(false); // Close the confirmation dialog without deleting
+    setJobTypeToDelete(null); // Clear the job type to be deleted
+  };
+
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdatePackage({
@@ -230,24 +237,34 @@ const ManagePackages = () => {
     }
   };
 
-  const handleToggleStatus = async (packageId, currentStatus) => {
+  const handleToggleStatus = async () => {
+    if (!selectedPackage) return;
+    setIsSubmiting(true);
+    const action =
+      selectedPackage.statusCode === "Active"
+        ? handleDeactivePackage
+        : handleActivePackage;
+
     try {
-      const action =
-        currentStatus === "active"
-          ? handleDeactivePackage
-          : handleActivePackage;
-      const response = await action({ id: packageId });
+      const response = await action({ id: selectedPackage.id });
       if (response.data && response.data.errCode === 0) {
-        fetchPackages(searchTerm, selectedType);
+        toast.success("Status updated successfully!");
+        fetchPackages(); // Refresh the list
       } else {
-        console.error(
-          "Failed to update package status:",
-          response.data.message || "No message"
-        );
+        toast.error(response.data.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("Error updating package status:", error);
+      toast.error("Error updating status.");
+    } finally {
+      setIsDialogOpen(false);
+      setSelectedPackage(null);
+      setIsSubmiting(false);
     }
+  };
+
+  const openStatusDialog = (pkg) => {
+    setSelectedPackage(pkg);
+    setIsDialogOpen(true);
   };
 
   const filteredPackages = packages.filter((pkg) => {
@@ -330,6 +347,7 @@ const ManagePackages = () => {
             <TableHead className="text-center">Type</TableHead>
             <TableHead className="text-center">Price</TableHead>
             <TableHead className="text-center">Point</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -343,16 +361,20 @@ const ManagePackages = () => {
               <TableCell className="text-center">{pkg.type}</TableCell>
               <TableCell className="text-center">{pkg.price}</TableCell>
               <TableCell className="text-center">{pkg.value}</TableCell>
-              {/* <TableCell className="text-center">
-                <Button
-                  onClick={() => handleToggleStatus(pkg.id, pkg.statusCode)}
-                  className={`text-white rounded-md w-20 ${
-                    pkg.statusCode === "active" ? "bg-green-500" : "bg-red-500"
+              <TableCell className="text-center">
+                {" "}
+                <span
+                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs  ${
+                    pkg.statusCode === "Active"
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
                   }`}
+                  onClick={() => openStatusDialog(pkg)}
                 >
-                  {pkg.statusCode}
-                </Button>
-              </TableCell> */}
+                  {pkg.statusCode === "Active" ? "Active" : "Inactive"}
+                </span>
+              </TableCell>
+
               <TableCell className="text-center flex space-x-3 items-center justify-center">
                 <Button
                   onClick={() => handleOpenUpdateModal(pkg)}
@@ -370,6 +392,42 @@ const ManagePackages = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+
+      {/* Confirmation Dialog */}
+      {isDialogOpen && (
+        <Dialog
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onOpenChange={() => setIsDialogOpen(false)}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Status Change</DialogTitle>
+            </DialogHeader>
+            <p>
+              Are you sure you want to change the status of{" "}
+              <strong>{selectedPackage?.name}</strong> to{" "}
+              {selectedPackage?.statusCode === "Active" ? "Inactive" : "Active"}
+              ?
+            </p>
+            <div className="mt-4 flex justify-end space-x-2">
+              <Button
+                className="p-3 bg-third hover:text-white text-white rounded-md w-20"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="p-3 bg-third hover:text-white text-white rounded-md w-20"
+                onClick={handleToggleStatus}
+              >
+                Confirm
+              </Button>
+              <GlobalLoading isSubmiting={isSubmiting} />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Create Modal */}
       {/* Modal for creating a new package */}
