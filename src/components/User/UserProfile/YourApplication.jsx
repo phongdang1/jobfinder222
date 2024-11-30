@@ -4,6 +4,7 @@ import { getCvByUserId } from "../../../fetchData/CvPost";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const YourApplication = () => {
   const userId = localStorage.getItem("user_id");
@@ -101,10 +102,11 @@ const YourApplication = () => {
                 >
                   {cv.statusCode}
                 </span>
-
+                 <Link to={`/job-detail/${cv.postId}`}>
                 <Button variant="outline" className="mt-2 border border-primary text-primary font-semibold hover:text-white hover:bg-primary">
                   View Details
                 </Button>
+                </Link>
               </div>
             </Card>
           ))}

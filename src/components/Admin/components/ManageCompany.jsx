@@ -59,8 +59,11 @@ const ManageCompanyAdmin = () => {
       setLoading(true);
       const response = await getAllCompanies(searchTerm);
       if (response.data.errCode === 0) {
-        setCompanies(response.data.data.reverse());
-        setFilteredCompanies(response.data.data);
+        const sortedData = response.data.data.sort((a, b) => 
+          new Date(b.updatedAt) - new Date(a.updatedAt)
+        );
+        setCompanies(sortedData);
+        setFilteredCompanies(sortedData);
       } else {
         setError("Error fetching data. Please try again later.");
         setCompanies([]);
