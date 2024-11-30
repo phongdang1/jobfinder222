@@ -20,7 +20,9 @@ import { Button } from "@/components/ui/button";
 import CandidateCard from "./CandidateCard";
 import { handleFindCv } from "@/fetchData/CvPost";
 import { getCompanyById } from "@/fetchData/Company";
+import axios from "../../../fetchData/axios";
 import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
+
 const FindCandidate = () => {
   const [dreamJob, setDreamJob] = useState({
     province: "",
@@ -226,6 +228,31 @@ const FindCandidate = () => {
   useEffect(() => {
     fetchCompany(companyId);
   }, []);
+
+  const [user, setUser] = useState();
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("user_id");
+
+  const fetchUser = async (userId) => {
+    try {
+      const response = await axios.get(`/getUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token in headers
+        },
+      });
+
+      if (response.data) {
+        setUser(response.data.data);
+        console.log("User data set in Redux and localStorage:", response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser(userId);
+  }, [userId]);
 
   return (
     <div className="grid grid-cols-3 gap-4 overflow-visible flex-grow">

@@ -19,6 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkViewCompany } from "@/fetchData/CvPost";
+import { Image } from "@nextui-org/react";
 
 function CandidateCard({ candidates, view }) {
   const [views, setViews] = useState();
@@ -31,9 +32,10 @@ function CandidateCard({ candidates, view }) {
       const response = await checkViewCompany(companyId);
       const allowCv = response.data.allowCv;
 
+      console.log("aaa", response.data);
+
       setViews(allowCv);
-      console.log("view:", views);
-      console.log(response.data.allowCv);
+      console.log("views", response.data.allowCv);
       if (response.data) {
         navigate(`/company/candidateDetail/${userId}/${allowCv}`);
       }
@@ -98,15 +100,20 @@ function CandidateCard({ candidates, view }) {
         return (
           <div
             key={index}
-            className="grid grid-cols-6 p-4 border border-gray-300 rounded-lg mt-4 hover:bg-primary/5 hover:border hover:border-primary font-poppins"
+            className="grid grid-cols-7 p-4 border border-gray-300 rounded-lg mt-4 hover:bg-primary/5 hover:border hover:border-primary font-poppins"
           >
-            <div className="bg-gray-100 h-full w-4/5 col-span-1 rounded-full cursor-pointer">
-              <img
-                src={c.image}
-                alt={`${c.UserDetailData.firstName} ${c.UserDetailData.lastName}`}
+            <div className="flex items-center col-span-1 justify-center mr-4">
+              <Image
+                alt="logo"
+                className="object-cover rounded-lg"
+                height={120}
+                shadow="md"
+                src={c.UserDetailData?.image}
+                width={120}
               />
             </div>
-            <div className="space-y-2 col-span-4">
+
+            <div className="space-y-2 col-span-5">
               <div className="flex gap-2 items-center">
                 <p className="text-primary text-xl font-medium cursor-pointer">
                   {c.UserDetailData.firstName} {c.UserDetailData.lastName}
@@ -161,7 +168,7 @@ function CandidateCard({ candidates, view }) {
                     <DialogTitle>
                       {view === 0 ? (
                         <div className="flex items-center gap-2">
-                          You have {view} CV views. Buy views to see candidate's
+                          You have {view} CV views. Buy views to see candidate
                           CV
                         </div>
                       ) : (
@@ -206,7 +213,7 @@ function CandidateCard({ candidates, view }) {
                             variant="outline"
                             className="text-primary border border-primary hover:bg-primary hover:text-white w-1/2"
                             onClick={() =>
-                              handleProceedClick(c.UserDetailData.id)
+                              handleProceedClick(c.UserDetailData?.id)
                             }
                           >
                             Proceed ?

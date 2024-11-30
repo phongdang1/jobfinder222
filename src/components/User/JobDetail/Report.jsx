@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createNewReport } from "@/fetchData/Report";
 import toast from "react-hot-toast";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import axios from "../../../fetchData/axios";
 
 function Report({ data }) {
   const plugin = React.useRef(
@@ -79,6 +80,31 @@ function Report({ data }) {
       }
     }
   };
+
+  const [user, setUser] = useState();
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("user_id");
+
+  const fetchUser = async (userId) => {
+    try {
+      const response = await axios.get(`/getUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token in headers
+        },
+      });
+
+      if (response.data) {
+        setUser(response.data.data);
+        console.log("User data set in Redux and localStorage:", response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser(userId);
+  }, [userId]);
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -162,76 +188,86 @@ function Report({ data }) {
         <CarouselNext />
       </Carousel>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="border border-primary text-primary hover:bg-primary hover:text-white w-full max-w-sm"
-          >
-            Report Scam
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Report Scam</DialogTitle>
-            <div>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  createReport();
-                }}
-              >
-                <div className="mt-4">
-                  <div className="flex gap-2">
-                    <div className="p-8 lg:p-8 md:p-6 sm:p-4 bg-gray-300 text-center">
-                      Logo
-                    </div>
-                    <div>
-                      <div className="text-xl font-semibold text-primary">
-                        {data.data.postDetailData?.name}
-                      </div>
-                      <div className="font-semibold text-lg text-black">
-                        {data.data.companyData?.name}
-                      </div>
-                    </div>
-                  </div>
+      {user?.isVerify === 1 ? (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              className="border border-primary text-primary hover:bg-primary hover:text-white w-full max-w-sm"
+              variant="outline"
+            >
+              Report Scam
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Report Scam</DialogTitle>
+              <div>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    createReport();
+                  }}
+                >
                   <div className="mt-4">
-                    <CheckboxGroup
-                      value={selectedReasons}
-                      onChange={handleCheckboxChange}
-                    >
-                      <Checkbox value="Wrong company address">
-                        Wrong company address
-                      </Checkbox>
-                      <Checkbox value="I have problem applying this job">
-                        I have problem applying this job
-                      </Checkbox>
-                      <Checkbox value="Scam issues">Scam issues</Checkbox>
-                      <Checkbox value="Others">Others</Checkbox>
-                    </CheckboxGroup>
-                  </div>
-                  <div className="grid w-full gap-2 mt-8">
-                    <Textarea
-                      value={description}
-                      onChange={handleDescriptionChange}
-                      placeholder=" Describe the reason you report..."
-                    />
+                    <div className="flex gap-2">
+                      <div className="p-8 lg:p-8 md:p-6 sm:p-4 bg-gray-300 text-center">
+                        Logo
+                      </div>
+                      <div>
+                        <div className="text-xl font-semibold text-primary">
+                          {data.data.postDetailData?.name}
+                        </div>
+                        <div className="font-semibold text-lg text-black">
+                          {data.data.companyData?.name}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <CheckboxGroup
+                        value={selectedReasons}
+                        onChange={handleCheckboxChange}
+                      >
+                        <Checkbox value="Wrong company address">
+                          Wrong company address
+                        </Checkbox>
+                        <Checkbox value="I have problem applying this job">
+                          I have problem applying this job
+                        </Checkbox>
+                        <Checkbox value="Scam issues">Scam issues</Checkbox>
+                        <Checkbox value="Others">Others</Checkbox>
+                      </CheckboxGroup>
+                    </div>
+                    <div className="grid w-full gap-2 mt-8">
+                      <Textarea
+                        value={description}
+                        onChange={handleDescriptionChange}
+                        placeholder=" Describe the reason you report..."
+                      />
 
-                    <Button
-                      variant="outline"
-                      className="border border-primary text-primary hover:bg-primary hover:text-white"
-                      type="submit"
-                    >
-                      Send Report
-                    </Button>
-                    <GlobalLoading isSubmiting={isSubmitting} />
+                      <Button
+                        variant="outline"
+                        className="border border-primary text-primary hover:bg-primary hover:text-white"
+                        type="submit"
+                      >
+                        Send Report
+                      </Button>
+                      <GlobalLoading isSubmiting={isSubmitting} />
+                    </div>
                   </div>
-                </div>
-              </form>
-            </div>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+                </form>
+              </div>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Button
+          disabled
+          className="border border-primary text-primary hover:bg-primary hover:text-white w-full max-w-sm"
+          variant="outline"
+        >
+          Verify Email to Report
+        </Button>
+      )}
     </div>
   );
 }

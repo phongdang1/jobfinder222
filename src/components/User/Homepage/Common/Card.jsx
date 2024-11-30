@@ -84,7 +84,7 @@ function JobCard({ expand, data }) {
                         </Tooltip>
                       </TooltipProvider>
 
-                      <p className="font-normal text-base text-gray-500">
+                      <p className="font-normal text-base text-gray-500 w-3/5 max-w-xs text-ellipsis overflow-hidden whitespace-nowrap">
                         {card.postDetailData.name}
                       </p>
                       <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">

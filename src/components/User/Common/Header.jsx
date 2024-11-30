@@ -73,13 +73,13 @@ function Header() {
   }
   useEffect(() => {
     const { token, userId } = getQueryParams();
-  
+
     if (token && userId) {
       // Lưu thông tin vào localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user_id", userId);
-      localStorage.setItem("roleCode", "USER"); 
-  
+      localStorage.setItem("roleCode", "USER");
+
       // Điều hướng đến trang chính
       navigate("/");
     }
@@ -91,7 +91,7 @@ function Header() {
           Authorization: `Bearer ${token}`, // Include token in headers
         },
       });
-     
+
       console.log("Response from /getUserById:", response);
 
       if (response.data) {
@@ -103,11 +103,11 @@ function Header() {
       console.error("Failed to fetch user:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchUser(userId);
   }, [userId]);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -173,6 +173,11 @@ function Header() {
     });
 
     socket.on("ReceivedMail", (msg) => {
+      setNotificationCount((prevCount) => prevCount + 1);
+      console.log("Company Approved Event:", msg);
+    });
+
+    socket.on("inviteApplyJob", (msg) => {
       setNotificationCount((prevCount) => prevCount + 1);
       console.log("Company Approved Event:", msg);
     });
@@ -359,7 +364,7 @@ function Header() {
           {userId === null ||
           userId === undefined ||
           token === null ||
-          token === undefined  ? (
+          token === undefined ? (
             <>
               <li>
                 <Button
