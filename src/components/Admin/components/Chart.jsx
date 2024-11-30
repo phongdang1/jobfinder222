@@ -176,6 +176,7 @@ function Chart() {
                 cursor={false}
                 content={<ChartTooltipContent hideLabel />}
               />
+
               <Pie
                 data={chartData}
                 dataKey="posts"

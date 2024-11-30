@@ -130,6 +130,7 @@ export function Component() {
             tickFormatter={(value) => value.slice(0, 20)}
           /> */}
           <ChartTooltip content={<ChartTooltipContent />} />
+
           <ChartLegend content={<ChartLegendContent />} />
           <Bar
             barSize={50}

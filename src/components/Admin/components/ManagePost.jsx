@@ -59,8 +59,11 @@ const ManagePostAdmin = () => {
       setLoading(true);
       const response = await getAllPostsInactive(searchTerm);
       if (response.data.errCode === 0) {
-        setposts(response.data.data);
-        setFilteredposts(response.data.data);
+        const sortedData = response.data.data.sort((a, b) => 
+          new Date(b.updatedAt) - new Date(a.updatedAt)
+        );
+        setposts(sortedData);
+        setFilteredposts(sortedData);
       } else {
         setError("Error fetching data. Please try again later.");
         setposts([]);
@@ -367,6 +370,14 @@ const ManagePostAdmin = () => {
               </DialogHeader>
               <div className="border-t border-gray-200 mt-4">
                 <dl>
+                <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                       Skill Requirement
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {currentPostDetail.postDetailData.skillRequirement}
+                    </dd>
+                  </div>
                   <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">
                       Description

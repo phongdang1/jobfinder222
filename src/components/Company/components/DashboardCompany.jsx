@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllPost } from "@/fetchData/Post";
 import { FcFaq, FcHome } from "react-icons/fc";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const DashboardCompany = () => {
   const [loading, setLoading] = useState(true);
@@ -93,26 +94,27 @@ const DashboardCompany = () => {
       expired: 0,
     };
     const currentTime = new Date().toISOString(); // Get current time
-    console.log("post ne 123", posts);
+    if (posts.userId === parseInt(userId)) {
+      posts.forEach((post) => {
+        console.log("post ne 123", post);
+      });
+    }
+
     posts.forEach((post) => {
       if (post.userId === parseInt(userId)) {
         if (post.statusCode === "APPROVED") {
-          if (post.timeEnd > currentTime) {
-            counts.active++;
-          } else {
-            counts.expired++;
-          }
+          counts.active++;
         } else if (post.statusCode === "PENDING") {
           counts.pending++;
         } else if (post.statusCode === "REJECTED") {
-          if (post.timeEnd > currentTime) {
-            counts.inactive++;
-          } else {
-            counts.expired++;
-          }
+          counts.inactive++;
+          console.log('post', post)
+        } else {
+          counts.expired++;
         }
       }
     });
+    console.log("count ne", counts);
 
     setPostCounts(counts);
   };
@@ -193,7 +195,7 @@ const DashboardCompany = () => {
   const jobData = [];
   const [selectedOption, setSelectedOption] = useState("Choose time");
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={loading} />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -286,11 +288,12 @@ const DashboardCompany = () => {
           <Card className="h-full relative">
             <CardHeader>
               <CardTitle className="text-lg font-normal">
-                Total number of records in 7 days
+                Total number of applications{" "}
+                <span className="text-xl text-primary font-medium">
+                  {cvPostCount}
+                </span>
               </CardTitle>
-              <CardDescription className="text-black text-2xl font-semibold">
-                {cvPostCount}
-              </CardDescription>
+              <CardDescription className="text-black text-2xl font-semibold"></CardDescription>
               {/* <div className="absolute top-4 right-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -320,34 +323,35 @@ const DashboardCompany = () => {
             </CardHeader>
             <CardContent>
               {cvPosts.length > 0 ? (
-                <Table>
-                  <TableCaption></TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name Post</TableHead>
-                      <TableHead>Name Employee</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Type</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {cvPosts.map((cvPost) => (
-                      <TableRow key={cvPost.id}>
-                        <TableCell>
-                          {cvPost.postCvData.postDetailData.name}
-                        </TableCell>
-                        <TableCell>{userNames[cvPost.userId]}</TableCell>
-                        <TableCell>{cvPost.description}</TableCell>
-                        <TableCell>
-                          {
-                            cvPost.postCvData.postDetailData.jobTypePostData
-                              .value
-                          }
-                        </TableCell>
+                <div className="overflow-y-auto max-h-[400px]">
+                  {" "}
+                  {/* Thêm thanh cuộn cho bảng khi có nhiều dữ liệu */}
+                  <Table>
+                    <TableCaption></TableCaption>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name Post</TableHead>
+                        <TableHead>CV Applications</TableHead>
+                        <TableHead className="w-[350px]">Description</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {cvPosts.map((cvPost) => (
+                        <TableRow key={cvPost.id}>
+                          <TableCell className="truncate max-w-[150px]">
+                            {cvPost.postCvData.postDetailData.name}
+                          </TableCell>
+                          <TableCell className="truncate max-w-[150px]">
+                            {userNames[cvPost.userId]}
+                          </TableCell>
+                          <TableCell className="truncate max-w-[250px]">
+                            {cvPost.description}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center text-center">
                   <img
@@ -458,27 +462,31 @@ const DashboardCompany = () => {
           </CardHeader>
           <CardContent>
             {userPackages.length > 0 ? (
-              <Table>
-                <TableCaption></TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Package Name</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Points Earned</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {userPackages.map((pkg) => (
-                    <TableRow key={pkg.packageId}>
-                      <TableCell>{pkg.PackageData.name}</TableCell>
-                      <TableCell>${pkg.PackageData.price}</TableCell>
-                      <TableCell>{pkg.PackageData.type}</TableCell>
-                      <TableCell>{pkg.poinEarned}</TableCell>
+              <div className="overflow-y-auto max-h-[400px]">
+                {" "}
+                {/* Thêm thanh cuộn cho bảng khi có nhiều dữ liệu */}
+                <Table>
+                  <TableCaption></TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Package Name</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Points Earned</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {userPackages.map((pkg) => (
+                      <TableRow key={pkg.packageId}>
+                        <TableCell>{pkg.PackageData.name}</TableCell>
+                        <TableCell>${pkg.PackageData.price}</TableCell>
+                        <TableCell>{pkg.PackageData.type}</TableCell>
+                        <TableCell>{pkg.poinEarned}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center text-center">
                 <img

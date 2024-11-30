@@ -50,7 +50,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+
 import { Image } from "@nextui-org/react";
+
+import { getAllPost } from "@/fetchData/Post";
+
 
 const Head = ({ job }) => {
   const navigate = useNavigate();
@@ -66,10 +70,12 @@ const Head = ({ job }) => {
   const deadline = new Date(job.data.timeEnd).getTime();
   const currentTime = new Date();
   const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
+  const [relatedJob, setRelatedJob] = useState([]); // State for
 
   useEffect(() => {
     fetchUserData();
     console.log("job ne", job);
+    fetchRelatedJobs();
   }, [userId, jobId]);
   const handleBackClick = () => {
     if (prevLocation) {
@@ -162,6 +168,45 @@ const Head = ({ job }) => {
       setIsOpen(true);
     }
   };
+  const fetchRelatedJobs = async () => {
+    try {
+      const res = await getAllPost();
+      if (res.data.errCode === 0) {
+        console.log("relate ne", res.data.data);
+  
+        // Filter related jobs
+        const relatedJobs = res.data.data.filter(
+          (post) =>
+            post.postDetailData.jobTypePostData.code ===
+            job.data.postDetailData.jobTypePostData.code
+        );
+  
+        // Sort by `isHot` first, then by `createdAt` (newest first)
+        const sortedJobs = relatedJobs.sort((a, b) => {
+          // Compare `isHot` first
+          if (b.isHot !== a.isHot) {
+            return b.isHot - a.isHot; // `1` (hot) comes before `0` (not hot)
+          }
+          // If `isHot` is the same, compare `createdAt`
+          return new Date(b.createdAt) - new Date(a.createdAt); // Newest first
+        });
+  
+        // Limit to 9 jobs
+        const limitedSortedJobs = sortedJobs.slice(0, 9);
+  
+        console.log(
+          "related jobs (sorted by isHot, createdAt, and limited to 9):",
+          limitedSortedJobs
+        );
+        setRelatedJob(limitedSortedJobs);
+      } else {
+        console.log("Error fetching related jobs");
+      }
+    } catch (error) {
+      console.error("Error in fetchRelatedJobs:", error);
+    }
+  };
+  
 
   return (
     <div className="flex flex-col mx-4 lg:mx-36">
@@ -455,7 +500,7 @@ const Head = ({ job }) => {
               <p className="font-semibold">Related Jobs</p>
             </div>
             <div className="space-y-4">
-              <Card expand="expand" />
+              <Card expand="expand" data={relatedJob} />
             </div>
           </div>
         </div>

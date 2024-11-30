@@ -16,17 +16,20 @@ import {
 const URL = "/getAllPackage";
 import { FaGift } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 function ProductPage() {
   const [products, setProducts] = useState([]);
   const [postPlans, setPostPlans] = useState([]);
   const [viewPlans, setViewPlans] = useState([]);
   const [postPrice, setPostPrice] = useState(0);
   const [viewPrice, setViewPrice] = useState(0);
+  const [postPoints, setPostPoints] = useState(null); // State to store post plan points
+  const [viewPoints, setViewPoints] = useState(null); // State to store view plan points
   const [selectedPostPlanId, setSelectedPostPlanId] = useState(null); // For selected Post plan ID
   const [selectedViewPlanId, setSelectedViewPlanId] = useState(null); // For selected View plan ID
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // State loading
 
   useEffect(() => {
     AOS.init({
@@ -58,11 +61,13 @@ function ProductPage() {
 
           if (postPackages.length > 0) {
             setPostPrice(postPackages[0].price);
-            setSelectedPostPlanId(postPackages[0].id); // Set default selected Post plan ID
+            setPostPoints(postPackages[0].value); // Set points for post package
+            setSelectedPostPlanId(postPackages[0].id);
           }
           if (viewPackages.length > 0) {
             setViewPrice(viewPackages[0].price);
-            setSelectedViewPlanId(viewPackages[0].id); // Set default selected View plan ID
+            setViewPoints(viewPackages[0].value); // Set points for view package
+            setSelectedViewPlanId(viewPackages[0].id);
           }
         } else {
           console.error("Unexpected data format:", response.data);
@@ -89,56 +94,67 @@ function ProductPage() {
     if (selectedProduct) {
       if (type === "Post") {
         setPostPrice(selectedProduct.price);
-        setSelectedPostPlanId(selectedProduct.id); // Update selected Post plan ID
+        setPostPoints(selectedProduct.value); // Set points for selected post plan
+        setSelectedPostPlanId(selectedProduct.id);
       } else {
         setViewPrice(selectedProduct.price);
-        setSelectedViewPlanId(selectedProduct.id); // Update selected View plan ID
+        setViewPoints(selectedProduct.value); // Set points for selected view plan
+        setSelectedViewPlanId(selectedProduct.id);
       }
     }
   };
 
   const handleCreatePaymentViewCv = async () => {
-    const res = await createPaymentViewCv(selectedViewPlanId);
-    if (res.data.errCode == 0) {
-      let data = {
-        packageId: selectedViewPlanId,
-        amount: 1,
-        userId: JSON.parse(localStorage.getItem("user_id")),
-      };
-      localStorage.setItem("orderData", JSON.stringify(data));
-      // const userId = JSON.parse(localStorage.getItem("user_id"));
-      // const packageId = selectedViewPlanId;
-      const redirectUrl = `${res.data.link}`;
-      console.log("Redirecting to:", redirectUrl);
-      window.location.href = redirectUrl;
-    } else {
-      console.log("loi thanh toan", res);
+    try {
+      setIsSubmitting(true);
+      const res = await createPaymentViewCv(selectedViewPlanId);
+      if (res.data.errCode === 0) {
+        const data = {
+          packageId: selectedViewPlanId,
+          amount: 1,
+          userId: JSON.parse(localStorage.getItem("user_id")),
+        };
+        localStorage.setItem("orderData", JSON.stringify(data));
+        const redirectUrl = `${res.data.link}`;
+        console.log("Redirecting to:", redirectUrl);
+        window.location.href = redirectUrl;
+      } else {
+        console.log("Lỗi thanh toán", res);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo thanh toán:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-    console.log("Payment result:", selectedViewPlanId);
   };
 
   const handleCreatePaymentHotPost = async () => {
-    const res = await createPaymentHotPost(selectedPostPlanId);
-    if (res.data.errCode == 0) {
-      let data = {
-        packageId: selectedPostPlanId,
-        amount: 1,
-        userId: JSON.parse(localStorage.getItem("user_id")),
-      };
-      localStorage.setItem("orderData", JSON.stringify(data));
-      // const userId = JSON.parse(localStorage.getItem("user_id"));
-      // const packageId = selectedViewPlanId;
-      const redirectUrl = `${res.data.link}`;
-      console.log("Redirecting to:", redirectUrl);
-      window.location.href = redirectUrl;
-    } else {
-      console.log("loi thanh toan", res);
+    try {
+      setIsSubmitting(true);
+      const res = await createPaymentHotPost(selectedPostPlanId);
+      if (res.data.errCode === 0) {
+        const data = {
+          packageId: selectedPostPlanId,
+          amount: 1,
+          userId: JSON.parse(localStorage.getItem("user_id")),
+        };
+        localStorage.setItem("orderData", JSON.stringify(data));
+        const redirectUrl = `${res.data.link}`;
+        console.log("Redirecting to:", redirectUrl);
+        window.location.href = redirectUrl;
+      } else {
+        console.log("Lỗi thanh toán", res);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo thanh toán:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-    console.log("Payment result:", selectedViewPlanId);
   };
 
   return (
     <div className="mb-5">
+      <GlobalLoadingMain isSubmiting={isSubmitting} />
       <div className="flex flex-col  bg-opacity-80 rounded-2xl mb-6">
         <ProductHero />
       </div>
@@ -184,14 +200,26 @@ function ProductPage() {
                 className="w-full mb-4 p-2 border border-gray-400 rounded"
                 onChange={(e) => handlePlanChange(e, "Post")}
               >
-                {postPlans.map((plan) => (
-                  <option key={plan.id} value={plan.name}>
-                    {plan.name}
-                  </option>
-                ))}
+                {postPlans
+                  .filter(
+                    (plan) => plan.statusCode.toLowerCase() !== "inactive"
+                  ) // Lọc các plan có statusCode không phải "Inactive"
+                  .map((plan) => (
+                    <option key={plan.id} value={plan.name}>
+                      {plan.name}
+                    </option>
+                  ))}
               </select>
+
+              <div className=" flex justify-center items-center bg-gray-100">
+                <p className="text-xl font-semibold">
+                  Price: {`$${postPrice}`}
+                </p>
+              </div>
               <div className="mb-4 p-2 flex justify-center items-center bg-gray-100">
-                <p className="text-xl font-semibold">{`$${postPrice}`}</p>
+                <p className="text-xl font-semibold ml-4">
+                  Point: {` ${postPoints}`}
+                </p>{" "}
               </div>
               <Button
                 onClick={handleCreatePaymentHotPost}
@@ -228,17 +256,25 @@ function ProductPage() {
               View the matching percentage of all candidates.
             </div>
             <select
-              className="w-full mb-4 p-2 border border-gray-400 rounded focus:border-primary focus:ring-1 ring-primary"
+              className="w-full mb-4 p-2 border border-gray-400 rounded"
               onChange={(e) => handlePlanChange(e, "View")}
             >
-              {viewPlans.map((plan) => (
-                <option key={plan.id} value={plan.name}>
-                  {plan.name}
-                </option>
-              ))}
+              {viewPlans
+                .filter((plan) => plan.statusCode.toLowerCase() !== "inactive") // Lọc các plan có statusCode không phải "Inactive"
+                .map((plan) => (
+                  <option key={plan.id} value={plan.name}>
+                    {plan.name}
+                  </option>
+                ))}
             </select>
+
+            <div className=" flex justify-center items-center bg-gray-100">
+              <p className="text-xl font-semibold">Price: {`$${viewPrice}`}</p>
+            </div>
             <div className="mb-4 p-2 flex justify-center items-center bg-gray-100">
-              <p className="text-xl font-semibold">{`$${viewPrice}`}</p>
+              <p className="text-xl font-semibold ml-4">
+                Points:{` ${viewPoints}`}
+              </p>{" "}
             </div>
             <Button
               onClick={handleCreatePaymentViewCv}

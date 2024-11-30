@@ -21,6 +21,7 @@ import CandidateCard from "./CandidateCard";
 import { handleFindCv } from "@/fetchData/CvPost";
 import { getCompanyById } from "@/fetchData/Company";
 import axios from "../../../fetchData/axios";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const FindCandidate = () => {
   const [dreamJob, setDreamJob] = useState({
@@ -40,7 +41,7 @@ const FindCandidate = () => {
   const [workType, setWorkType] = useState([]);
   const [exp, setExp] = useState([]);
   const [genderPost, setGenderPost] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const [type, setType] = useState("");
 
   const typeKey = [
@@ -168,6 +169,7 @@ const FindCandidate = () => {
 
   const handleFilter = async () => {
     console.log(filters);
+    setLoading(true); // Show loading when the filter is triggered
 
     try {
       const response = await handleFindCv(filters);
@@ -182,6 +184,8 @@ const FindCandidate = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); // Hide loading once the filter is done
     }
   };
 
@@ -190,6 +194,7 @@ const FindCandidate = () => {
   }, []);
 
   const handleReset = () => {
+    setLoading(true); // Show loading when reset is triggered
     setDreamJob({
       province: "",
       jobType: "",
@@ -201,6 +206,10 @@ const FindCandidate = () => {
     });
     setSelectedSkills([]);
     setFetchedCandidate([]);
+
+    setTimeout(() => {
+      setLoading(false); // Hide loading after resetting (using a timeout to simulate reset delay)
+    }, 500); // Adjust the timeout as needed
   };
 
   const companyId = JSON.parse(localStorage.getItem("companyId"));
@@ -247,6 +256,7 @@ const FindCandidate = () => {
 
   return (
     <div className="grid grid-cols-3 gap-4 overflow-visible flex-grow">
+      <GlobalLoadingMain isSubmiting={loading} />
       {/* left */}
       <div className="col-span-1 bg-white p-4 shadow-lg rounded-xl border border-slate-100 mt-4 mb-4 h-full max-h-[780px] sticky top-[100px]">
         <form
@@ -518,6 +528,7 @@ const FindCandidate = () => {
       </div>
       {/* Right */}
       <div className="col-span-2 bg-white p-4 shadow-lg rounded-xl border border-slate-100 mt-4 mb-4 ">
+        <GlobalLoadingMain isSubmiting={loading} />
         <div className="flex justify-between items-center">
           <p className="text-2xl font-semibold text-primary">
             Filtered Candidate

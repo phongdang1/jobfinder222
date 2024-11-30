@@ -494,7 +494,7 @@ const ManageUser = () => {
                               setShowConfirm(true);
                               setAction("ban");
                             }}
-                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
+                            className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
                           >
                             Ban
                           </button>
@@ -522,7 +522,7 @@ const ManageUser = () => {
                           <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">
                             Warning: This action cannot be undone.
                           </h3>
-                          <div className="mt-4">
+                          {action !== "setAdmin" && <div className="mt-4">
                             <label
                               htmlFor="banReason"
                               className="block text-sm font-medium text-gray-700"
@@ -543,7 +543,7 @@ const ManageUser = () => {
                                 Please enter a reason for {action} this user.
                               </p>
                             )}
-                          </div>
+                          </div>}
                           <div className="flex justify-center mt-4">
                             <button
                               onClick={() => {

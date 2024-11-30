@@ -37,7 +37,13 @@ function JobPage() {
               job.statusCode.toUpperCase() === "approved".toUpperCase() &&
               date < new Date(job?.timeEnd)
           );
-          const sortedJobs = activeJobs.sort((a, b) => b.isHot - a.isHot);
+          const sortedJobs = activeJobs.sort((a, b) => {
+            if (b.isHot !== a.isHot) {
+              return b.isHot - a.isHot;
+            }
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+          console.log("sort cai", sortedJobs);
           setJobs(sortedJobs);
           setFilteredJobs(sortedJobs);
         } else {
@@ -155,17 +161,13 @@ function JobPage() {
           {loading || loadingFilter ? (
             <div className="grid grid-cols-1 gap-6">
               {Array.from({ length: 6 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="flex space-y-4 items-start"
-                >
+                <div key={index} className="flex space-y-4 items-start">
                   <Skeleton className="w-20 h-20 rounded-md mt-4" />
                   <div className="w-full flex flex-col gap-2 mx-5">
                     <Skeleton className="w-full h-6 sm:h-8 lg:h-10 rounded-md" />
-                  <Skeleton className="w-3/4 h-4 sm:h-6 lg:h-8 rounded-md" />
-                  <Skeleton className="w-1/2 h-4 sm:h-5 lg:h-6 rounded-md" />
+                    <Skeleton className="w-3/4 h-4 sm:h-6 lg:h-8 rounded-md" />
+                    <Skeleton className="w-1/2 h-4 sm:h-5 lg:h-6 rounded-md" />
                   </div>
-                  
                 </div>
               ))}
             </div>

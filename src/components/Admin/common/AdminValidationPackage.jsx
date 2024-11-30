@@ -31,6 +31,12 @@ function AdminValidationPackage(formData, isCreateModal) {
         error.price = "Package price is required!";
       }
     }
+
+    if (formData.value !== undefined) {
+      if (formData.value === "") {
+        error.value = "Package point is required!";
+      }
+    }
   }
 
   if (formData.name !== undefined) {
@@ -45,6 +51,12 @@ function AdminValidationPackage(formData, isCreateModal) {
   if (formData.price !== undefined) {
     if (formData.price === "") {
       error.price = "Package price is required!";
+    }
+  }
+
+  if (formData.value !== undefined) {
+    if (formData.value === "") {
+      error.value = "Package point is required!";
     }
   }
 

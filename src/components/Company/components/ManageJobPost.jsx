@@ -55,6 +55,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { handleClosePost } from "@/fetchData/Post";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 const ManageJobPost = () => {
   const [company, setCompany] = useState([]);
   const [post, setPost] = useState([]);
@@ -73,6 +75,7 @@ const ManageJobPost = () => {
   const [rejectDialog, setRejectDialog] = useState(false);
   const [approveDialog, setApproveDialog] = useState(false);
   const [closeDialog, setCloseDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setScheduleForm((prevForm) => ({
@@ -84,6 +87,7 @@ const ManageJobPost = () => {
   const date = new Date();
   const fetchCompanyData = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.get(`/getCompanyById?id=${companyId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -153,6 +157,7 @@ const ManageJobPost = () => {
         setUserCVs(userCvData);
         setUserDetails(userDetailsData);
         setSchedule(scheduleData);
+        setIsLoading(false);
         console.log("Final User CVs by Post ID:", userCvData);
         console.log("Final User Details:", userDetailsData);
       } else {
@@ -164,6 +169,7 @@ const ManageJobPost = () => {
   };
   const handleSubmitForm = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.post(
         `/createInterviewSchedule`,
         {
@@ -195,11 +201,16 @@ const ManageJobPost = () => {
       }
     } catch (error) {
       console.log("error j j day", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleReject = async (id) => {
+    setIsLoading(true);
+
     try {
+      setIsLoading(true);
       const res = await handleRejectCvPost(id);
       if (res.data.errCode === 0) {
         console.log("CV Rejected !!!", res);
@@ -218,10 +229,13 @@ const ManageJobPost = () => {
       }
     } catch (error) {
       console.log("error reject", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleApprove = async (id) => {
     try {
+      setIsLoading(true);
       const res = await handleApproveCvPost(id);
       if (res.data.errCode === 0) {
         console.log("CV Approved!!!", res);
@@ -233,6 +247,8 @@ const ManageJobPost = () => {
       }
     } catch (error) {
       console.log("error approve", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -254,9 +270,35 @@ const ManageJobPost = () => {
       console.log("error close", error);
     }
   };
+  const handleUpdateTime = (value, type) => {
+    if (!scheduleForm.interviewDate) {
+      toast.error("Please pick a date first!");
+      return;
+    }
+
+    // Tạo một đối tượng Date từ interviewDate
+    const date = new Date(scheduleForm.interviewDate);
+
+    // Cộng giờ hoặc phút tùy thuộc vào type
+    if (type === "hour") {
+      date.setHours(value); // Cập nhật giờ
+    } else if (type === "minute") {
+      date.setMinutes(value); // Cập nhật phút
+    }
+
+    // Chuyển datetime thành chuỗi định dạng và cập nhật lại vào scheduleForm
+    const updatedDateTime = format(date, "yyyy-MM-dd HH:mm:ss");
+
+    setScheduleForm({
+      ...scheduleForm,
+      interviewDate: updatedDateTime, // Cập nhật interviewDate
+    });
+  };
 
   return (
     <div className="mt-8 my-60">
+      <GlobalLoadingMain isSubmiting={isLoading} />
+
       <h1 className="text-3xl font-semibold my-4">
         Total Post ({post.length})
       </h1>
@@ -282,6 +324,7 @@ const ManageJobPost = () => {
               <TableRow>
                 <TableHead className="w-[300px]">Name</TableHead>
                 <TableHead>Description</TableHead>
+                <TableHead>Requirement</TableHead>
                 <TableHead>Action</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead className="text-right">Status</TableHead>
@@ -298,6 +341,9 @@ const ManageJobPost = () => {
                       </TableCell>
                       <TableCell className="w-2/5 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                         {post.postDetailData.description}
+                      </TableCell>
+                      <TableCell className="w-2/5 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                        {post.postDetailData.skillRequirement}
                       </TableCell>
                       <TableCell className="text-right flex items-end justify-start">
                         {/* mở cái dialog user  */}
@@ -389,7 +435,7 @@ const ManageJobPost = () => {
                     : ""
                 }
                 ${
-                  userCv.statusCode === "BANNED"
+                  userCv.statusCode === "REJECTED"
                     ? "bg-red-100 text-red-700"
                     : ""
                 }
@@ -572,6 +618,47 @@ const ManageJobPost = () => {
                                                         </PopoverContent>
                                                       </Popover>
                                                     </div>
+                                                    {/* Input giờ và phút */}
+                                                    <div className="flex items-center gap-2">
+                                                      <Label>Time</Label>
+                                                      <input
+                                                        type="number"
+                                                        placeholder="HH"
+                                                        min="0"
+                                                        max="23"
+                                                        className="w-[60px] p-2 border rounded-md"
+                                                        onChange={(e) => {
+                                                          const hour =
+                                                            parseInt(
+                                                              e.target.value,
+                                                              10
+                                                            ) || 0;
+                                                          handleUpdateTime(
+                                                            hour,
+                                                            "hour"
+                                                          );
+                                                        }}
+                                                      />
+                                                      :
+                                                      <input
+                                                        type="number"
+                                                        placeholder="MM"
+                                                        min="0"
+                                                        max="59"
+                                                        className="w-[60px] p-2 border rounded-md"
+                                                        onChange={(e) => {
+                                                          const minute =
+                                                            parseInt(
+                                                              e.target.value,
+                                                              10
+                                                            ) || 0;
+                                                          handleUpdateTime(
+                                                            minute,
+                                                            "minute"
+                                                          );
+                                                        }}
+                                                      />
+                                                    </div>
                                                     <div>
                                                       <Label>
                                                         Interview Location
@@ -624,13 +711,14 @@ const ManageJobPost = () => {
                                                         Close
                                                       </Button>
                                                       <Button
-                                                        onClick={
-                                                          handleSubmitForm
-                                                        }
+                                                        onClick={handleSubmitForm}
                                                         className="bg-white border border-primary hover:text-white"
                                                       >
                                                         Set Schedule
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </PopoverContent>
                                                 </Popover>
@@ -688,6 +776,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Reject
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </DialogContent>
                                                 </Dialog>
@@ -946,6 +1037,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Approve
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </DialogContent>
                                                 </Dialog>
@@ -1003,6 +1097,9 @@ const ManageJobPost = () => {
                                                       >
                                                         Reject
                                                       </Button>
+                                                      <GlobalLoadingMain
+                                                        isSubmiting={isLoading}
+                                                      />
                                                     </div>
                                                   </DialogContent>
                                                 </Dialog>
@@ -1410,11 +1507,14 @@ const ManageJobPost = () => {
                                     </DialogHeader>
                                     <DialogFooter>
                                       <Button
-                                      className="bg-white border border-primary hover:bg-primary hover:text-white"
+                                        className="bg-white border border-primary hover:bg-primary hover:text-white"
                                         onClick={() => closePost(post.id)}
                                       >
                                         Confirm
                                       </Button>
+                                      <GlobalLoadingMain
+                                        isSubmiting={isLoading}
+                                      />
                                     </DialogFooter>
                                   </DialogContent>
                                 </Dialog>
@@ -1441,7 +1541,7 @@ const ManageJobPost = () => {
                             : ""
                         }
                         ${
-                          post.statusCode.toUpperCase() === "BANNED"
+                          post.statusCode.toUpperCase() === "REJECTED"
                             ? "bg-red-100 text-red-700"
                             : ""
                         }
@@ -1484,7 +1584,9 @@ const ManageJobPost = () => {
                         {post.postDetailData.description}
                       </TableCell>
                       <TableCell className="text-right">
-                        <span className="bg-red-600 text-red-200 p-2 rounded-sm">{post.statusCode}</span>
+                        <span className="bg-red-600 text-red-200 p-2 rounded-sm">
+                          {post.statusCode}
+                        </span>
                       </TableCell>
                     </TableRow>
                   )

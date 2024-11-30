@@ -51,8 +51,10 @@ const ManageTypeJob = () => {
     code: "",
     type: "JOBTYPE",
     value: "",
+    image: "",
   });
-
+console.log("UpdateJob", updateJobType);
+console.log("jobTypes", jobTypes);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -135,10 +137,47 @@ const ManageTypeJob = () => {
     setJobTypeToDelete(jobType);
     setDeleteConfirmOpen(true); // Open the confirmation dialog
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        if (isUpdateModalOpen) {
+          setUpdateJobType((prevData) => ({
+            ...prevData,
+            [e.target.name]: base64String,
+          }));
+        } 
+        if (isCreateModalOpen) {
+          setNewJobType((prevData) => ({
+            ...prevData,
+            [e.target.name]: base64String,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       const base64String = reader.result;
+  //       setCompanyData((prevData) => ({
+  //         ...prevData,
+  //         [e.target.name]: base64String,
+  //       }));
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+  
 
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
-    setUpdateJobType({ code: "", type: "JOBTYPE", value: "" });
+    setUpdateJobType({ code: "", type: "JOBTYPE", value: "", image: "" });
     setErrorMessage({});
   };
 
@@ -176,6 +215,7 @@ const ManageTypeJob = () => {
       type: "JOBTYPE",
       value: newJobType.value,
       code: newJobType.code,
+      image: newJobType.image,
     };
 
     try {
@@ -188,8 +228,7 @@ const ManageTypeJob = () => {
       } else {
         console.error("Failed to create job type:", response.data);
         toast.error(
-          `Failed to create job type: ${
-            response.data.message || "Unknown error"
+          `Failed to create job type: ${response.data.message || "Unknown error"
           }`
         );
       }
@@ -218,22 +257,24 @@ const ManageTypeJob = () => {
       type: updateJobType.type,
       value: updateJobType.value,
       code: updateJobType.code,
+      image: updateJobType.image,
     };
 
     try {
       const response = await handleUpdateAllCode(userData);
+      console.log("respone", response);
       if (response.data && response.data.errCode === 0) {
         setJobTypes((prev) =>
           prev.map((jobType) =>
             jobType.code === userData.code
-              ? { ...jobType, value: userData.value }
+              ? { ...jobType, value: userData.value, image:  userData.image}
               : jobType
           )
         );
         setFilteredJobTypes((prev) =>
           prev.map((jobType) =>
             jobType.code === userData.code
-              ? { ...jobType, value: userData.value }
+              ? { ...jobType, value: userData.value, image:  userData.image }
               : jobType
           )
         );
@@ -241,8 +282,7 @@ const ManageTypeJob = () => {
       } else {
         console.error("Failed to update job type:", response.data);
         toast.error(
-          `Failed to update job type: ${
-            response.data.message || "Unknown error"
+          `Failed to update job type: ${response.data.message || "Unknown error"
           }`
         );
       }
@@ -277,8 +317,7 @@ const ManageTypeJob = () => {
       } else {
         console.error("Failed to delete job type:", response.data);
         toast.error(
-          `Failed to delete job type: ${
-            response.data.errMessage || "Unknown error"
+          `Failed to delete job type: ${response.data.errMessage || "Unknown error"
           }`
         );
       }
@@ -396,9 +435,8 @@ const ManageTypeJob = () => {
                 name="code"
                 value={newJobType.code}
                 onChange={handleInputChange}
-                className={`${
-                  errorMessage.code ? "border-red-500" : "focus:border-primary"
-                } `}
+                className={`${errorMessage.code ? "border-red-500" : "focus:border-primary"
+                  } `}
               />
               {errorMessage.code && (
                 <p className="text-red-500  mb-3">{errorMessage.code}</p>
@@ -411,13 +449,21 @@ const ManageTypeJob = () => {
                 name="value"
                 value={newJobType.value}
                 onChange={handleInputChange}
-                className={`${
-                  errorMessage.value ? "border-red-500" : "focus:border-primary"
-                } `}
+                className={`${errorMessage.value ? "border-red-500" : "focus:border-primary"
+                  } `}
               />
               {errorMessage.value && (
                 <p className="text-red-500 mb-3">{errorMessage.value}</p>
               )}
+              <Label htmlFor="value" className="mb-2 mt-2">
+                Image
+              </Label>
+              <Input
+                type="file"
+                name="image"
+                onChange={handleFileChange}
+                className="py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
             </div>
             <Button
               type="submit"
@@ -461,13 +507,28 @@ const ManageTypeJob = () => {
                 name="value"
                 value={updateJobType.value}
                 onChange={handleInputChange}
-                className={`${
-                  errorMessage.value ? "border-red-500" : "focus:border-primary"
-                } `}
+                className={`${errorMessage.value ? "border-red-500" : "focus:border-primary"
+                  } `}
               />
               {errorMessage.value && (
                 <p className="text-red-500 mb-3">{errorMessage.value}</p>
               )}
+              <Label htmlFor="value" className="mb-2 mt-2">
+                Image
+              </Label>
+              <Input
+                type="file"
+                name="image"
+                onChange={handleFileChange}
+                className="py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+              <div className="mt-2 rounded-md overflow-hidden">
+                    <img
+                      src={updateJobType.image}
+                      alt="image"
+                      className="w-[300px] h-[200px] object-cover"
+                    />
+                  </div>
             </div>
             <Button
               type="submit"

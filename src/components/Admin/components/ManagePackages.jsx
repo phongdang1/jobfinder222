@@ -41,11 +41,14 @@ const ManagePackages = () => {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPackage, setNewPackage] = useState({
     id: "",
     name: "",
     type: "",
     price: "",
+    value: "",
     statusCode: "",
   });
   const [updatePackage, setUpdatePackage] = useState({
@@ -53,6 +56,7 @@ const ManagePackages = () => {
     name: "",
     type: "",
     price: "",
+    value: "",
     statusCode: "",
   });
   const [loading, setLoading] = useState(true);
@@ -98,6 +102,7 @@ const ManagePackages = () => {
       name: "",
       type: "",
       price: "",
+      value: "",
       statusCode: "active",
     });
     setErrorMessage({});
@@ -110,6 +115,7 @@ const ManagePackages = () => {
       name: "",
       type: "",
       price: "",
+      value: "",
       statusCode: "active",
     });
     setErrorMessage({});
@@ -122,6 +128,7 @@ const ManagePackages = () => {
       name: "",
       type: "",
       price: "",
+      value: "",
       statusCode: "active",
     });
   };
@@ -132,6 +139,11 @@ const ManagePackages = () => {
     setErrorMessage({});
   };
 
+  const handleCancelDelete = () => {
+    setDeleteConfirmOpen(false); // Close the confirmation dialog without deleting
+    setJobTypeToDelete(null); // Clear the job type to be deleted
+  };
+
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
     setUpdatePackage({
@@ -139,6 +151,7 @@ const ManagePackages = () => {
       name: "",
       type: "",
       price: "",
+      value: "",
       statusCode: "active",
     });
     setErrorMessage({});
@@ -166,14 +179,10 @@ const ManagePackages = () => {
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
-    // Run validation and check if there are errors
     const errors = AdminValidationPackage(newPackage, true);
     setErrorMessage(errors);
 
-    // If there are errors, prevent submission
-    if (Object.keys(errors).length > 0) {
-      return; // Exit function early if there are validation errors
-    }
+    if (Object.keys(errors).length > 0) return;
 
     setIsSubmiting(true);
 
@@ -181,97 +190,81 @@ const ManagePackages = () => {
       const response = await handleCreateNewPackage(newPackage);
       if (response.data && response.data.errCode === 0) {
         fetchPackages(searchTerm, selectedType);
+        toast.success("Package created successfully!");
         setNewPackage({
           id: "",
           name: "",
           type: "",
           price: "",
+          value: "", // Reset point
           statusCode: "active",
         });
-        toast.success("Package created successfully!");
+        setCreateModalOpen(false);
       } else {
-        console.error("Failed to create package:", response.data);
-        toast.error(
-          `Failed to create package: ${
-            response.data.message || "Unknown error"
-          }`
-        );
+        toast.error(response.data.message || "Failed to create package.");
       }
-      setCreateModalOpen(false);
     } catch (error) {
-      console.error("Error creating package:", error);
+      console.error(error);
+      toast.error("Error occurred while creating package.");
     } finally {
-      setIsSubmiting(false); // Hide Lottie animation
+      setIsSubmiting(false);
     }
   };
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-
     const errors = AdminValidationPackage(updatePackage, true);
     setErrorMessage(errors);
 
-    // If there are errors, prevent submission
-    if (Object.keys(errors).length > 0) {
-      return; // Exit function early if there are validation errors
-    }
+    if (Object.keys(errors).length > 0) return;
 
     setIsSubmiting(true);
 
     try {
-      console.log("Updating package with data: ", updatePackage);
       const response = await handleUpdatePackage(updatePackage);
       if (response.data && response.data.errCode === 0) {
         fetchPackages(searchTerm, selectedType);
-        setNewPackage({
-          id: updatePackage.id,
-          name: updatePackage.name,
-          type: updatePackage.type,
-          price: updatePackage.price,
-          statusCode: "active",
-        });
         toast.success("Package updated successfully!");
+        setUpdateModalOpen(false);
       } else {
-        console.error(
-          "Failed to update package:",
-          response.data,
-          response.data // Log the entire response to understand the issue better
-        );
-        toast.error(
-          `Failed to update package: ${
-            response.data.message || "Unknown error"
-          }`
-        );
+        toast.error(response.data.message || "Failed to update package.");
       }
-      handleCloseUpdateModal();
     } catch (error) {
-      console.error("Error updating package:", error.response || error);
-      alert(
-        "Error occurred while updating the package. Please check the console for details."
-      );
+      console.error(error);
+      toast.error("Error occurred while updating package.");
     } finally {
-      setIsSubmiting(false); // Hide Lottie animation
+      setIsSubmiting(false);
     }
   };
 
-  const handleToggleStatus = async (packageId, currentStatus) => {
+  const handleToggleStatus = async () => {
+    if (!selectedPackage) return;
+    setIsSubmiting(true);
+    const action =
+      selectedPackage.statusCode === "Active"
+        ? handleDeactivePackage
+        : handleActivePackage;
+
     try {
-      const action =
-        currentStatus === "active"
-          ? handleDeactivePackage
-          : handleActivePackage;
-      const response = await action({ id: packageId });
+      const response = await action({ id: selectedPackage.id });
       if (response.data && response.data.errCode === 0) {
-        fetchPackages(searchTerm, selectedType);
+        toast.success("Status updated successfully!");
+        fetchPackages(); // Refresh the list
       } else {
-        console.error(
-          "Failed to update package status:",
-          response.data.message || "No message"
-        );
+        toast.error(response.data.message || "Failed to update status.");
       }
     } catch (error) {
-      console.error("Error updating package status:", error);
+      toast.error("Error updating status.");
+    } finally {
+      setIsDialogOpen(false);
+      setSelectedPackage(null);
+      setIsSubmiting(false);
     }
+  };
+
+  const openStatusDialog = (pkg) => {
+    setSelectedPackage(pkg);
+    setIsDialogOpen(true);
   };
 
   const filteredPackages = packages.filter((pkg) => {
@@ -353,7 +346,8 @@ const ManagePackages = () => {
             <TableHead className="text-center">Package Name</TableHead>
             <TableHead className="text-center">Type</TableHead>
             <TableHead className="text-center">Price</TableHead>
-            {/* <TableHead className="text-center">Status</TableHead> */}
+            <TableHead className="text-center">Point</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -366,16 +360,21 @@ const ManagePackages = () => {
               <TableCell className="text-center">{pkg.name}</TableCell>
               <TableCell className="text-center">{pkg.type}</TableCell>
               <TableCell className="text-center">{pkg.price}</TableCell>
-              {/* <TableCell className="text-center">
-                <Button
-                  onClick={() => handleToggleStatus(pkg.id, pkg.statusCode)}
-                  className={`text-white rounded-md w-20 ${
-                    pkg.statusCode === "active" ? "bg-green-500" : "bg-red-500"
+              <TableCell className="text-center">{pkg.value}</TableCell>
+              <TableCell className="text-center">
+                {" "}
+                <span
+                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs  ${
+                    pkg.statusCode === "Active"
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
                   }`}
+                  onClick={() => openStatusDialog(pkg)}
                 >
-                  {pkg.statusCode}
-                </Button>
-              </TableCell> */}
+                  {pkg.statusCode === "Active" ? "Active" : "Inactive"}
+                </span>
+              </TableCell>
+
               <TableCell className="text-center flex space-x-3 items-center justify-center">
                 <Button
                   onClick={() => handleOpenUpdateModal(pkg)}
@@ -393,6 +392,42 @@ const ManagePackages = () => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+
+      {/* Confirmation Dialog */}
+      {isDialogOpen && (
+        <Dialog
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onOpenChange={() => setIsDialogOpen(false)}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Status Change</DialogTitle>
+            </DialogHeader>
+            <p>
+              Are you sure you want to change the status of{" "}
+              <strong>{selectedPackage?.name}</strong> to{" "}
+              {selectedPackage?.statusCode === "Active" ? "Inactive" : "Active"}
+              ?
+            </p>
+            <div className="mt-4 flex justify-end space-x-2">
+              <Button
+                className="p-3 bg-third hover:text-white text-white rounded-md w-20"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="p-3 bg-third hover:text-white text-white rounded-md w-20"
+                onClick={handleToggleStatus}
+              >
+                Confirm
+              </Button>
+              <GlobalLoading isSubmiting={isSubmiting} />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Create Modal */}
       {/* Modal for creating a new package */}
@@ -444,6 +479,18 @@ const ManagePackages = () => {
               />
               {errorMessage.price && (
                 <p className="text-red-500  mb-3">{errorMessage.price}</p>
+              )}
+              <Input
+                id="value"
+                name="value"
+                type="number"
+                placeholder="Enter point value"
+                value={newPackage.value}
+                onChange={handleInputChange}
+                className={errorMessage.value ? "border-red-500" : ""}
+              />
+              {errorMessage.value && (
+                <p className="text-red-500 text-sm">{errorMessage.value}</p>
               )}
               <Button
                 type="submit"
@@ -504,6 +551,19 @@ const ManagePackages = () => {
               {errorMessage.price && (
                 <p className="text-red-500  mb-3">{errorMessage.price}</p>
               )}
+              <Input
+                id="value"
+                name="value"
+                type="number"
+                placeholder="Enter point value"
+                value={updatePackage.value}
+                onChange={handleInputChange}
+                className={errorMessage.value ? "border-red-500" : ""}
+              />
+              {errorMessage.value && (
+                <p className="text-red-500 text-sm">{errorMessage.value}</p>
+              )}
+
               <Button
                 type="submit"
                 className="p-3 bg-third hover:text-white text-white rounded-md w-20"

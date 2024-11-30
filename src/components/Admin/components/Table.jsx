@@ -35,7 +35,7 @@ export function TableDemo() {
       <TableHeader>
         <TableRow>
           <TableHead className="w-[50px]">STT</TableHead>
-          <TableHead>User Name</TableHead>
+          <TableHead>User Email</TableHead>
           <TableHead>Package Name</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>Type</TableHead>
@@ -45,10 +45,11 @@ export function TableDemo() {
         {userPackages.map((userPackage, index) => (
           <TableRow key={userPackage.packageId}>
             <TableCell className="font-medium">{index + 1}</TableCell>
-            <TableCell>
+            {/* <TableCell>
               {userPackage.userPackageData.firstName}{" "}
               {userPackage.userPackageData.lastName}
-            </TableCell>
+            </TableCell> */}
+            <TableCell>{userPackage.userPackageData.email}</TableCell>
             <TableCell>{userPackage.PackageData.name}</TableCell>
             <TableCell>{userPackage.PackageData.price}</TableCell>
             <TableCell>{userPackage.PackageData.type}</TableCell>
