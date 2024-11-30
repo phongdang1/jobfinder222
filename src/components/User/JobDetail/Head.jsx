@@ -50,6 +50,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import { Image } from "@nextui-org/react";
 
 const Head = ({ job }) => {
   const navigate = useNavigate();
@@ -438,6 +439,13 @@ const Head = ({ job }) => {
                 {job.data.companyData?.address}
               </p>
             </div>
+
+            <div className="flex flex-col mb-2">
+              <p className="text-md font-semibold">Skill Requirement</p>
+              <p className="list-item list-inside">
+                {job.data.postDetailData?.skillRequirement}
+              </p>
+            </div>
           </div>
 
           {/* Related Jobs */}
@@ -455,10 +463,16 @@ const Head = ({ job }) => {
         {/* right */}
         <div className="col-span-1">
           <div className="flex flex-col text-third bg-white shadow-lg mb-8 rounded-lg p-6 space-y-4">
-            <div className="flex gap-2">
-              <div className="p-8 lg:p-8 md:p-6 sm:p-4 bg-gray-300 text-center">
-                Logo
-              </div>
+            <div className="flex gap-4 items-start">
+              <Image
+                alt="logo"
+                className="object-cover rounded-lg"
+                height={100}
+                shadow="md"
+                src={job.data?.companyData?.thumbnail}
+                width={100}
+              />
+
               <p className="font-semibold text-xl">
                 {job.data.companyData?.name}
               </p>
