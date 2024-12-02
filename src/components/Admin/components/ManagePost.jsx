@@ -30,6 +30,7 @@ import {
 // import { getAllReport } from "@/fetchData/Report";
 import AdminPagination from "./AdminPagination";
 import toast from "react-hot-toast";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManagePostAdmin = () => {
   const [action, setAction] = useState("");
@@ -58,21 +59,25 @@ const ManagePostAdmin = () => {
     try {
       setLoading(true);
       const response = await getAllPostsInactive(searchTerm);
-      if (response.data.errCode === 0) {
-        const sortedData = response.data.data.sort((a, b) => 
-          new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
-        setposts(sortedData);
-        setFilteredposts(sortedData);
-      } else {
+      setTimeout(() => {
+        if (response.data.errCode === 0) {
+          const sortedData = response.data.data.sort(
+            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+          );
+          setposts(sortedData);
+          setFilteredposts(sortedData);
+        } else {
+          setError("Error fetching data. Please try again later.");
+          setposts([]);
+        }
+        setLoading(false); // Dừng loading sau 3 giây
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
         setError("Error fetching data. Please try again later.");
         setposts([]);
-      }
-    } catch (error) {
-      setError("Error fetching data. Please try again later.");
-      setposts([]);
-    } finally {
-      setLoading(false);
+        setLoading(false);
+      }, 1000); // Thời gian chờ là 3 giây
     }
   };
 
@@ -175,6 +180,7 @@ const ManagePostAdmin = () => {
   };
   const handleInactive = async (note) => {
     try {
+      setLoading(false);
       const res = await inactivePost(currentPostDetail.id, note);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -188,10 +194,13 @@ const ManagePostAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleActive = async () => {
     try {
+      setLoading(true);
       const res = await activePost(currentPostDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -205,10 +214,13 @@ const ManagePostAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleUnban = async (note) => {
     try {
+      setLoading(true);
       const res = await unbanPost(
         currentPostDetail.id,
         note,
@@ -226,10 +238,13 @@ const ManagePostAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleBan = async (note) => {
     try {
+      setLoading(true);
       const res = await banPost(currentPostDetail.id, note);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -243,10 +258,13 @@ const ManagePostAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
+
   if (error) return <p>{error}</p>;
 
   return (
@@ -370,9 +388,9 @@ const ManagePostAdmin = () => {
               </DialogHeader>
               <div className="border-t border-gray-200 mt-4">
                 <dl>
-                <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">
-                       Skill Requirement
+                      Skill Requirement
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       {currentPostDetail.postDetailData.skillRequirement}
@@ -487,6 +505,7 @@ const ManagePostAdmin = () => {
                           >
                             Approve
                           </button>
+                          <GlobalLoadingMain isSubmiting={loading} />
                           <button
                             onClick={() => {
                               setShowConfirm(true);
@@ -530,6 +549,7 @@ const ManagePostAdmin = () => {
                           Approve
                         </button>
                       )}
+
                       {currentPostDetail.statusCode.toUpperCase() ===
                         "BANNED".toUpperCase() && (
                         <button
@@ -597,6 +617,7 @@ const ManagePostAdmin = () => {
                             >
                               Yes, I am sure
                             </button>
+                            <GlobalLoadingMain isSubmiting={loading} />
                             <button
                               onClick={() => setShowConfirm(false)}
                               className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"

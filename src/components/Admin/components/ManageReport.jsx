@@ -23,6 +23,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManageReport = () => {
   const [reports, setReports] = useState([]);
@@ -49,27 +50,30 @@ const ManageReport = () => {
         getAllReport(),
         getAllPost(),
       ]);
-
-      if (
-        Array.isArray(reportsResponse.data.data) &&
-        Array.isArray(postsResponse.data.data)
-      ) {
-        setReports(reportsResponse.data.data);
-        setFilteredReports(reportsResponse.data.data); // Set all reports initially
-        setPosts(postsResponse.data.data);
-        setTotalCount(reportsResponse.length);
-      } else {
-        setError("Error fetching data. Please try again later.");
-        console.log(
-          "Error fetching data. Please try again later.",
-          reportsResponse
-        );
-      }
+      setTimeout(() => {
+        if (
+          Array.isArray(reportsResponse.data.data) &&
+          Array.isArray(postsResponse.data.data)
+        ) {
+          setReports(reportsResponse.data.data);
+          setFilteredReports(reportsResponse.data.data); // Set all reports initially
+          setPosts(postsResponse.data.data);
+          setTotalCount(reportsResponse.length);
+        } else {
+          setError("Error fetching data. Please try again later.");
+          console.log(
+            "Error fetching data. Please try again later.",
+            reportsResponse
+          );
+        }
+        setLoading(false); // Dừng loading sau 3 giây
+      }, 1000);
     } catch (error) {
-      setError("loi roi");
-      console.log("Error fetching data. Please try again later.", error);
-    } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setError("loi roi");
+        console.log("Error fetching data. Please try again later.", error);
+        setLoading(false);
+      }, 1000); // Thời gian chờ là 3 giây
     }
   };
   // Fetch reports and posts
@@ -182,7 +186,8 @@ const ManageReport = () => {
   );
   const totalPages = Math.ceil(filteredReports.length / reportsPerPage);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
+
   if (error) return <p>{error}</p>;
 
   return (

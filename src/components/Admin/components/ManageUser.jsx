@@ -24,11 +24,12 @@ import {
   getUsersById,
   banUser,
   unBanUser,
-  setUserToAdmin
+  setUserToAdmin,
 } from "@/fetchData/User";
 import AdminPagination from "./AdminPagination";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import toast from "react-hot-toast";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManageUser = () => {
   const [action, setAction] = useState("");
@@ -56,18 +57,22 @@ const ManageUser = () => {
     try {
       setLoading(true);
       const response = await getAllUsers(searchTerm);
-      if (response.data.errCode === 0) {
-        setUsers(response.data.data);
-        setFilteredusers(response.data.data);
-      } else {
+      setTimeout(() => {
+        if (response.data.errCode === 0) {
+          setUsers(response.data.data);
+          setFilteredusers(response.data.data);
+        } else {
+          setError("Error fetching data. Please try again later.");
+          setUsers([]);
+        }
+        setLoading(false); // Dừng loading sau 3 giây
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
         setError("Error fetching data. Please try again later.");
         setUsers([]);
-      }
-    } catch (error) {
-      setError("Error fetching data. Please try again later.");
-      setUsers([]);
-    } finally {
-      setLoading(false);
+        setLoading(false);
+      }, 1000); // Thời gian chờ là 3 giây
     }
   };
 
@@ -124,6 +129,7 @@ const ManageUser = () => {
 
   const handleActive = async () => {
     try {
+      setLoading(true);
       const res = await unBanUser(currentUserId);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -137,11 +143,14 @@ const ManageUser = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handlesetUserToAdmin = async () => {
     try {
+      setLoading(true);
       const res = await setUserToAdmin(currentUserId);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -155,6 +164,8 @@ const ManageUser = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleBlur = () => {
@@ -164,6 +175,7 @@ const ManageUser = () => {
   };
   const handleBan = async (note) => {
     try {
+      setLoading(true);
       const res = await banUser(currentUserDetail.id, note);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -177,12 +189,15 @@ const ManageUser = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
+
   if (error) return <p>{error}</p>;
- 
+
   return (
     <div className="border border-blue-gray-100 shadow-sm rounded-lg">
       <div className="flex justify-between items-center p-4">
@@ -229,7 +244,6 @@ const ManageUser = () => {
             <TableHead className="text-center">Role</TableHead>
             <TableHead className="text-center">Phone</TableHead>
             <TableHead className="text-center">Status Code</TableHead>
-
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -242,35 +256,29 @@ const ManageUser = () => {
               <TableCell className="text-center">
                 {indexOfFirstuser + index + 1}
               </TableCell>
-              <TableCell className="text-center">
-                {user.firstName}
-              </TableCell>
-              <TableCell className="text-center">
-                {user.lastName}
-              </TableCell>
+              <TableCell className="text-center">{user.firstName}</TableCell>
+              <TableCell className="text-center">{user.lastName}</TableCell>
               <TableCell className="text-center">
                 {user.roleCode.toUpperCase()}
               </TableCell>
-              <TableCell className="text-center">
-                {user.phoneNumber}
-              </TableCell>
+              <TableCell className="text-center">{user.phoneNumber}</TableCell>
               <TableCell className="text-center">
                 <span
-                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${user.statusCode.toUpperCase() === "ACTIVE"
-                    ? "bg-green-500 text-white"
-                    : "bg-orange-500 text-white"
-                    }`}
+                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${
+                    user.statusCode.toUpperCase() === "ACTIVE"
+                      ? "bg-green-500 text-white"
+                      : "bg-orange-500 text-white"
+                  }`}
                 >
                   {user.statusCode.toUpperCase() === "ACTIVE"
                     ? "ACTIVE"
                     : user.statusCode.toUpperCase() === "PENDING"
-                      ? "PENDING"
-                      : user.statusCode.toUpperCase() === "BANNED"
-                        ? "BANNED"
-                        : "INACTIVE"}
+                    ? "PENDING"
+                    : user.statusCode.toUpperCase() === "BANNED"
+                    ? "BANNED"
+                    : "INACTIVE"}
                 </span>
               </TableCell>
-
             </TableRow>
           ))}
         </TableBody>
@@ -294,11 +302,14 @@ const ManageUser = () => {
             <>
               <DialogHeader>
                 <DialogTitle>
-                  {currentUserDetail.firstName + " " + currentUserDetail.lastName}
+                  {currentUserDetail.firstName +
+                    " " +
+                    currentUserDetail.lastName}
                 </DialogTitle>
               </DialogHeader>
               <div className="border-t border-gray-200 mt-4  pt-4">
-                {currentUserDetail.roleCode.toUpperCase() != "admin".toUpperCase() && (
+                {currentUserDetail.roleCode.toUpperCase() !=
+                  "admin".toUpperCase() && (
                   <div className="flex justify-end">
                     <Button
                       onClick={() => {
@@ -313,20 +324,19 @@ const ManageUser = () => {
                   </div>
                 )}
 
-
                 <dl>
                   <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">
                       Full Name
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {currentUserDetail.firstName + " " + currentUserDetail.lastName}
+                      {currentUserDetail.firstName +
+                        " " +
+                        currentUserDetail.lastName}
                     </dd>
                   </div>
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Email
-                    </dt>
+                    <dt className="text-sm font-medium text-gray-500">Email</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       {currentUserDetail.email}
                     </dd>
@@ -349,17 +359,17 @@ const ManageUser = () => {
                     </dd>
                   </div>
                   <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      DOB
-                    </dt>
+                    <dt className="text-sm font-medium text-gray-500">DOB</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {new Date(currentUserDetail.dob).toISOString().split("T")[0]}
+                      {
+                        new Date(currentUserDetail.dob)
+                          .toISOString()
+                          .split("T")[0]
+                      }
                     </dd>
                   </div>
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Point
-                    </dt>
+                    <dt className="text-sm font-medium text-gray-500">Point</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       {currentUserDetail.point}
                     </dd>
@@ -389,9 +399,7 @@ const ManageUser = () => {
                     </dd>
                   </div>
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      isVip
-                    </dt>
+                    <dt className="text-sm font-medium text-gray-500">isVip</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       {currentUserDetail.isVip === 1 ? "Yes" : "No"}
                     </dd>
@@ -433,7 +441,9 @@ const ManageUser = () => {
                       Gender
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {currentUserDetail.UserDetailData.genderCode === 'M' ? "Male" : "Female"}
+                      {currentUserDetail.UserDetailData.genderCode === "M"
+                        ? "Male"
+                        : "Female"}
                     </dd>
                   </div>
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -477,9 +487,7 @@ const ManageUser = () => {
                     </dd>
                   </div>
                   <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      File
-                    </dt>
+                    <dt className="text-sm font-medium text-gray-500">File</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       {currentUserDetail.file}
                     </dd>
@@ -489,25 +497,26 @@ const ManageUser = () => {
                     <div className="flex justify-end">
                       {currentUserDetail.statusCode.toUpperCase() ===
                         "ACTIVE".toUpperCase() && (
-                          <button
-                            onClick={() => {
-                              setShowConfirm(true);
-                              setAction("ban");
-                            }}
-                            className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
-                          >
-                            Ban
-                          </button>
-                        )}
+                        <button
+                          onClick={() => {
+                            setShowConfirm(true);
+                            setAction("ban");
+                          }}
+                          className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
+                        >
+                          Ban
+                        </button>
+                      )}
                       {currentUserDetail.statusCode.toUpperCase() ===
                         "BANNED".toUpperCase() && (
-                          <button
-                            onClick={handleActive}
-                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
-                          >
-                            Active
-                          </button>
-                        )}
+                        <button
+                          onClick={handleActive}
+                          className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
+                        >
+                          Active
+                        </button>
+                      )}
+                      <GlobalLoadingMain isSubmiting={loading} />
                     </div>
 
                     {showConfirm === true && (
@@ -522,28 +531,30 @@ const ManageUser = () => {
                           <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">
                             Warning: This action cannot be undone.
                           </h3>
-                          {action !== "setAdmin" && <div className="mt-4">
-                            <label
-                              htmlFor="banReason"
-                              className="block text-sm font-medium text-gray-700"
-                            >
-                              Reason for {action}:
-                            </label>
-                            <Input
-                              id="banReason"
-                              type="text"
-                              className="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              value={note}
-                              onBlur={handleBlur}
-                              onChange={(e) => setNote(e.target.value)}
-                              placeholder="Enter the reason for banning this user"
-                            />
-                            {er && (
-                              <p className="mt-2 text-sm text-red-600">
-                                Please enter a reason for {action} this user.
-                              </p>
-                            )}
-                          </div>}
+                          {action !== "setAdmin" && (
+                            <div className="mt-4">
+                              <label
+                                htmlFor="banReason"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Reason for {action}:
+                              </label>
+                              <Input
+                                id="banReason"
+                                type="text"
+                                className="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                value={note}
+                                onBlur={handleBlur}
+                                onChange={(e) => setNote(e.target.value)}
+                                placeholder="Enter the reason for banning this user"
+                              />
+                              {er && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  Please enter a reason for {action} this user.
+                                </p>
+                              )}
+                            </div>
+                          )}
                           <div className="flex justify-center mt-4">
                             <button
                               onClick={() => {
@@ -553,7 +564,8 @@ const ManageUser = () => {
                                   handleBan(note);
                                 }
                                 if (
-                                  action.toUpperCase() === "setAdmin".toUpperCase()
+                                  action.toUpperCase() ===
+                                  "setAdmin".toUpperCase()
                                 ) {
                                   handlesetUserToAdmin();
                                 }
@@ -563,6 +575,7 @@ const ManageUser = () => {
                             >
                               Yes, I'm sure
                             </button>
+                            <GlobalLoadingMain isSubmiting={loading} />
                             <button
                               onClick={() => setShowConfirm(false)}
                               className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
@@ -585,4 +598,3 @@ const ManageUser = () => {
 };
 
 export default ManageUser;
-

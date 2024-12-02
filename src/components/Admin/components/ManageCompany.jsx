@@ -28,6 +28,8 @@ import {
 } from "@/fetchData/Company";
 import AdminPagination from "./AdminPagination";
 import toast from "react-hot-toast";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
+import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
 const ManageCompanyAdmin = () => {
   const [companies, setCompanies] = useState([]);
@@ -37,6 +39,7 @@ const ManageCompanyAdmin = () => {
   const [currentCompanyDetail, setcurrentCompanyDetail] = useState(null);
   const [currentCompanyId, setcurrentCompanyId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -58,21 +61,25 @@ const ManageCompanyAdmin = () => {
     try {
       setLoading(true);
       const response = await getAllCompanies(searchTerm);
-      if (response.data.errCode === 0) {
-        const sortedData = response.data.data.sort((a, b) => 
-          new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
-        setCompanies(sortedData);
-        setFilteredCompanies(sortedData);
-      } else {
+      setTimeout(() => {
+        if (response.data.errCode === 0) {
+          const sortedData = response.data.data.sort(
+            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+          );
+          setCompanies(sortedData);
+          setFilteredCompanies(sortedData);
+        } else {
+          setError("Error fetching data. Please try again later.");
+          setCompanies([]);
+        }
+        setLoading(false); // Dừng loading sau 3 giây
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
         setError("Error fetching data. Please try again later.");
         setCompanies([]);
-      }
-    } catch (error) {
-      setError("Error fetching data. Please try again later.");
-      setCompanies([]);
-    } finally {
-      setLoading(false);
+        setLoading(false);
+      }, 1000); // Thời gian chờ là 3 giây
     }
   };
 
@@ -127,6 +134,7 @@ const ManageCompanyAdmin = () => {
   };
   const handleInactive = async () => {
     try {
+      setIsSubmiting(true);
       const res = await inactiveCompany(currentCompanyDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -140,10 +148,13 @@ const ManageCompanyAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setIsSubmiting(false);
     }
   };
   const handleActive = async () => {
     try {
+      setIsSubmiting(true);
       const res = await activeCompany(currentCompanyDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -157,10 +168,13 @@ const ManageCompanyAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setIsSubmiting(false);
     }
   };
   const handleUnban = async () => {
     try {
+      setIsSubmiting(true);
       const res = await unbanCompany(currentCompanyDetail.id);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -174,10 +188,13 @@ const ManageCompanyAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setIsSubmiting(false);
     }
   };
   const handleBan = async () => {
     try {
+      setIsSubmiting(true);
       const res = await banCompany(currentCompanyDetail.id, note);
       console.log("res.data: ", res.data.errCode);
       if (res.data.errCode === 0) {
@@ -191,10 +208,13 @@ const ManageCompanyAdmin = () => {
       }
     } catch (error) {
       toast.error("Lỗi khi gọi API:", error);
+    } finally {
+      setIsSubmiting(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
+
   if (error) return <p>{error}</p>;
 
   return (
@@ -267,22 +287,23 @@ const ManageCompanyAdmin = () => {
               <TableCell className="text-center">{company.taxnumber}</TableCell>
               <TableCell className="text-center">
                 <span
-                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${company.statusCode.toUpperCase() === "APPROVED"
-                    ? "bg-green-500 text-white"
-                    : company.statusCode.toUpperCase() === "PENDING"
+                  className={`w-20 text-center inline-block py-1 px-2 rounded-full text-xs ${
+                    company.statusCode.toUpperCase() === "APPROVED"
+                      ? "bg-green-500 text-white"
+                      : company.statusCode.toUpperCase() === "PENDING"
                       ? "bg-gray-500 text-white"
                       : company.statusCode.toUpperCase() === "BANNED"
-                        ? "bg-orange-500 text-white"
-                        : "bg-red-500 text-white"
-                    }`}
+                      ? "bg-orange-500 text-white"
+                      : "bg-red-500 text-white"
+                  }`}
                 >
                   {company.statusCode.toUpperCase() === "APPROVED"
                     ? "APPROVED"
                     : company.statusCode.toUpperCase() === "PENDING"
-                      ? "PENDING"
-                      : company.statusCode.toUpperCase() === "BANNED"
-                        ? "BANNED"
-                        : "REJECTED"}
+                    ? "PENDING"
+                    : company.statusCode.toUpperCase() === "BANNED"
+                    ? "BANNED"
+                    : "REJECTED"}
                 </span>
               </TableCell>
             </TableRow>
@@ -399,68 +420,70 @@ const ManageCompanyAdmin = () => {
                     <div className="flex justify-end">
                       {currentCompanyDetail.statusCode.toUpperCase() ===
                         "PENDING".toUpperCase() && (
-                          <>
-                            <button
-                              onClick={handleActive}
-                              className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => {
-                                setShowConfirm(true);
-                                setAction("reject");
-                              }}
-                              className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
-                            >
-                              Reject
-                            </button>
-                          </>
-                        )}
-                      {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "APPROVED".toUpperCase() && (
-                          <>
-                            <button
-                              onClick={() => {
-                                setShowConfirm(true);
-                                setAction("reject");
-                              }}
-                              className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
-                            >
-                              Reject
-                            </button>
-                            <button
-                              onClick={() => {
-                                setShowConfirm(true);
-                                setAction("ban");
-                              }}
-                              className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
-                            >
-                              Ban
-                            </button>
-                          </>
-                        )}
-                      {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "REJECTED".toUpperCase() && (
+                        <>
                           <button
                             onClick={handleActive}
-                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
+                            className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md mr-2"
                           >
                             Approve
                           </button>
-                        )}
-                      {currentCompanyDetail.statusCode.toUpperCase() ===
-                        "BANNED".toUpperCase() && (
+                          <GlobalLoadingMain isSubmiting={isSubmiting} />
                           <button
                             onClick={() => {
                               setShowConfirm(true);
-                              setAction("unban");
+                              setAction("reject");
                             }}
-                            className="p-3 text-white bg-blue-500 hover:bg-blue-700 rounded-md"
+                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md"
                           >
-                            Unban
+                            Reject
                           </button>
-                        )}
+                        </>
+                      )}
+                      {currentCompanyDetail.statusCode.toUpperCase() ===
+                        "APPROVED".toUpperCase() && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setShowConfirm(true);
+                              setAction("reject");
+                            }}
+                            className="p-3 text-white bg-red-500 hover:bg-red-700 rounded-md mr-2"
+                          >
+                            Reject
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowConfirm(true);
+                              setAction("ban");
+                            }}
+                            className="p-3 text-white bg-orange-500 hover:bg-orange-700 rounded-md"
+                          >
+                            Ban
+                          </button>
+                        </>
+                      )}
+                      {currentCompanyDetail.statusCode.toUpperCase() ===
+                        "REJECTED".toUpperCase() && (
+                        <button
+                          onClick={handleActive}
+                          className="p-3 text-white bg-green-500 hover:bg-green-700 rounded-md"
+                        >
+                          Approve
+                        </button>
+                      )}
+                      <GlobalLoadingMain isSubmiting={isSubmiting} />
+                      {currentCompanyDetail.statusCode.toUpperCase() ===
+                        "BANNED".toUpperCase() && (
+                        <button
+                          onClick={() => {
+                            setShowConfirm(true);
+                            setAction("unban");
+                          }}
+                          className="p-3 text-white bg-blue-500 hover:bg-blue-700 rounded-md"
+                        >
+                          Unban
+                        </button>
+                      )}
                     </div>
 
                     {showConfirm === true && (
@@ -496,13 +519,20 @@ const ManageCompanyAdmin = () => {
                           <div className="flex justify-center mt-4">
                             <button
                               onClick={() => {
-                                if (action.toUpperCase() === "ban".toUpperCase()) {
+                                if (
+                                  action.toUpperCase() === "ban".toUpperCase()
+                                ) {
                                   handleBan(note);
                                 }
-                                if (action.toUpperCase() === "reject".toUpperCase()) {
+                                if (
+                                  action.toUpperCase() ===
+                                  "reject".toUpperCase()
+                                ) {
                                   handleInactive();
                                 }
-                                if (action.toUpperCase() === "unban".toUpperCase()) {
+                                if (
+                                  action.toUpperCase() === "unban".toUpperCase()
+                                ) {
                                   handleUnban();
                                 }
                                 setNote("");
@@ -511,6 +541,7 @@ const ManageCompanyAdmin = () => {
                             >
                               Yes, I am sure
                             </button>
+                            <GlobalLoadingMain isSubmiting={isSubmiting} />
                             <button
                               onClick={() => setShowConfirm(false)}
                               className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
@@ -527,8 +558,8 @@ const ManageCompanyAdmin = () => {
             </>
           )}
         </DialogContent>
-      </Dialog >
-    </div >
+      </Dialog>
+    </div>
   );
 };
 

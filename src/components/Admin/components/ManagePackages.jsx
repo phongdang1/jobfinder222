@@ -32,6 +32,7 @@ import axios from "../../../fetchData/axios";
 import AdminValidationPackage from "../common/AdminValidationPackage";
 import toast from "react-hot-toast";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManagePackages = () => {
   const [packages, setPackages] = useState([]);
@@ -76,16 +77,19 @@ const ManagePackages = () => {
           type: selectedType,
         },
       });
-
-      if (response.data.errCode === 0) {
-        setPackages(response.data.data);
-      } else {
-        setError(response.data.errMessage || "Error fetching packages");
-      }
+      setTimeout(() => {
+        if (response.data.errCode === 0) {
+          setPackages(response.data.data);
+        } else {
+          setError(response.data.errMessage || "Error fetching packages");
+        }
+        setLoading(false); // Dừng loading sau 3 giây
+      }, 1000);
     } catch (error) {
-      setError("Error fetching data. Please try again later.");
-    } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setError("Error fetching data. Please try again later.");
+        setLoading(false);
+      }, 1000); // Thời gian chờ là 3 giây
     }
   };
 
@@ -295,7 +299,8 @@ const ManagePackages = () => {
     setCurrentPage(pageNumber);
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
+
   if (error) return <p>{error}</p>;
 
   return (

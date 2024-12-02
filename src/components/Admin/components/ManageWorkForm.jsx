@@ -31,6 +31,7 @@ import AdminPagination from "./AdminPagination";
 import AdminValidationWorkForm from "../common/AdminValidationWorkForm";
 import toast from "react-hot-toast";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManageWorkForm = () => {
   const [workTypes, setWorkTypes] = useState([]);
@@ -66,28 +67,32 @@ const ManageWorkForm = () => {
     const fetchWorkTypes = async () => {
       try {
         const response = await getAllWorkType();
-        if (Array.isArray(response.data.data)) {
-          // Sort work types in descending order based on `value`
-          const sortedWorkTypes = response.data.data.sort((a, b) => {
-            if (a.value < b.value) return 1;
-            if (a.value > b.value) return -1;
-            return 0;
-          });
+        setTimeout(() => {
+          if (Array.isArray(response.data.data)) {
+            // Sort work types in descending order based on `value`
+            const sortedWorkTypes = response.data.data.sort((a, b) => {
+              if (a.value < b.value) return 1;
+              if (a.value > b.value) return -1;
+              return 0;
+            });
 
-          setWorkTypes(sortedWorkTypes);
-          setTotalCount(sortedWorkTypes.length); // Set total count of work types
-          setFilteredWorkTypes(sortedWorkTypes); // Filtered work types should also be sorted
-        } else {
+            setWorkTypes(sortedWorkTypes);
+            setTotalCount(sortedWorkTypes.length); // Set total count of work types
+            setFilteredWorkTypes(sortedWorkTypes); // Filtered work types should also be sorted
+          } else {
+            setError("Error fetching data. Please try again later.");
+            setWorkTypes([]);
+            setFilteredWorkTypes([]);
+          }
+          setLoading(false); // Dừng loading sau 3 giây
+        }, 1000);
+      } catch (error) {
+        setTimeout(() => {
           setError("Error fetching data. Please try again later.");
           setWorkTypes([]);
           setFilteredWorkTypes([]);
-        }
-      } catch (error) {
-        setError("Error fetching data. Please try again later.");
-        setWorkTypes([]);
-        setFilteredWorkTypes([]);
-      } finally {
-        setLoading(false);
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -328,7 +333,8 @@ const ManageWorkForm = () => {
   );
   const totalPages = Math.ceil(filteredWorkTypes.length / itemsPerPage);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
+
   if (error) return <p>{error}</p>;
 
   return (

@@ -31,6 +31,7 @@ import AdminPagination from "./AdminPagination";
 import AdminValidationTypeJob from "../common/AdminValidationTypeJob";
 import toast from "react-hot-toast";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManageTypeJob = () => {
   const [jobTypes, setJobTypes] = useState([]);
@@ -53,8 +54,8 @@ const ManageTypeJob = () => {
     value: "",
     image: "",
   });
-console.log("UpdateJob", updateJobType);
-console.log("jobTypes", jobTypes);
+  console.log("UpdateJob", updateJobType);
+  console.log("jobTypes", jobTypes);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,26 +71,29 @@ console.log("jobTypes", jobTypes);
   useEffect(() => {
     const fetchJobTypes = async () => {
       try {
-        setLoading(true);
+        setLoading(true); // Bắt đầu loading
         const response = await getAllJobType();
-        if (Array.isArray(response.data.data)) {
-          const sortedJobTypes = response.data.data.sort((a, b) => {
-            // Assuming you want to sort by `STT` or any field like `value` or `code`
-            return b.code.localeCompare(a.code); // Change `code` to the appropriate field if needed
-          });
-          setJobTypes(sortedJobTypes);
-          setFilteredJobTypes(sortedJobTypes); // Set initial filtered job types
-        } else {
+        setTimeout(() => {
+          if (Array.isArray(response.data.data)) {
+            const sortedJobTypes = response.data.data.sort((a, b) =>
+              b.code.localeCompare(a.code)
+            );
+            setJobTypes(sortedJobTypes);
+            setFilteredJobTypes(sortedJobTypes);
+          } else {
+            setError("Error fetching data. Please try again later.");
+            setJobTypes([]);
+            setFilteredJobTypes([]);
+          }
+          setLoading(false); // Dừng loading sau 3 giây
+        }, 1000); // Thời gian chờ là 3 giây
+      } catch (error) {
+        setTimeout(() => {
           setError("Error fetching data. Please try again later.");
           setJobTypes([]);
           setFilteredJobTypes([]);
-        }
-      } catch (error) {
-        setError("Error fetching data. Please try again later.");
-        setJobTypes([]);
-        setFilteredJobTypes([]);
-      } finally {
-        setLoading(false);
+          setLoading(false);
+        }, 1000); // Thời gian chờ là 3 giây
       }
     };
     fetchJobTypes();
@@ -148,7 +152,7 @@ console.log("jobTypes", jobTypes);
             ...prevData,
             [e.target.name]: base64String,
           }));
-        } 
+        }
         if (isCreateModalOpen) {
           setNewJobType((prevData) => ({
             ...prevData,
@@ -173,7 +177,6 @@ console.log("jobTypes", jobTypes);
   //     reader.readAsDataURL(file);
   //   }
   // };
-  
 
   const handleCloseUpdateModal = () => {
     setUpdateModalOpen(false);
@@ -228,7 +231,8 @@ console.log("jobTypes", jobTypes);
       } else {
         console.error("Failed to create job type:", response.data);
         toast.error(
-          `Failed to create job type: ${response.data.message || "Unknown error"
+          `Failed to create job type: ${
+            response.data.message || "Unknown error"
           }`
         );
       }
@@ -267,14 +271,14 @@ console.log("jobTypes", jobTypes);
         setJobTypes((prev) =>
           prev.map((jobType) =>
             jobType.code === userData.code
-              ? { ...jobType, value: userData.value, image:  userData.image}
+              ? { ...jobType, value: userData.value, image: userData.image }
               : jobType
           )
         );
         setFilteredJobTypes((prev) =>
           prev.map((jobType) =>
             jobType.code === userData.code
-              ? { ...jobType, value: userData.value, image:  userData.image }
+              ? { ...jobType, value: userData.value, image: userData.image }
               : jobType
           )
         );
@@ -282,7 +286,8 @@ console.log("jobTypes", jobTypes);
       } else {
         console.error("Failed to update job type:", response.data);
         toast.error(
-          `Failed to update job type: ${response.data.message || "Unknown error"
+          `Failed to update job type: ${
+            response.data.message || "Unknown error"
           }`
         );
       }
@@ -317,7 +322,8 @@ console.log("jobTypes", jobTypes);
       } else {
         console.error("Failed to delete job type:", response.data);
         toast.error(
-          `Failed to delete job type: ${response.data.errMessage || "Unknown error"
+          `Failed to delete job type: ${
+            response.data.errMessage || "Unknown error"
           }`
         );
       }
@@ -338,7 +344,7 @@ console.log("jobTypes", jobTypes);
     setJobTypeToDelete(null); // Clear the job type to be deleted
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
   if (error) return <p>{error}</p>;
 
   const totalPages = Math.ceil(filteredJobTypes.length / jobTypesPerPage);
@@ -435,8 +441,9 @@ console.log("jobTypes", jobTypes);
                 name="code"
                 value={newJobType.code}
                 onChange={handleInputChange}
-                className={`${errorMessage.code ? "border-red-500" : "focus:border-primary"
-                  } `}
+                className={`${
+                  errorMessage.code ? "border-red-500" : "focus:border-primary"
+                } `}
               />
               {errorMessage.code && (
                 <p className="text-red-500  mb-3">{errorMessage.code}</p>
@@ -449,8 +456,9 @@ console.log("jobTypes", jobTypes);
                 name="value"
                 value={newJobType.value}
                 onChange={handleInputChange}
-                className={`${errorMessage.value ? "border-red-500" : "focus:border-primary"
-                  } `}
+                className={`${
+                  errorMessage.value ? "border-red-500" : "focus:border-primary"
+                } `}
               />
               {errorMessage.value && (
                 <p className="text-red-500 mb-3">{errorMessage.value}</p>
@@ -507,8 +515,9 @@ console.log("jobTypes", jobTypes);
                 name="value"
                 value={updateJobType.value}
                 onChange={handleInputChange}
-                className={`${errorMessage.value ? "border-red-500" : "focus:border-primary"
-                  } `}
+                className={`${
+                  errorMessage.value ? "border-red-500" : "focus:border-primary"
+                } `}
               />
               {errorMessage.value && (
                 <p className="text-red-500 mb-3">{errorMessage.value}</p>
@@ -523,12 +532,12 @@ console.log("jobTypes", jobTypes);
                 className="py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               />
               <div className="mt-2 rounded-md overflow-hidden">
-                    <img
-                      src={updateJobType.image}
-                      alt="image"
-                      className="w-[300px] h-[200px] object-cover"
-                    />
-                  </div>
+                <img
+                  src={updateJobType.image}
+                  alt="image"
+                  className="w-[300px] h-[200px] object-cover"
+                />
+              </div>
             </div>
             <Button
               type="submit"

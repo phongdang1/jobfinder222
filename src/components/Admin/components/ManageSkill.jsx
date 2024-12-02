@@ -32,6 +32,7 @@ import axios from "../../../fetchData/axios";
 import AdminValidationSkill from "../common/AdminValidationSkill";
 import toast from "react-hot-toast";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManageSkill = () => {
   const [skills, setSkills] = useState([]);
@@ -70,25 +71,28 @@ const ManageSkill = () => {
 
   const fetchSkills = async (searchKey = "", selectedCategory = "all") => {
     try {
+      setLoading(true);
       const response = await axios.get("/getAllSkill", {
         params: {
           searchKey,
           category: selectedCategory,
         },
       });
-
-      if (response.data.errCode === 0) {
-        setSkills(response.data.data);
-        setTotalCount(response.data.count); // Set total count for pagination
-      } else {
-        setError(response.data.errMessage || "Error fetching skills");
-        setSkills([]);
-      }
+      setTimeout(() => {
+        if (response.data.errCode === 0) {
+          setSkills(response.data.data);
+          setTotalCount(response.data.count); // Set total count for pagination
+        } else {
+          setError(response.data.errMessage || "Error fetching skills");
+          setSkills([]);
+        }
+        setLoading(false); // Dừng loading sau 3 giây
+      }, 1000); // Thời gian chờ là 3 giây
     } catch (error) {
-      setError("Error fetching data. Please try again later.");
-      setSkills([]);
-    } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setError("Error fetching data. Please try again later.");
+        setSkills([]);
+      }, 1000); // Thời gian chờ là 3 giây
     }
   };
 
@@ -290,7 +294,7 @@ const ManageSkill = () => {
     setCurrentPage(pageNumber);
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
   if (error) return <p>{error}</p>;
 
   return (

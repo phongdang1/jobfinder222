@@ -32,6 +32,7 @@ import { SiLevelsdotfyi } from "react-icons/si";
 import AdminValidationLevel from "../common/AdminValidationLevel";
 import toast from "react-hot-toast";
 import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 const ManageLevel = () => {
   const [jobLevels, setJobLevels] = useState([]);
@@ -68,26 +69,30 @@ const ManageLevel = () => {
       try {
         setLoading(true);
         const response = await getAllJobLevel();
-        if (Array.isArray(response.data.data)) {
-          // Sort levels by `value` or another key in descending order
-          const sortedJobLevels = response.data.data.sort((a, b) => {
-            if (a.value < b.value) return 1;
-            if (a.value > b.value) return -1;
-            return 0;
-          });
-          setJobLevels(sortedJobLevels);
-          setFilteredJobLevels(sortedJobLevels);
-        } else {
+        setTimeout(() => {
+          if (Array.isArray(response.data.data)) {
+            // Sort levels by `value` or another key in descending order
+            const sortedJobLevels = response.data.data.sort((a, b) => {
+              if (a.value < b.value) return 1;
+              if (a.value > b.value) return -1;
+              return 0;
+            });
+            setJobLevels(sortedJobLevels);
+            setFilteredJobLevels(sortedJobLevels);
+          } else {
+            setError("Error fetching data. Please try again later.");
+            setJobLevels([]);
+            setFilteredJobLevels([]);
+          }
+          setLoading(false);
+        }, 1000);
+      } catch (error) {
+        setTimeout(() => {
           setError("Error fetching data. Please try again later.");
           setJobLevels([]);
           setFilteredJobLevels([]);
-        }
-      } catch (error) {
-        setError("Error fetching data. Please try again later.");
-        setJobLevels([]);
-        setFilteredJobLevels([]);
-      } finally {
-        setLoading(false);
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -347,7 +352,7 @@ const ManageLevel = () => {
   );
   const totalPages = Math.ceil(filteredJobLevels.length / jobLevelsPerPage);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <GlobalLoadingMain isSubmiting={true} />;
   if (error) return <p>{error}</p>;
 
   return (

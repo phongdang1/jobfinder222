@@ -3,7 +3,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
 
 import { RadioGroup, Radio } from "@nextui-org/radio";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
   return (
     <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200 ease-in-out duration-300 transition-all relative">
       {/* Global Loading */}
-      <GlobalLoading isSubmiting={isSubmitting} />
+      <GlobalLoadingMain isSubmiting={isSubmitting} />
 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center space-x-2">
