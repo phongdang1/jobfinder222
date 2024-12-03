@@ -170,6 +170,7 @@ const ManageJobPost = () => {
   const handleSubmitForm = async () => {
     try {
       setIsLoading(true);
+
       const res = await axios.post(
         `/createInterviewSchedule`,
         {
@@ -183,6 +184,7 @@ const ManageJobPost = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
+
       if (res.data.errCode === 0) {
         console.log("form ne", res);
         setOpenSchedule(null);
@@ -202,7 +204,9 @@ const ManageJobPost = () => {
     } catch (error) {
       console.log("error j j day", error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 15000);
     }
   };
 
@@ -711,17 +715,20 @@ const ManageJobPost = () => {
                                                         Close
                                                       </Button>
                                                       <Button
-                                                        onClick={handleSubmitForm}
+                                                        onClick={
+                                                          handleSubmitForm
+                                                        }
                                                         className="bg-white border border-primary hover:text-white"
                                                       >
                                                         Set Schedule
                                                       </Button>
-                                                      <GlobalLoadingMain
+                                                      {/* <GlobalLoadingMain
                                                         isSubmiting={isLoading}
-                                                      />
+                                                      /> */}
                                                     </div>
                                                   </PopoverContent>
                                                 </Popover>
+
                                                 {/* dialog confirm reject */}
                                                 <Dialog open={rejectDialog}>
                                                   <DialogTrigger
@@ -1469,6 +1476,7 @@ const ManageJobPost = () => {
                                 </AccordionContent>
                               </AccordionItem>
                             </Accordion>
+                            <GlobalLoadingMain isSubmiting={isLoading} />
                           </DialogContent>
                         </Dialog>
                       </TableCell>
