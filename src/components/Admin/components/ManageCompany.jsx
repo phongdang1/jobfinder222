@@ -176,7 +176,7 @@ const ManageCompanyAdmin = () => {
     try {
       setIsSubmiting(true);
       const res = await unbanCompany(currentCompanyDetail.id);
-      console.log("res.data: ", res.data.errCode);
+      console.log("res.data: ", res);
       if (res.data.errCode === 0) {
         toast.success("Công ty đã được mở khóa!");
         fetchCompanies();
