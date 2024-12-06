@@ -125,7 +125,7 @@ function BestJob() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
 
-    const jobsToPaginate = sortedData.length > 0 ? sortedData : data; // Determine data source
+    const jobsToPaginate = sortedData.length > 0 ? sortedData : data;
     const indexOfLastJob = page * itemsPerPage;
     const indexOfFirstJob = indexOfLastJob - itemsPerPage;
 
@@ -175,6 +175,23 @@ function BestJob() {
     setSelect("");
     fetchAllPosts();
   };
+
+  const [autoPaginate, setAutoPaginate] = useState(null);
+  useEffect(() => {
+    if (totalPages > 0) {
+      const interval = setInterval(() => {
+        setCurrentPage((prevPage) => {
+          const nextPage = prevPage < totalPages ? prevPage + 1 : 1;
+          handlePageChange(nextPage);
+          return nextPage;
+        });
+      }, 10000);
+
+      setAutoPaginate(interval);
+
+      return () => clearInterval(interval);
+    }
+  }, [totalPages, data, sortedData]);
 
   return (
     <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary">
