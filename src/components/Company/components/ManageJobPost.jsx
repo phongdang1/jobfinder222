@@ -230,7 +230,7 @@ const ManageJobPost = () => {
     } catch (error) {
       console.log("error reject", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
   const handleApprove = async (id) => {
@@ -248,7 +248,7 @@ const ManageJobPost = () => {
     } catch (error) {
       console.log("error approve", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -711,7 +711,9 @@ const ManageJobPost = () => {
                                                         Close
                                                       </Button>
                                                       <Button
-                                                        onClick={handleSubmitForm}
+                                                        onClick={
+                                                          handleSubmitForm
+                                                        }
                                                         className="bg-white border border-primary hover:text-white"
                                                       >
                                                         Set Schedule
