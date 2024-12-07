@@ -146,14 +146,14 @@ const CompanyInfo = () => {
   return (
     <div className="p-4 col-span-5 w-full">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Thông tin công ty</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Company Information</h1>
         <div className="col-span-10 flex justify-end py-4">
           {!isEditable ? (
             <Button
               onClick={toggleEdit}
               className="px-6 py-4 bg-primary text-white rounded-md"
             >
-              Chỉnh sửa
+              edit
             </Button>
           ) : (
             <>
@@ -162,13 +162,13 @@ const CompanyInfo = () => {
                 onClick={handleSubmit}
                 className="px-6 py-4 bg-primary text-white rounded-md"
               >
-                Lưu
+                Save
               </Button>
               <Button
                 onClick={toggleEdit}
                 className="ml-2 px-6 py-4 bg-primary text-white rounded-md"
               >
-                Hủy
+                Cancel
               </Button>
             </>
           )}
@@ -176,7 +176,7 @@ const CompanyInfo = () => {
         <form className="space-y-4">
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-7">
-              <label className="block text-sm font-medium text-gray-700">Tên</label>
+              <label className="block text-sm font-medium text-gray-700">Name</label>
               <input
                 type="text"
                 name="name"
@@ -190,7 +190,7 @@ const CompanyInfo = () => {
               )}
             </div>
             <div className="col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Điện thoại</label>
+              <label className="block text-sm font-medium text-gray-700">Phone Number</label>
               <input
                 type="tel"
                 name="phonenumber"
@@ -207,7 +207,7 @@ const CompanyInfo = () => {
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-7">
-              <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
+              <label className="block text-sm font-medium text-gray-700">Address</label>
               <input
                 type="text"
                 name="address"
@@ -221,7 +221,7 @@ const CompanyInfo = () => {
               )}
             </div>
             <div className="col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Mã số thuế</label>
+              <label className="block text-sm font-medium text-gray-700">Tax Number</label>
               <input
                 type="text"
                 name="taxnumber"
@@ -237,7 +237,7 @@ const CompanyInfo = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Lĩnh vực</label>
+            <label className="block text-sm font-medium text-gray-700">Categories</label>
             <select
               name="typeCompany"
               value={companyData.typeCompany || ""}
@@ -246,7 +246,7 @@ const CompanyInfo = () => {
               disabled={!isEditable}
             >
               <option value="" disabled>
-                -- Chọn lĩnh vực --
+                -- Select Categories --
               </option>
               {skills.map((skill) => (
                 <option key={skill.id} value={skill.categoryJobCode}>
@@ -283,7 +283,7 @@ const CompanyInfo = () => {
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700">Số lượng nhân viên</label>
+              <label className="block text-sm font-medium text-gray-700">Number of employees</label>
               <input
                 type="text"
                 name="amountEmployer"
@@ -312,7 +312,7 @@ const CompanyInfo = () => {
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700 pb-1">Ảnh bìa</label>
+              <label className="block text-sm font-medium text-gray-700 pb-1">Cover Image</label>
               <div className="col-span-5 border border-gray-300 rounded-lg p-4">
                 <input
                   type="file"
@@ -333,7 +333,7 @@ const CompanyInfo = () => {
               </div>
             </div>
             <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700 pb-1">Ảnh đại diện</label>
+              <label className="block text-sm font-medium text-gray-700 pb-1">Thumbnail</label>
               <div className="col-span-5 border border-gray-300 rounded-lg p-4">
                 <input
                   type="file"
