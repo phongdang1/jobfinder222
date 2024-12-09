@@ -102,8 +102,9 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                   )}
 
                   <CardBody>
-                    <Link
-                      to={`/job-detail/${job.id}`}
+                    {/* sửa lại thẻ Link bằng thẻ div  */}
+                    <div
+                      // to={`/job-detail/${job.id}`}
                       className="flex gap-8 items-center justify-start w-full "
                     >
                       <div className="relative bg-transparent shrink-0">
@@ -151,7 +152,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                           </Badge>
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </CardBody>
                 </Card>
               </div>

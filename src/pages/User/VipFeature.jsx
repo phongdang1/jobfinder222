@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { FaLightbulb, FaEnvelope, FaFileAlt } from "react-icons/fa";
@@ -14,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createPaymentViewCv, createPaymentVip } from "@/fetchData/Transaction";
+import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
+
 const VipFeature = () => {
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -23,28 +25,44 @@ const VipFeature = () => {
     window.scrollTo(0, 0);
   }, []);
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const [loading, setLoading] = useState(false); // Đặt initial loading là false
+
   console.log("userid:", user?.data?.isVip);
+
   const handleUpdateVip = async () => {
-    const res = await createPaymentVip(7);
-    console.log("vip:", res);
-    if (res.data.errCode == 0) {
-      let data = {
-        packageId: 7,
-        amount: 1,
-        userId: JSON.parse(localStorage.getItem("user_id")),
-      };
-      localStorage.setItem("orderData", JSON.stringify(data));
-      // const userId = JSON.parse(localStorage.getItem("user_id"));
-      // const packageId = selectedViewPlanId;
-      const redirectUrl = `${res.data.link}`;
-      console.log("Redirecting to:", redirectUrl);
-      window.location.href = redirectUrl;
-    } else {
-      console.log("loi thanh toan", res);
+    // Bắt đầu loading
+    setLoading(true);
+
+    try {
+      const res = await createPaymentVip(7);
+      console.log("vip:", res);
+      if (res.data.errCode == 0) {
+        let data = {
+          packageId: 7,
+          amount: 1,
+          userId: JSON.parse(localStorage.getItem("user_id")),
+        };
+        localStorage.setItem("orderData", JSON.stringify(data));
+        const redirectUrl = `${res.data.link}`;
+        console.log("Redirecting to:", redirectUrl);
+        window.location.href = redirectUrl;
+      } else {
+        console.log("loi thanh toan", res);
+      }
+    } catch (error) {
+      console.error("Error during payment:", error);
+    } finally {
+      // Kết thúc loading
+      setLoading(false);
     }
   };
+
   return (
     <div className="container mx-auto my-20">
+      {/* Hiển thị loading khi đang tải */}
+      {loading && <GlobalLoadingMain isSubmiting={loading} />}
+
       {/* Banner Section */}
       <div className="w-full flex text-white justify-around" data-aos="fade-up">
         {/* text */}
