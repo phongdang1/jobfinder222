@@ -80,10 +80,10 @@ const VipFeature = () => {
           </div>
           <Button
             onClick={handleUpdateVip}
-            disabled={user?.isVip === 1 || user?.status === false}
+            disabled={user?.isVip === 1 || user?.errorCode !== 0}
             className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
           >
-            {user?.status === false
+            {user?.errorCode !== 0
               ? "You are not logged in !"
               : user?.isVip === 1
               ? "You are already VIP member !"
