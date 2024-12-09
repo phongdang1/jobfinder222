@@ -224,14 +224,16 @@ function BestJob() {
           </SelectContent>
         </Select>
 
-        <Button
-          variant="outline"
-          className="bg-white text-primary border border-primary hover:bg-primary hover:text-white right-36 group"
-          onClick={() => handleReset()}
-        >
-          <Cached className="group-hover:animate-spin" />
-          <p>Reset</p>
-        </Button>
+        <div className="flex justify-center lg:justify-start w-full lg:w-auto lg:pr-64">
+          <Button
+            variant="outline"
+            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white group"
+            onClick={() => handleReset()}
+          >
+            <Cached className="group-hover:animate-spin" />
+            <p>Reset</p>
+          </Button>
+        </div>
 
         <div className="w-[95%] basis-1/2 px-20 flex-shrink">
           <Carousel className="w-[96%] xl:w-[600px]">
