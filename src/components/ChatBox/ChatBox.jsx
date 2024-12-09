@@ -3,8 +3,15 @@ import { HiChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
 import { IoMdClose, IoMdSend } from "react-icons/io";
 import { Button } from "../ui/button";
 import typingAnimation from "../../assets/animation/typingAnimation.json";
-import logo from "../../assets/images/JobFinder_logo.png"
+import logo from "../../assets/images/JobFinder_logo.png";
 import Lottie from "lottie-react";
+import { chatWithAI, getUsersById } from "@/fetchData/User";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ChatBox = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,33 +19,30 @@ const ChatBox = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const [roleCode, setRoleCode] = useState(
-    localStorage.getItem("roleCode") || null
-  );
-
-  const randomReplies = [
-    "Sure! How can I help?",
-    "We provide job-finding services.",
-    "Can you elaborate more on that?",
-    "Our team will assist you shortly.",
-    "Thank you for reaching out!",
-  ];
+  const [user, setUser] = useState();
+  const userId = localStorage.getItem("user_id");
+  const [replyHistory, setReplyHistory] = useState("");
 
   const toggleChatBox = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     setMessages((prev) => [...prev, { text: inputMessage, isUser: true }]);
     setInputMessage("");
     setIsTyping(true);
-    setTimeout(() => {
-      const randomReply =
-        randomReplies[Math.floor(Math.random() * randomReplies.length)];
-      setMessages((prev) => [...prev, { text: randomReply, isUser: false }]);
-      setIsTyping(false);
-    }, 1500);
+    try {
+      const response = await chatWithAI(inputMessage, userId, replyHistory);
+      setTimeout(() => {
+        const replyMessage = response.data.data;
+        setMessages((prev) => [...prev, { text: replyMessage, isUser: false }]);
+        setReplyHistory(replyMessage);
+        setIsTyping(false);
+      }, 1500);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const scrollToBottom = () => {
@@ -47,25 +51,26 @@ const ChatBox = () => {
 
   useEffect(() => {
     scrollToBottom();
-    setRoleCode(localStorage.getItem("roleCode"));
-  }, [messages, isTyping, roleCode]);
-  // useEffect(() => {
-  //   if (roleCode) {
-  //     localStorage.setItem("roleCode", roleCode);
-  //   } else {
-  //     localStorage.removeItem("roleCode");
-  //   }
-  // }, [roleCode]);
+  }, [messages, isTyping]);
 
   return (
-    <div
-      className={`fixed bottom-4 right-4 z-50 ${roleCode ? "block" : "hidden"}`}
-    >
-      {/* Icon Chat */}
-      <HiChatBubbleOvalLeftEllipsis
-        onClick={toggleChatBox}
-        className="w-14 h-14 text-primary cursor-pointer"
-      />
+    <div className={`fixed bottom-4  right-4 z-50 `}>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <HiChatBubbleOvalLeftEllipsis
+              onClick={toggleChatBox}
+              className="w-14 h-14 text-primary cursor-pointer"
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="flex items-center gap-1">
+              <HiChatBubbleOvalLeftEllipsis className="text-primary w-5 h-5" />
+              <p className="text-sm text-gray-700">Chat with our AI</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* Box chat */}
       {isOpen && (
@@ -77,10 +82,9 @@ const ChatBox = () => {
           {/* Close Button */}
           <div className="flex justify-between items-center mb-4">
             <div className="text-lg font-semibold flex items-center gap-1">
-              Chat with 
-              <img className="w-5" src={logo}/>
+              Chat with
+              <img className="w-5" src={logo} />
               <span className="text-primary">Job Finder</span>
-               
             </div>
             <IoMdClose
               className="text-2xl text-gray-500 cursor-pointer hover:text-gray-800"

@@ -102,7 +102,6 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                   )}
 
                   <CardBody>
-                    {/* sửa lại thẻ Link bằng thẻ div  */}
                     <div
                       // to={`/job-detail/${job.id}`}
                       className="flex gap-8 items-center justify-start w-full "

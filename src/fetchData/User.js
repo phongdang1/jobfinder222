@@ -67,4 +67,15 @@ const resetPassword = (id, oldPassword, newPassword) => {
     }
   );
 };
-export { handleSetDataUserDetail, getUsersById, banUser, unBanUser, setUserToAdmin, resetPassword, getAllUsers };
+const chatWithAI = (message, userId, replyHistory) => {
+  return axios.post(
+    "/chatWithAI",
+    { message: message, userId: userId, replyHistory: replyHistory },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+export { handleSetDataUserDetail, getUsersById, banUser, unBanUser, setUserToAdmin, resetPassword, getAllUsers,chatWithAI };
