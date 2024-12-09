@@ -12,7 +12,7 @@ import {
 import { getAllUserPackage } from "@/fetchData/Package";
 import AdminPagination from "./AdminPagination";
 import * as XLSX from "xlsx"; // Import thư viện SheetJS
-
+import { Button } from "@/components/ui/button";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
@@ -112,12 +112,12 @@ export function TableDemo() {
   return (
     <div className="w-full">
       <div className="flex justify-end mb-4">
-        <button
+        <Button
           onClick={handleExportToExcel}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-third hover:text-white text-white rounded-md mt-4"
         >
           Export to Excel
-        </button>
+        </Button>
       </div>
       <Table className="bg-white border border-gray-200 rounded-sm">
         <TableCaption>List of user service packs.</TableCaption>

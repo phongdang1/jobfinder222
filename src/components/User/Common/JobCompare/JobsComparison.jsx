@@ -99,32 +99,31 @@ function JobsComparison() {
 
             <TableCell className="flex flex-col gap-2 text-large text-start items-start ">
               {Object.keys(job2).length ? (
-                <div className="flex flex-col gap-3">
-                  <div
-                    className="absolute top-2 right-8 cursor-pointer"
-                    onClick={handleRemoveJob2}
-                  >
+                <div className="flex gap-60">
+                  <div className="flex flex-col gap-3">
+                    <div className="relative bg-transparent shrink-0">
+                      <Image
+                        alt="Album cover"
+                        clasName="object-cover rounded-lg"
+                        height={90}
+                        shadow="md"
+                        src={
+                          job2.userPostData?.userCompanyData?.thumbnail
+                            ? job2.userPostData?.userCompanyData?.thumbnail
+                            : "https://nextui.org/images/album-cover.png"
+                        }
+                        width={90}
+                      />
+                    </div>
+                    <div className="text-xl text-primary font-semibold">
+                      {job2.postDetailData?.name}
+                    </div>
+                    <div className="font-semibold text-sm">
+                      {job2.companyData?.name}
+                    </div>
+                  </div>
+                  <div className="cursor-pointer" onClick={handleRemoveJob2}>
                     <CloseOutlined className="text-gray-500 hover:text-red-600" />
-                  </div>
-                  <div className="relative bg-transparent shrink-0">
-                    <Image
-                      alt="Album cover"
-                      clasName="object-cover rounded-lg"
-                      height={90}
-                      shadow="md"
-                      src={
-                        job2.userPostData?.userCompanyData?.thumbnail
-                          ? job2.userPostData?.userCompanyData?.thumbnail
-                          : "https://nextui.org/images/album-cover.png"
-                      }
-                      width={90}
-                    />
-                  </div>
-                  <div className="text-xl text-primary font-semibold">
-                    {job2.postDetailData?.name}
-                  </div>
-                  <div className="font-semibold text-sm">
-                    {job2.companyData?.name}
                   </div>
                 </div>
               ) : (

@@ -125,7 +125,7 @@ function BestJob() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
 
-    const jobsToPaginate = sortedData.length > 0 ? sortedData : data; // Determine data source
+    const jobsToPaginate = sortedData.length > 0 ? sortedData : data;
     const indexOfLastJob = page * itemsPerPage;
     const indexOfFirstJob = indexOfLastJob - itemsPerPage;
 
@@ -176,6 +176,23 @@ function BestJob() {
     fetchAllPosts();
   };
 
+  const [autoPaginate, setAutoPaginate] = useState(null);
+  useEffect(() => {
+    if (totalPages > 0) {
+      const interval = setInterval(() => {
+        setCurrentPage((prevPage) => {
+          const nextPage = prevPage < totalPages ? prevPage + 1 : 1;
+          handlePageChange(nextPage);
+          return nextPage;
+        });
+      }, 10000);
+
+      setAutoPaginate(interval);
+
+      return () => clearInterval(interval);
+    }
+  }, [totalPages, data, sortedData]);
+
   return (
     <div className="flex flex-col bg-white pb-8 mb-24 mt-10 mx-10 sm:mx-12 md:mx-16 xl:mx-36 font-poppins rounded-lg border-[1px] border-primary">
       <div className="flex items-center justify-between text-4xl md:text-5xl font-forum mb-4 font-semibold text-start bg-[#4a3d8d] bg-opacity-70 rounded-t-lg p-6">
@@ -207,14 +224,16 @@ function BestJob() {
           </SelectContent>
         </Select>
 
-        <Button
-          variant="outline"
-          className="bg-white text-primary border border-primary hover:bg-primary hover:text-white right-36 group"
-          onClick={() => handleReset()}
-        >
-          <Cached className="group-hover:animate-spin" />
-          <p>Reset</p>
-        </Button>
+        <div className="flex justify-center lg:justify-start w-full lg:w-auto lg:pr-64">
+          <Button
+            variant="outline"
+            className="bg-white text-primary border border-primary hover:bg-primary hover:text-white group"
+            onClick={() => handleReset()}
+          >
+            <Cached className="group-hover:animate-spin" />
+            <p>Reset</p>
+          </Button>
+        </div>
 
         <div className="w-[95%] basis-1/2 px-20 flex-shrink">
           <Carousel className="w-[96%] xl:w-[600px]">
