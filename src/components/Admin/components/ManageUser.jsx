@@ -59,22 +59,25 @@ const ManageUser = () => {
       const response = await getAllUsers(searchTerm);
       setTimeout(() => {
         if (response.data.errCode === 0) {
-          setUsers(response.data.data);
-          setFilteredusers(response.data.data);
+          // Filter out users with the role of "company"
+          const filteredData = response.data.data.filter(user => user.roleCode.toUpperCase() !== "COMPANY".toUpperCase());
+          setUsers(filteredData);
+          setFilteredusers(filteredData);
         } else {
           setError("Error fetching data. Please try again later.");
           setUsers([]);
         }
-        setLoading(false); // Dừng loading sau 3 giây
+        setLoading(false); // Stop loading after 1 second
       }, 1000);
     } catch (error) {
       setTimeout(() => {
         setError("Error fetching data. Please try again later.");
         setUsers([]);
-        setLoading(false);
-      }, 1000); // Thời gian chờ là 3 giây
+        setLoading(false); // Stop loading after 1 second
+      }, 1000);
     }
   };
+  
 
   useEffect(() => {
     fetchUsers();
