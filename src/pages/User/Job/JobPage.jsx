@@ -35,7 +35,7 @@ function JobPage() {
           const activeJobs = response.data.data.filter(
             (job) =>
               job.statusCode.toUpperCase() === "approved".toUpperCase() &&
-              date < new Date(job?.timeEnd)
+              date < new Date(job?.timeEnd)&& job.userPostData.userCompanyData.statusCode.toUpperCase() === "approved".toUpperCase()
           );
           const sortedJobs = activeJobs.sort((a, b) => {
             if (b.isHot !== a.isHot) {
