@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { createPaymentViewCv, createPaymentVip } from "@/fetchData/Transaction";
 import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
+import { getUsersById } from "@/fetchData/User";
 
 const VipFeature = () => {
   useEffect(() => {
@@ -24,8 +25,9 @@ const VipFeature = () => {
     // Cuộn lên đầu trang khi component được render
     window.scrollTo(0, 0);
   }, []);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState();
 
+  const userId = localStorage.getItem("user_id");
   const [loading, setLoading] = useState(false); // Đặt initial loading là false
 
   console.log("userid:", user?.data?.isVip);
@@ -57,6 +59,21 @@ const VipFeature = () => {
       setLoading(false);
     }
   };
+  const fetchUser = async (userId) => {
+    try {
+      const response = await getUsersById(userId);
+      if (response.data) {
+        setUser(response.data);
+        console.log('vip dmm',response.data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser(userId);
+  }, [userId]);
 
   return (
     <div className="container mx-auto my-20">
@@ -80,12 +97,12 @@ const VipFeature = () => {
           </div>
           <Button
             onClick={handleUpdateVip}
-            disabled={user?.isVip === 1 || user?.errorCode !== 0}
+            disabled={user?.data.isVip === 1 || user?.errCode !== 0}
             className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
           >
-            {user?.errorCode !== 0
+            {user?.errCode !== 0
               ? "You are not logged in !"
-              : user?.isVip === 1
+              : user?.data.isVip === 1
               ? "You are already VIP member !"
               : "Upgrade Now"}
           </Button>
