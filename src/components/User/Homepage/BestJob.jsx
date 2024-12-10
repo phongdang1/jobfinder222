@@ -204,27 +204,27 @@ function BestJob() {
         </div>
       </div>
       {/* Sort and carousel */}
-      <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center w-full mx-4 space-y-4 lg:space-y-0 mt-4">
-        <Select
-          className="flex items-center"
-          onValueChange={(type) => setSelectedType(type)}
-        >
-          <SelectTrigger className="w-4/5 sm:w-4/5 md:w-4/5 lg:w-[200px] shrink basis-1/4 ">
-            <FilterListIcon className="" />
-            <SelectValue placeholder="Sort by" value={selectedType} />
-          </SelectTrigger>
-          <SelectContent>
-            {uniqueTypes
-              .filter((type) => requiredTypes.includes(type))
-              .map((type, index) => (
-                <SelectItem key={index} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-col xl:flex-row justify-center xl:justify-between items-center w-full mx-4 space-y-4 xl:space-y-0 mt-4">
+        <div className="flex justify-around xl:justify-start gap-x-4 w-full">
+          <Select
+            className="flex items-center "
+            onValueChange={(type) => setSelectedType(type)}
+          >
+            <SelectTrigger className="w-4/5 sm:w-4/5 md:w-4/5 xl:w-[200px] shrink basis-1/4">
+              <FilterListIcon className="" />
+              <SelectValue placeholder="Sort by" value={selectedType} />
+            </SelectTrigger>
+            <SelectContent>
+              {uniqueTypes
+                .filter((type) => requiredTypes.includes(type))
+                .map((type, index) => (
+                  <SelectItem key={index} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
 
-        <div className="flex justify-center lg:justify-start w-full lg:w-auto lg:pr-64">
           <Button
             variant="outline"
             className="bg-white text-primary border border-primary hover:bg-primary hover:text-white group"
