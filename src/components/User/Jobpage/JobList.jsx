@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import TooltipBox from "../Homepage/Common/TooltipBox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 // import GlobalLoading from "@/components/GlobalLoading/GlobalLoading";
 
@@ -21,7 +21,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
   const [locationTerm, setLocationTerm] = useState("");
   // const [isSubmitting, setIsSubmitting] = useState(false); // New state to control loading
   const date = new Date();
-
+  const navigate = useNavigate();
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -108,6 +108,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                     >
                       <div className="relative bg-transparent shrink-0">
                         <Image
+                          onClick={() => navigate(`/job-detail/${job.id}`)}
                           alt="Job cover"
                           className="object-cover rounded-lg"
                           height={90}
@@ -124,26 +125,33 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger className="text-start">
-                              <p className="text-base font-medium group-hover:text-primary">
+                              <Link
+                                to={`/job-detail/${job.id}`}
+                                className="text-base font-medium group-hover:text-primary"
+                              >
                                 {job.userPostData.userCompanyData.name}
-                              </p>
+                              </Link>
                             </TooltipTrigger>
                             <TooltipContent>
                               <TooltipBox id={job.id} />
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        <p className="font-normal text-base text-gray-500">
+                        <p
+                         onClick={() => navigate(`/job-detail/${job.id}`)}
+                        className="font-normal text-base text-gray-500">
                           {job.postDetailData.name}
                         </p>
                         <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
                           <Badge
+                           onClick={() => navigate(`/job-detail/${job.id}`)}
                             variant="outline"
                             className="bg-white w-fit text-nowrap rounded-lg"
                           >
                             {job.postDetailData.salaryTypePostData.value}
                           </Badge>
                           <Badge
+                           onClick={() => navigate(`/job-detail/${job.id}`)}
                             variant="outline"
                             className="bg-white w-fit text-nowrap rounded-lg"
                           >

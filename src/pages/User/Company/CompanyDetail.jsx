@@ -35,7 +35,7 @@ function CompanyDetail() {
   const [companyDetail, setCompanyDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const date = new Date()
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     console.log(id);
@@ -106,9 +106,9 @@ function CompanyDetail() {
         <div
           className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 bg-cover bg-center bg-white rounded-full absolute z-30
                 lg:top-[500px] lg:left-72
-                md:top-[390px] md:left-1/2 md:transform md:-translate-x-1/2
-                sm:top-[400px] sm:left-1/2 sm:transform sm:-translate-x-1/2
-                top-[370px] left-1/2 transform -translate-x-1/2"
+                md:top-[390px] md:left-1/2 md:transform md:-trangray-x-1/2
+                sm:top-[400px] sm:left-1/2 sm:transform sm:-trangray-x-1/2
+                top-[370px] left-1/2 transform -trangray-x-1/2"
           style={{
             backgroundImage: `url(${companyDetail.thumbnail})`,
           }}
@@ -175,19 +175,30 @@ function CompanyDetail() {
                   <Card
                     key={index}
                     className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
-                      post?.isHot  === 1
+                      post?.isHot === 1 && date < new Date(post?.timeEnd)
                         ? "bg-primary/20 hover:bg-violet-200"
+                        : date > new Date(post?.timeEnd) ?
+                        "bg-gray-200"
                         : "bg-white"
                     }`}
                     shadow=""
                   >
-                     {post?.isHot === 1 && (
-                    <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
-                      <WhatshotIcon className="text-[#ffdd85] mr-2" />
-                      SUPER HOT
-                      <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 translate-x-1 translate-y-1"></span>
-                    </span>
-                  )}
+                    {
+                      date > new Date(post?.timeEnd) && (
+                        <span className="absolute top-2 right-0 bg-gray-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
+                        
+                        EXPIRED
+                        <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-600 transform rotate-90 trangray-x-1 trangray-y-1"></span>
+                      </span>
+                      )
+                    }
+                    {post?.isHot === 1 && date < new Date(post?.timeEnd) && (
+                      <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
+                        <WhatshotIcon className="text-[#ffdd85] mr-2" />
+                        SUPER HOT
+                        <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-orange-600 transform rotate-90 trangray-x-1 trangray-y-1"></span>
+                      </span>
+                    )}
                     <CardBody>
                       <div className="flex gap-8 items-center justify-start w-full">
                         <div
