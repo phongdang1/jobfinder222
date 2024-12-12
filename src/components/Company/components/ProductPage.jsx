@@ -5,7 +5,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa";
 import "aos/dist/aos.css";
 import AOS from "aos";
-import postcard from "../../../assets/images/img1.jpg";
+import postcard from "../../../assets/illustration/post.png";
 import viewCandidate from "../../../assets/illustration/viewCandidate.png";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Button } from "@/components/ui/button";

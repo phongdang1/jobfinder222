@@ -129,7 +129,7 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                                 to={`/job-detail/${job.id}`}
                                 className="text-base font-medium group-hover:text-primary"
                               >
-                                {job.userPostData.userCompanyData.name}
+                                {job.postDetailData.name}
                               </Link>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -138,20 +138,21 @@ const JobList = ({ currentJobs, totalJobs, currentPage, handleSearch }) => {
                           </Tooltip>
                         </TooltipProvider>
                         <p
-                         onClick={() => navigate(`/job-detail/${job.id}`)}
-                        className="font-normal text-base text-gray-500">
-                          {job.postDetailData.name}
+                          onClick={() => navigate(`/job-detail/${job.id}`)}
+                          className="font-normal text-base text-gray-500"
+                        >
+                          {job.userPostData.userCompanyData.name}
                         </p>
                         <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
                           <Badge
-                           onClick={() => navigate(`/job-detail/${job.id}`)}
+                            onClick={() => navigate(`/job-detail/${job.id}`)}
                             variant="outline"
                             className="bg-white w-fit text-nowrap rounded-lg"
                           >
                             {job.postDetailData.salaryTypePostData.value}
                           </Badge>
                           <Badge
-                           onClick={() => navigate(`/job-detail/${job.id}`)}
+                            onClick={() => navigate(`/job-detail/${job.id}`)}
                             variant="outline"
                             className="bg-white w-fit text-nowrap rounded-lg"
                           >

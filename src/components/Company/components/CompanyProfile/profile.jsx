@@ -122,6 +122,7 @@ const CompanyInfo = () => {
         fetchCompany();
         toast.success("Update company success!");
         setIsEditable(false);
+        window.location.reload();
       } else {
         setError("loi submit");
       }
@@ -153,7 +154,7 @@ const CompanyInfo = () => {
               onClick={toggleEdit}
               className="px-6 py-4 bg-primary text-white rounded-md"
             >
-              edit
+              Edit
             </Button>
           ) : (
             <>
@@ -254,32 +255,6 @@ const CompanyInfo = () => {
                 </option>
               ))}
             </select>
-          </div>
-          <div className="grid grid-cols-10 gap-4 mb-4">
-            <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700">
-                Allow Hot Post
-              </label>
-              <input
-                type="text"
-                name="allowHotPost"
-                value={companyData.allowHotPost}
-                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
-                disabled
-              />
-            </div>
-            <div className="col-span-5">
-              <label className="block text-sm font-medium text-gray-700">
-                Allow CV
-              </label>
-              <input
-                type="text"
-                name="allowCv"
-                value={companyData.allowCv}
-                className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
-                disabled
-              />
-            </div>
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-5">

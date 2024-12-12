@@ -30,7 +30,7 @@ function JobCard({ expand, data }) {
       {data && data.length > 0 ? (
         // Lọc các card có statusCode !== "BANNED"
         data
-          .filter((card) => card.statusCode !== "BANNED")
+          .filter((card) => card.statusCode === "APPROVED")
           .map((card, index) =>
             card.isHot === 1 && date < new Date(card.timeEnd) ? ( // Đặt điều kiện đúng cách
               <div key={card.id}>
@@ -76,7 +76,7 @@ function JobCard({ expand, data }) {
                                 onClick={() => handleNavigate(card.id)}
                                 className="text-base font-medium group-hover:text-primary w-3/5 max-w-xs whitespace-nowrap hover:underline hover:underline-offset-2 text-ellipsis overflow-hidden"
                               >
-                                {card.userPostData.userCompanyData.name}
+                                {card.postDetailData.name}
                               </p>
                             </TooltipTrigger>
                             <TooltipContent
@@ -88,7 +88,7 @@ function JobCard({ expand, data }) {
                         </TooltipProvider>
 
                         <p className="font-normal text-base text-gray-500 w-3/5 max-w-xs text-ellipsis overflow-hidden whitespace-nowrap">
-                          {card.postDetailData.name}
+                          {card.userPostData.userCompanyData.name}
                         </p>
                         <div className="flex mt-2 -ml-1 items-center relative w-full space-x-2">
                           <Badge

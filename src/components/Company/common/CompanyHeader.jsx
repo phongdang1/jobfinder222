@@ -356,7 +356,7 @@ const CompanyHeader = () => {
                   <div className="flex active:opacity-60">
                     <Avatar
                       alt={user?.data?.phoneNumber}
-                      src={user?.data?.image}
+                      src={user?.data?.thumbnail}
                       className="cursor-pointer"
                     />
                     <button className="absolute -right-2 bottom-0   bg-background rounded-full">

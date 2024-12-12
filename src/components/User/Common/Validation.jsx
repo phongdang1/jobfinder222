@@ -4,7 +4,7 @@ function Validation(inputValue) {
   const phoneRegex = /^(0[2|3|5|7|8|9])+([0-9]{8})$/;
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-  const nameRegex = /^[\p{L}\s]+$/u;
+  const nameRegex = /^[\p{L}\s"()\-&_]+$/u;
   const amountEmployerRegex = /^\d+$/;
 
   if (inputValue.name !== undefined) {
