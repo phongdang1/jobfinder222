@@ -143,7 +143,7 @@ const CompanyInfo = () => {
 
 
   if (error) return <p>{error}</p>;
-  console.log("companyData",companyData );
+  console.log("companyData", companyData);
   return (
     <div className="p-4 col-span-5 w-full">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md">
@@ -237,7 +237,7 @@ const CompanyInfo = () => {
               )}
             </div>
           </div>
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700">Categories</label>
             <select
               name="typeCompany"
@@ -255,6 +255,16 @@ const CompanyInfo = () => {
                 </option>
               ))}
             </select>
+          </div> */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Categories</label>
+            <input
+              type="text"
+              name="typeCompany"
+              value={companyData.typeCompany || ""}
+              className={`mt-1 block w-full border border-gray-300 rounded-md p-2 ${!isEditable ? 'cursor-not-allowed' : ''}`}
+              disabled={true}
+            />
           </div>
           <div className="grid grid-cols-10 gap-4 mb-4">
             <div className="col-span-5">
