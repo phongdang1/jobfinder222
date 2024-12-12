@@ -103,7 +103,7 @@ function BestJob() {
       const response = await getAllPost();
       const fetchedData = response.data.data;
       const allHotJobs = fetchedData.filter(
-        (all) => all.isHot === 1 && date < new Date(all.timeEnd)
+        (all) => all.isHot === 1 && date < new Date(all.timeEnd) && all.statusCode === "APPROVED"
       );
 
       if (allHotJobs) {

@@ -35,7 +35,7 @@ function CompanyDetail() {
   const [companyDetail, setCompanyDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const date = new Date()
+  const date = new Date();
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     console.log(id);
@@ -48,7 +48,14 @@ function CompanyDetail() {
       try {
         const response = await getCompanyById(id);
         if (response.data.errCode === 0) {
-          setCompanyDetail(response.data.data);
+          const approvedPostData = response.data.data.postData.filter(
+            (post) => post.statusCode === "APPROVED"
+          );
+          console.log("Approved Post Data:", approvedPostData);
+          setCompanyDetail({
+            ...response.data.data,
+            postData: approvedPostData,
+          });
         } else {
           setError(response.data.errMessage);
         }
@@ -177,21 +184,18 @@ function CompanyDetail() {
                     className={`border-none w-full rounded-lg hover:bg-[#E6E6FA]/50 group hover:outline-2 hover:outline-primary cursor-pointer ${
                       post?.isHot === 1 && date < new Date(post?.timeEnd)
                         ? "bg-primary/20 hover:bg-violet-200"
-                        : date > new Date(post?.timeEnd) ?
-                        "bg-gray-200"
+                        : date > new Date(post?.timeEnd)
+                        ? "bg-gray-200"
                         : "bg-white"
                     }`}
                     shadow=""
                   >
-                    {
-                      date > new Date(post?.timeEnd) && (
-                        <span className="absolute top-2 right-0 bg-gray-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
-                        
+                    {date > new Date(post?.timeEnd) && (
+                      <span className="absolute top-2 right-0 bg-gray-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
                         EXPIRED
                         <span className="absolute bottom-0 right-0 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-600 transform rotate-90 trangray-x-1 trangray-y-1"></span>
                       </span>
-                      )
-                    }
+                    )}
                     {post?.isHot === 1 && date < new Date(post?.timeEnd) && (
                       <span className="absolute top-2 right-0 bg-orange-600 text-white text-sm font-semibold px-2 py-1 rounded-tl-md rounded-bl-md">
                         <WhatshotIcon className="text-[#ffdd85] mr-2" />
