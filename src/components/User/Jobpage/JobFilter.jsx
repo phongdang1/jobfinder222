@@ -109,11 +109,13 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
               value={filter.typeWorks || ""} // Single value for type of work
               onChange={(e) => handleRadioChange(e, "typeWorks")}
             >
-              {["Toàn thời gian", "Remote"].map((typeWork, index) => (
-                <Radio key={index} value={typeWork} size="sm">
-                  {typeWork}
-                </Radio>
-              ))}
+              {["Toàn thời gian", "Thực tập", "Remote", "Bán thời gian"].map(
+                (typeWork, index) => (
+                  <Radio key={index} value={typeWork} size="sm">
+                    {typeWork}
+                  </Radio>
+                )
+              )}
             </RadioGroup>
           </div>
 
