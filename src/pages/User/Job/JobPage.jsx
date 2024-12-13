@@ -13,10 +13,11 @@ function JobPage() {
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [filter, setFilter] = useState({
     jobName: "",
-    location: "",
+    locations: "",
     levels: [],
     typeWorks: [],
     expJobs: [],
+    salarys: [],
     postedOn: "All",
   });
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,9 @@ function JobPage() {
           const activeJobs = response.data.data.filter(
             (job) =>
               job.statusCode.toUpperCase() === "approved".toUpperCase() &&
-              date < new Date(job?.timeEnd)&& job.userPostData.userCompanyData.statusCode.toUpperCase() === "approved".toUpperCase()
+              date < new Date(job?.timeEnd) &&
+              job.userPostData.userCompanyData.statusCode.toUpperCase() ===
+                "approved".toUpperCase()
           );
           const sortedJobs = activeJobs.sort((a, b) => {
             if (b.isHot !== a.isHot) {
@@ -73,10 +76,8 @@ function JobPage() {
           .toLowerCase()
           .includes(filter.jobName.toLowerCase());
       const locationMatch =
-        filter.location === "" ||
-        job.postDetailData.provincePostData.value
-          .toLowerCase()
-          .includes(filter.location.toLowerCase());
+        filter.locations.length === 0 ||
+        filter.locations.includes(job.postDetailData.provincePostData.value);
       const levelMatch =
         filter.levels.length === 0 ||
         filter.levels.includes(job.postDetailData.jobLevelPostData.value);
@@ -86,6 +87,9 @@ function JobPage() {
       const expJobMatch =
         filter.expJobs.length === 0 ||
         filter.expJobs.includes(job.postDetailData.expTypePostData.value);
+      const salaryMatch =
+        filter.salarys.length === 0 ||
+        filter.salarys.includes(job.postDetailData.salaryTypePostData.value);
       const postedOnMatch = filter.postedOn === "All";
 
       return (
@@ -94,7 +98,8 @@ function JobPage() {
         levelMatch &&
         typeWorkMatch &&
         expJobMatch &&
-        postedOnMatch
+        postedOnMatch &&
+        salaryMatch
       );
     });
 
@@ -124,10 +129,11 @@ function JobPage() {
   const handleResetAll = () => {
     setFilter({
       jobName: "",
-      location: "",
+      locations: "",
       levels: "",
       typeWorks: "",
       expJobs: "",
+      salarys: "",
       postedOn: "All",
     });
   };

@@ -1,19 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import GlobalLoadingMain from "@/components/GlobalLoading/GlobalLoadingMain";
-
+import { getAllCodeByType } from "@/fetchData/AllCode";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { RadioGroup, Radio } from "@nextui-org/radio";
 import { Button } from "@/components/ui/button";
 
 function JobFilter({ filter, handleFilterChange, handleResetAll }) {
   const [isOpen, setIsOpen] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
+  const [locations, setLocations] = useState([]); // State to store location data
+
+  useEffect(() => {
+    // Fetch all location data (PROVINCE)
+    getAllCodeByType("PROVINCE")
+      .then((response) => {
+        if (response.data.data) {
+          setLocations(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch location data", error);
+      });
+  }, []);
 
   const toggleFilter = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleSelectChange = (value) => {
+    setIsSubmitting(true); // Show loading
+    setTimeout(() => {
+      handleFilterChange({ locations: value }); // Update the filter
+      setIsSubmitting(false); // Hide loading after update
+    }, 1000); // Simulate delay (optional)
   };
 
   const handleRadioChange = (e, name) => {
@@ -103,6 +132,52 @@ function JobFilter({ filter, handleFilterChange, handleResetAll }) {
                 </Radio>
               ))}
             </RadioGroup>
+          </div>
+
+          {/* Salary Work Filter */}
+          <div className="mb-4">
+            <RadioGroup
+              label="Salary"
+              color="primary"
+              className="text-primary"
+              value={filter.salarys || ""} // Single value for experience
+              onChange={(e) => handleRadioChange(e, "salarys")}
+            >
+              {["3 - 5 triệu", "10-15 triệu", "Thoả thuận"].map(
+                (salary, index) => (
+                  <Radio key={index} value={salary} size="sm">
+                    {salary}
+                  </Radio>
+                )
+              )}
+            </RadioGroup>
+          </div>
+
+          {/* Location Work Filter */}
+          <div className="mb-4 mr-2">
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Location
+            </label>
+            <Select
+              id="location"
+              value={filter.locations || ""}
+              onValueChange={handleSelectChange}
+              className="w-32" // Adjust width as needed
+            >
+              <SelectTrigger className="py-1 px-2 text-sm">
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                {locations.map((location) => (
+                  <SelectItem key={location.code} value={location.value}>
+                    {location.value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
