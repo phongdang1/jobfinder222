@@ -62,7 +62,7 @@ function BestJob() {
       if (selectedType) {
         const response2 = await getAllCodeByType(selectedType);
         setSortValue(response2.data.data);
-        console.log(response2.data.data);
+        console.log("aaaaaaaa", response2.data.data);
       }
     } catch (error) {
       console.log(error);
@@ -103,7 +103,10 @@ function BestJob() {
       const response = await getAllPost();
       const fetchedData = response.data.data;
       const allHotJobs = fetchedData.filter(
-        (all) => all.isHot === 1 && date < new Date(all.timeEnd) && all.statusCode === "APPROVED"
+        (all) =>
+          all.isHot === 1 &&
+          date < new Date(all.timeEnd) &&
+          all.statusCode === "APPROVED"
       );
 
       if (allHotJobs) {
@@ -145,6 +148,7 @@ function BestJob() {
     try {
       const response = await getAllPostsInactive(code);
       const fetchedData = response.data.data;
+      console.log("asdasd", fetchedData);
 
       const allHotJobs = fetchedData.filter(
         (all) => all.isHot === 1 && date < new Date(all.timeEnd)

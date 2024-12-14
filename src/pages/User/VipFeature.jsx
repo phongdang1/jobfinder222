@@ -64,7 +64,7 @@ const VipFeature = () => {
       const response = await getUsersById(userId);
       if (response.data) {
         setUser(response.data);
-        console.log('vip dmm',response.data)
+        console.log("vip dmm", response.data);
       }
     } catch (error) {
       console.error("Failed to fetch user:", error);
@@ -97,12 +97,12 @@ const VipFeature = () => {
           </div>
           <Button
             onClick={handleUpdateVip}
-            disabled={user?.data.isVip === 1 || user?.errCode !== 0}
+            disabled={user?.data?.isVip === 1 || user?.errCode !== 0}
             className="mt-4 py-8 px-5 rounded-2xl bg-white border border-primary hover:bg-primary hover:text-white shadow-sm shadow-primary"
           >
             {user?.errCode !== 0
               ? "You are not logged in !"
-              : user?.data.isVip === 1
+              : user?.data?.isVip === 1
               ? "You are already VIP member !"
               : "Upgrade Now"}
           </Button>
