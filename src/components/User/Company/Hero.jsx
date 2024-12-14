@@ -48,7 +48,7 @@ function Hero({ handleSearch }) {
             </p>
 
             {/* thanh search */}
-            <div className="flex justify-center items-center p-4">
+            <div className="flex justify-center items-center p-2 sm:p-4 md:p-6 lg:p-8">
               <div className="flex w-full max-w-7xl items-center gap-0">
                 <div className="relative flex flex-1 items-center">
                   <Input

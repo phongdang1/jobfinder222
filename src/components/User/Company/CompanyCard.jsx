@@ -22,22 +22,11 @@ const CompanyCard = ({ company }) => {
     fetchcompanyData();
   }, [company.id]);
 
-  // if (!companyData?) {
-  //   return (
-  //     <div className="w-full bg-white shadow rounded-lg overflow-hidden">
-  //       <Skeleton className="w-full h-40 object-cover" />
-  //       <div className="p-4">
-  //         <Skeleton className="w-16 h-16 rounded-full mb-4" />
-  //         <Skeleton className="h-6 w-3/4 mb-2" />
-  //         <Skeleton className="h-4 w-1/2 mb-4" />
-  //         <Skeleton className="h-4 w-full" />
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <Link to={`/companydetail/${company.id}`} className="block" target="_blank">
+    <Link
+      to={`/companydetail/${company.id}`}
+      className="block w-full sm:w-80 md:w-96 lg:w-[400px] xl:w-[450px] mx-auto bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
+    >
       <div className="relative">
         {companyData?.coverimage ? (
           <img
@@ -69,7 +58,7 @@ const CompanyCard = ({ company }) => {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 truncate">
               {companyData?.name}
             </h3>
             <div className="flex items-center mt-2 text-sm text-gray-700">
@@ -78,14 +67,16 @@ const CompanyCard = ({ company }) => {
                 fontSize="small"
               />
               <p className="text-sm text-gray-700 mt-2 line-clamp-2">
-                Head Office: {companyData?.address}
+              <strong><i>Head Office:</i></strong>
+              {companyData?.address}
               </p>
             </div>
-            <p className="text-sm text-gray-700 mt-2 line-clamp-2">
-              {companyData?.description}
-            </p>
+
             <p className="text-sm text-gray-700 mt-2 font-medium">
-              Total Job Recruitment:<span className="text-primary font-semibold"> {companyData?.postData?.length || 0}</span>
+              <strong><i>Total Job Recruitment:</i></strong>{" "}
+              <span className="text-primary font-semibold">
+                {companyData?.postData?.length || 0}
+              </span>
             </p>
           </div>
         </div>

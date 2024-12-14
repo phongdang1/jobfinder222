@@ -57,6 +57,7 @@ const ManageUser = () => {
     try {
       setLoading(true);
       const response = await getAllUsers(searchTerm);
+      console.log("res", response)
       setTimeout(() => {
         if (response.data.errCode === 0) {
           // Filter out users with the role of "company"
