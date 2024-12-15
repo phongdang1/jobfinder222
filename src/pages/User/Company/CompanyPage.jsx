@@ -94,11 +94,13 @@ function CompanyPage() {
           setFilteredCompanies={setFilteredCompanies}
         />
       </div>
-      <div className="border-2 border-gray-200 mx-72 flex-grow pb-4 bg-white">
+      <div className="border-2 border-gray-200 sm:mx-8 md:mx-16 lg:mx-72 flex-grow pb-4 bg-white">
         <div className="flex justify-between items-center">
-          <p className="text-nowrap font-semibold text-3xl ml-10">
-            <p> All companies ({filteredCompanies.length})</p>
+        <p className="font-semibold text-l sm:text-l md:text-2xl ml-4 sm:ml-6 md:ml-10 whitespace-nowrap">
+            All companies ({filteredCompanies.length})
           </p>
+
+
           <div className="relative w-full flex justify-end pr-2 sm:pr-4 mt-8 mb-10 right-6 ">
             <select
               id="typeFilter"
@@ -118,7 +120,9 @@ function CompanyPage() {
             </select>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="flex flex-col md:flex-row w-full max-w-full sm:max-w-full md:max-w-6xl lg:max-w-screen-xl mx-auto px-2 sm:px-4">
+
+
           {loading ? (
             <div className="w-full grid grid-cols-3 gap-4 p-4">
               {Array(9).fill().map((_, index) => (
@@ -138,7 +142,7 @@ function CompanyPage() {
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {currentCompanies.map((company) => (
                   <div
                     key={company.id}
@@ -148,6 +152,7 @@ function CompanyPage() {
                   </div>
                 ))}
               </div>
+
             </>
           )}
         </div>

@@ -119,7 +119,9 @@ function TooltipBox({ id }) {
                 Job Description
               </div>
               <ul className="list-disc list-inside text-wrap space-y-2">
-                <li>{card.postDetailData.description}</li>
+                <li className="max-h-[100px] overflow-hidden line-clamp-4">
+                  {card.postDetailData.description}
+                </li>
                 <li>Work time: {card.postDetailData.workTypePostData.value}</li>
                 <li>Salary: {card.postDetailData.salaryTypePostData.value}</li>
               </ul>
@@ -166,7 +168,7 @@ function TooltipBox({ id }) {
           onClick={() => handleNavigateCompare(id)}
           disabled={!user || user?.isVip !== 1} // Vô hiệu hóa khi không phải là VIP
         >
-          {!user || user?.isVip === 0 ? "VIP Member Only" : "Compare Job"}
+          {!user || user?.isVip === 0 ? "Compare Job (VIP)" : "Compare Job"}
         </Button>
       </div>
     </div>

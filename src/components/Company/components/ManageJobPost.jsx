@@ -340,7 +340,7 @@ const ManageJobPost = () => {
                 (post) =>
                   post.statusCode !== "CLOSED" && (
                     <TableRow key={post.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium w-1/6 xl:w-2/5 max-w-40 xl:max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                         {post.postDetailData.name}
                       </TableCell>
                       <TableCell className="w-2/5 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
@@ -349,8 +349,8 @@ const ManageJobPost = () => {
                       <TableCell className="w-2/5 max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                         {post.postDetailData.skillRequirement}
                       </TableCell>
-                      <TableCell className="text-right flex items-end justify-start">
-                        {/* mở cái dialog user  */}
+                      <TableCell className="text-right flex items-end justify-center">
+                        {/* mở cái dialog user ne */}
                         <Dialog>
                           <DialogTrigger>
                             <div className="flex items-center px-4 py-2 text-primary bg-white hover:bg-primary hover:text-white border border-primary rounded font-semibold">
