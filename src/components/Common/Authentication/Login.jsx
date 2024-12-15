@@ -361,13 +361,6 @@ const Login = () => {
               <img src={IconGoogle} className="w-6 m-2" alt="" />
               <p className="hidden sm:block">Login with Google</p>
             </button>
-            <button
-              type="button"
-              className="flex items-center justify-center px-3 py-3  rounded-full border-2 border-slate-300 hover:bg-slate-200"
-            >
-              <img src={IconFacebook} className="w-6 m-2" alt="" />
-              <p className="hidden sm:block">Login with Facebook</p>
-            </button>
           </div>
         </form>
       </div>
